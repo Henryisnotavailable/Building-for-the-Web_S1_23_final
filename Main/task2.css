@@ -1,0 +1,169 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    font-family: "PT Sans", Calibri, Tahoma, sans-serif;
+    box-sizing: border-box;
+      
+}
+
+body, html, main {
+    height: 100%;
+    width: 100%;
+}
+
+.header {
+    text-align: center;
+    color: white;
+}
+
+
+/*Create a flexible navbar (each child is a flex item)*/
+.navbar {
+    display: flex;
+    background-color: dimgray;
+    align-items: center;
+    justify-content: center;
+
+
+}
+
+/*Style the links in the navbar*/
+.navbar a {
+    color: white;
+    text-decoration: none;
+    text-align: center;
+    padding: 1%;
+    
+}
+
+.navbar a:hover {
+    color: red;
+    background-color: white;
+}
+
+#IntroPage {
+
+    background-color: mediumspringgreen;
+    padding: 60px;
+    text-align: center;
+
+}
+
+#IntroPage h1 {
+    
+    font-size: 62px;
+    
+}
+
+
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    
+}
+
+.main {
+    padding-left: 1%;
+    padding-right: 1%;
+    flex: 70%;
+    background-color: white; 
+    
+    
+}
+
+table,th,td {
+    border: 1px solid;
+    text-align: center
+}
+
+caption {
+    font-size: xx-large;
+    
+}
+table {
+    width: 100%;
+    height: 100%;
+}
+
+tbody {
+    height: 80%;
+}
+
+tr:hover {
+    background-color: coral;
+}
+
+
+
+td:hover {
+    background-color: red;
+}
+
+th {
+    background-color: mediumspringgreen;
+    color: black;
+  }
+
+table img {
+    max-height: 32px;
+    max-width: 45px;
+}
+
+
+
+.side {
+    flex: 30%;
+    background-color: #f1f1f1;
+    padding-left: 1%;
+    padding-right: 1%;
+    
+    
+}
+
+.side ol {
+    padding-left: 3%;
+    
+}
+
+.side ol li {
+    
+    margin: 5px;
+    
+}
+
+.custom_image {    
+display: block;
+margin-left: auto;
+margin-right: auto;
+width: 50%;    
+}
+
+figure {
+    border: 1px black solid;
+    padding: 1px;
+    margin: auto;
+}
+
+figcaption {
+    background-color: black;
+    color: white;
+    font-style: italic;
+    padding: 2px;
+    text-align: center;
+  }
+
+@media screen and (max-width: 800px) {
+    .navbar, .row {   
+      flex-direction: column;
+      flex-wrap:wrap; 
+    }
+  }
+
+
+.footer {
+    text-align: center;
+    background-color: darkslategrey;
+}
+

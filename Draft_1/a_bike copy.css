@@ -1,0 +1,593 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, Helvetica;
+}
+
+body {
+    width: 100%;
+   min-height: 100%;
+
+}
+
+html {
+    
+    min-height: 100%;
+    background: #e1e8f0;
+}
+
+
+article {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    height: 100%;
+}
+
+main {
+    flex-grow: 1;
+}
+
+header,
+main,
+footer {
+    flex-shrink: 0;
+}
+
+/*Start of header styling*/
+
+#Wrapper {
+    width: 100%;
+    height: 100%;
+}
+
+
+
+#PageHeader {
+    background-color: #9068be;
+    color: white;
+    text-align: center;
+    box-sizing: border-box;
+    margin-left: 1%;
+    margin-right: 1%;
+    margin-top: 1%;
+    border-radius: 10px;
+}
+
+header #PageHeader h1 {
+    font-size: 60px;
+
+}
+
+header {
+    height: 30vh;
+    padding-bottom: 3%;
+}
+
+#navbarWrapper {
+    height: 20%;
+    width: 100%;
+}
+
+nav {
+    background-color: #6ed3cf;
+    border-radius: 5px;
+    margin-left: 1%;
+    margin-right: 1%;
+    margin-top: 1%;
+    height: 180%;
+
+}
+
+nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: space-around;
+    align-items: stretch;
+    height: 100%;
+    width: 100%;
+
+}
+
+nav li {
+    display: inline;
+    list-style-type: none;
+    width: 100%;
+    border-radius: 25px;
+
+
+}
+
+
+
+nav a {
+    text-decoration: none;
+    color: white;
+    transition: all 0.3s ease 0s;
+    height: 100%;
+    width: 100%;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 4px;
+}
+
+nav a:hover {
+    
+    background-color:rgba(144,104,190,1) ;
+    transition-duration: 0.5s;
+}
+#logout_button a:hover {
+    background-color: #e62739;
+
+}
+
+nav img {
+    width: 20px;
+    height: 20px;
+    padding-right: 5px;
+}
+
+#placeholder a {
+    pointer-events: none;
+}
+
+/*End of header styling*/
+
+
+/*Start of main styling*/
+
+.page-wrapper {
+    margin-left: 1%;
+    margin-right: 1%;
+
+
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
+
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+    flex-basis: 100%;
+    flex: 1;
+}
+
+.left-column {
+    background-color: #e62739;
+    color: white;
+    height: 100%;
+    flex: 1;
+    margin-left: 1%;
+    text-align: center;
+    
+    box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.75);
+
+}
+
+
+.left-column .user_picture {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.left-column .user_picture img {
+    max-height: 100px;
+    max-width: 100px;
+    border: solid;
+}
+
+.left-column p {
+    text-align: left center;
+    padding-left: 2%;
+    padding-top: 2%;
+    padding-bottom: 2%;
+}
+
+.left-column a {
+    color: white;
+}
+
+.left-column a:hover {
+    color: black;
+    transition-duration: 0.5s;
+}
+
+.right-column {
+   color: white;
+    height: 100%;
+    box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.75);
+    flex: 3;
+    background-color: #6ed3cf
+    
+    
+
+}
+
+.right-column .button_row {
+display: flex;
+justify-content: space-around;
+align-items: center;
+}
+
+
+
+.form_main h1 {
+    font-size: xx-large;
+}
+
+.form_main label {
+    font-size: x-large;
+}
+
+.form_main {
+    margin-top: 2%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    background-color: #6ed3cf
+}
+
+.input_row {
+    display:flex;
+    flex-direction:row;
+    width: 80%;
+    padding-bottom: 2%;
+    
+}
+
+.input_col {
+    
+    flex:1;
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    margin: 1% 2%;
+}
+
+.input_col input,textarea {
+    color: rgb(83, 81, 81);
+  border-radius: 4px;
+  background: white;
+  outline: none;
+  
+}
+
+.input_col textarea {
+    overflow-wrap: break-word;
+
+}
+
+.input_row img {
+   max-width: 60%;
+   max-height: 60%;
+   border: solid 1px;
+}
+
+.input_row #bike_image_row, .input_row #other_media_row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.input_row #FaveColourBike {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+}
+
+.input_row #FaveColourBike input {
+    width: 50%;
+    height: 50%;
+}
+
+.input_row #electric_row input{
+    width: 50%;
+    height: 50%;
+}
+
+.input_col input[type="text"],.input_col input[type="number"] {
+    height: 30px;
+}
+
+#button_row {
+    display: flex;
+    justify-content: space-around;
+    
+}
+
+input[type="file"]::file-selector-button {
+    
+    padding: 1% 1%;
+    border-radius: 1%;
+    background-color: white;
+    transition: 1s;
+    color: black;
+    cursor: pointer;
+  }
+
+  input[type=file]::file-selector-button:hover {
+    background-color: #9068be;
+    
+    color: white;
+  }
+
+  input[type="color"] {
+    cursor: pointer;
+    align-self: center;
+  }
+
+
+  input[type="checkbox"] {
+        display: none;
+       
+        
+  }
+
+
+  input[type="checkbox"] + label::after {
+    
+    width: 2.5rem;
+    height: 2.5rem;
+    display: inline-block;
+    padding: 0 0 0 0px;
+    align-self: center;
+
+    content: 'N';
+    font-size: 2rem;
+    color: white;
+}
+input[type="checkbox"] + label {
+    cursor: pointer;
+    background-color: #e62739;
+
+}
+input[type="checkbox"]:checked + label::after {
+
+    color: white;
+    content: 'Y';
+    font-size: 2rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    display: inline-block;
+    padding: 0 0 0 0px;
+    align-self: center;
+    
+}
+
+
+
+
+
+#electric_row #is_electric input{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+}
+
+#electric_row label {
+    box-shadow: 0px 11px 17px -4px rgba(0,0,0,0.75);
+    margin-left: 40%;
+    margin-right: 40%;
+}
+
+.custom_button {
+    border:solid;
+    border-radius:10px;
+    padding: 1% 3%;
+    background-color: #9068be;
+    color: white;
+    font-size: large;
+    cursor: pointer;
+}
+
+#edit_button {
+    margin-top: 2%;
+    box-shadow: 0px 11px 17px -4px rgba(0,0,0,0.75);
+}
+
+#delete_bike_button:hover {
+    background-color: #e62739;
+    transition: 0.7s;
+}
+
+#edit_button:hover {
+    background-color: green;
+    color: white;
+    transition: 0.7s;
+}
+
+#sell_button:hover {
+    
+    background-color: green;
+    color: white;
+    transition: 0.7s;
+}
+
+
+#clear_button:hover {
+    
+    background-color: red;
+    color: white;
+    transition: 0.7s;
+}
+
+
+#sell_button {
+    background-image: url(./assets/icons/1737376_dollar_money_sign_icon.png);
+    background-repeat: no-repeat;
+    background-position: left center;
+    background-size: 20px 20px; 
+    padding-left: 30px;
+    visibility: hidden;
+    
+}
+
+#clear_button {
+    background-image: url(./assets/icons/8675036_ic_fluent_eraser_regular_icon.png);
+    background-repeat: no-repeat;
+    background-position: left center;
+    background-size: 20px 20px; 
+    padding-left: 30px;
+    visibility: hidden;
+}
+
+
+#favourite_bike {
+    align-self: center;
+    height: 50%;
+    cursor: pointer;
+}
+
+
+
+
+
+
+.main_body_container {
+    text-align: center;
+}
+
+.user_picture {
+    height: 7%;
+    width: 7%;
+}
+
+.main_column_text {
+    overflow-wrap: break-word;
+    max-width: 5%;
+}
+
+.social_media_row p {
+    padding-left: 5%;
+}
+
+article .social_media_row img {
+    height: 0.1%;
+    width: 0.1%;
+    padding-right: 1%;
+    padding-left: 1%;
+
+}
+
+
+
+/*End of main styling*/
+
+
+/*Start of footer styling*/
+
+footer {
+    background-color: #6ed3cf;
+    color: white;
+margin-left: 1%;
+margin-right: 1%;
+margin-top: 1%;
+
+box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.75);
+}
+
+
+footer .social_media_row img {
+    height: 3%;
+    width: 3%;
+    padding-right: 1%;
+    padding-left: 1%;
+    padding-top: 1%;
+    padding-bottom: 1%;
+    
+}
+
+footer .social_media_row img:hover {
+   background-color: rgba(144,104,190,1);
+   transition: 0.7s;
+}
+
+.social_media_row p {
+    padding-left: 2%;
+}
+/*End of footer styling*/
+
+@media only screen and (max-width: 800px) {
+
+    /*Start of header styling*/
+
+    nav {
+        height: 550%;
+        box-shadow: none;
+    }
+    
+    nav ul {
+        flex-direction: column;
+        row-gap: 20px;
+        
+    }
+
+    nav a {
+        height: 6vh;
+        
+    }
+
+    header {
+        height: 130%;
+    }
+
+    #logout_button {
+
+        border-top: none;
+    }
+
+
+
+
+    /*End of header styling*/
+
+    /*Start of main styling*/
+
+    .row, .form_main, .input_row {
+        flex-direction: column;
+        align-items: center;
+    }
+    .row {
+        flex-direction: column;
+    }
+
+    .left-column {
+        margin-right: 0%;
+        margin-bottom: 2%;
+    }
+
+    footer .social_media_row img {
+        height: 10%;
+        width: 10%;
+    }
+
+    #favourite_bike {
+        align-self: center;
+        height: 20px;
+        cursor: pointer;
+    }
+    
+    .right-column {
+        flex:1
+    }
+
+    /*End of main styling*/
+
+}

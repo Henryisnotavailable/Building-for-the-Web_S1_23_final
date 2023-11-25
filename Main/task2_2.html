@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="task2.2.css"></link>
+    </head>
+    <body>
+        <article>
+            <header>
+
+                <div class="page_title">
+                    <h1>User Registration</h1>
+                </div>
+
+                <nav>
+                    <a href="#1">Home</a>
+                    <a href="#2">My Projects</a>
+                    <a href="#3">My Modules</a>
+                    <a href="#4">My Books</a>
+                    <a href="#5">Registration</a>
+                </nav>
+            </header>
+            
+            <main>
+
+                <h1>Give me your Details</h1>
+                <hr></hr>
+                <div class="main_body">
+                    <div class = "form_wrapper">
+                <form class="register_form" autocomplete="on" target="_self" action="lala.php" method="GET" id="register_form">
+                    <ul class="flex-wrapper">
+                        <li class="form-row">
+                            
+                            <label for="firstname">First Name: </label>
+                            <input type="text" id="firstname"></input>
+                           
+                        </li>
+
+                        <li class="form-row">
+                            <label for="lastname">Last Name: </label>
+                            <input type="text" id="lastname"></input>
+                        </li>
+
+                        <li class="form-row">
+                            <label for="username">Username: </label>
+                            <input type="text" id="username"></input>
+                        </li>
+
+                        <li class="form-row">
+                            <label for="password">Password: </label>
+                            <input type="password" id="password"></input>
+                        </li>
+
+                        <li class="form-row">
+                            <label for="password_confirm">Password (again): </label>
+                            <input type="password" id="password_confirm"></input>
+                        </li>
+
+                        <li class="form-row">
+                            <label for="age">Age: </label>
+                            <input type="number" id="age"></input>
+                        </li>
+
+                        
+                        <li class="form-row">
+                            <label for="email">Email: </label>
+                            <input type="email" id="email"></input>
+                        </li>
+                        
+                        <li class="form-row">
+                            <label for="course_name">Course Name: </label>
+                            <input type="text" id="course_name"></input>
+                        </li>
+
+                        <li class="form-row">
+                            <label for="entry_year">Year of Entry: </label>
+                            <input type="number" id="entry_year"></input>
+                        </li>
+
+                        <li class="gender-row">
+
+                            <p>Gender: </p> 
+
+                            <div class="gender_buttons">
+                                <label id="male_label">
+                                    <input type="radio" name="gender" id="female"/>
+                                    <img src="https://www.iconpacks.net/icons/2/free-female-symbol-icon-2240-thumb.png" alt="Female Icon" />
+                                </label>
+                                <label>
+                                    <input type="radio" name="gender" id="male" class="input-hidden" />
+                                    <img src="https://cdn.pixabay.com/photo/2012/04/23/17/06/male-39108_640.png" alt="Male Icon" />
+                                </label>
+                            </div>
+
+                        <li class="form-row" id="ft_row">
+                            <label for="is_full_time">Full Time Student: </label>
+                            <input type="checkbox" id="is_full_time"></input>
+                        </li>
+
+                        
+
+                        
+                           
+                        </li>
+                        <li class="form-row">
+                            
+                            <label for="profile_pic" class="file_label">Select Profile Picture</label>
+                            <input type="file" id="profile_pic"></input>
+                        </li>
+                        <li class="form-row">
+                            <button type="submit" id="register_button">Register</button>
+                            <button type="button" type="reset" id="reset_button">Reset</button>
+                        </li>
+
+                        <li><br></br></li>
+                    <li><br></br></li>
+
+                    </ul>
+                 
+                </form>
+            </div>
+            </div>
+            </main>
+            
+            <footer>
+                <p>Copyright (C) - IDK my student number</p>
+
+                <p>Contact - Someone</p>
+            </footer>
+        
+        </article>
+    </body>
+    <script src="registration.js"></script>
+</html>

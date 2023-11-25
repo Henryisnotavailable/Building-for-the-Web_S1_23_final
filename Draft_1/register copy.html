@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="./register.css">
+    </link>
+</head>
+
+<body>
+    <article>
+        <header>
+            <div id="wrapper">
+                <div id="PageHeader">
+                    <h1>The Bike House</h1>
+                    <br></br>
+                    <p>Register</p>
+                </div>
+            </div>
+
+        </header>
+        <main>
+            <div class="page-wrapper">
+                <div class="row">
+
+                    <div class='middle-column'>
+                        <div class="col_wrapper">
+                        <div class="main_body_container">
+
+                            <h1><u>Enter your details</u></h1>
+                            <br></br>
+                            <form class="register_form" enctype="multipart/form-data">
+                                <div class="form_main">
+                                    <div class="input_row">
+                                        <div class="input_col">
+                                            <label for="firstname">First Name</label>
+                                            <input type="text" placeholder="Your first name" id="firstname" name="firstname" required autocomplete="off"></input>
+                                        </div>
+                                        <div class="input_col">
+                                            <label for="lastname">Last Name</label>
+                                            <input type="text" placeholder="Your last name" id="lastname" name="lastname" required autocomplete="off"></input>
+
+
+                                        </div>
+                                    </div>
+                                    <div class="input_row">
+                                        <div class="input_col">
+                                            <label for="email">Email</label>
+                                            <input type="email" placeholder="Your email" id="email" name="email" required autocomplete="off"></input>
+                                        </div>
+
+                                        <div class="input_col">
+                                            <label for="username">Username</label>
+                                            <input type="text" placeholder="Your new username" id="username" name="username" required autocomplete="off"></input>
+                                        </div>
+                                    </div>
+
+                                    <div class="input_row">
+                                        <div class="input_col">
+                                            <label for="password">Password</label>
+                                            <input type="password" placeholder="Strong Password!" id="password" name="password" required autocomplete="off"></input>
+                                        </div>
+
+                                        <div class="input_col">
+                                            <label for="password_confirm">Password (Confirmation)</label>
+                                            <input type="password" placeholder="Strong Password Again!" id="password_confirm" name="password_confirm" required autocomplete="off"></input>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="input_row">
+                                        <div class="input_col">
+                                            <label for="pronouns">Pronouns</label>
+                                            <select id="pronouns" name="pronouns">
+                                                <option value="he/him">He/him</option>
+                                                <option value="she/her">She/her</option>
+                                                <option value="they/them">They/them</option>
+                                              </select>
+                                            
+                                        </div>
+
+                                        <div class="input_col">
+                                            <label for="date_of_birth">Date of Birth</label>
+                                            <input type="date" placeholder="01/01/2000" id="date_of_birth" name="date_of_birth" required autocomplete="off"></input>
+                                        </div>
+                                    </div>
+
+                                    <div class="input_row">
+                                        <div class="input_col">
+                                            <label for="phone_num">Phone Number</label>
+                                            <input placeholder="07924424222" type="tel" id="phone_num" name="phone_num" required autocomplete="off"></input>
+                                        </div>
+
+                                        <div class="input_col">
+                                            <label for="favourite_bike">Favourite Bike</label>
+                                            <input type="text" placeholder="Road Bike" id="favourite_bike" name="favourite_bike" required autocomplete="off"></input>
+                                        </div>
+                                    </div>
+
+                                    <div class="input_row">
+                                        <div class="input_col">
+                                            <label for="profile_pic">Upload Profile Picture</label>
+                                            <input type="file" id="profile_pic" name="profile_pic" required autocomplete="off"></input>
+                                        </div>
+                                    </div>
+
+                                    <div class="input_row">
+                                        <div class="input_col">
+                                            <label for="bio">Short Bio</label>
+                                            <textarea id="bio" name="bio" required autocomplete="off" placeholder="I am a lover of bikes"></textarea>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="input_row" id="button_row">
+                                        
+                                            <button class="custom_button" id="register_button" type="submit">Register</button>
+                                            <button class="custom_button" id="clear_button" type="reset">Clear</button>
+                                        
+                                    </div>
+                            </form>
+                        </div>
+                    
+                        <br></br>
+                        <a href="./login.html">Already have an account? Sign in!</a>
+                        <br>
+                        <br>
+                        
+                        <a href="./index.html">Got here by mistake? Go home!</a>
+                        <br>
+
+                    </div>
+                    </div>
+                    <br></br>
+
+                    <div class="social_media_row">
+                        
+                        <a href="https://twitter.com"><img style="visibility: hidden;"
+                                src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/X_logo_2023_original.svg/2048px-X_logo_2023_original.svg.png" /></a>
+                        
+                    </div>
+                </div>
+            </div>
+            </div>
+
+        </main>
+        <footer>
+            <div class="social_media_row">
+                <p><b>Follow our social media accounts!</b></p>
+
+
+                <a href="https://twitter.com"><img
+                        src="./assets/icons/twitter.webp"
+                        id="twitter" /></a>
+
+                <a href="https://instagram.com"><img
+                        src="./assets/icons/instagram-white-icon.webp" /></a>
+
+                <a href="https://example.com"><img
+                        src="./assets/icons/tiktok.png" /></a>
+                <a href="https://old.com"><img
+                        src="./assets/icons/facebook-icon-white-png.png" /></a>
+
+            </div>
+        </footer>
+    </article>
+</body>
+
+</html>
