@@ -9,6 +9,8 @@ require_once "config.php";
 //Set all variables to ""
 $firstname = $lastname = $email = $username = $password = $password_confirm = $pronouns = $date_of_birth = $phone_num = $favourite_bike = $bio = $profile_pic_error = $error = ""; 
 $firstname_error = $lastname_error = $email_error = $username_error = $password_error = $password_confirm_error = $pronouns_error = $date_of_birth_error = $phone_num_error = $favourite_bike_error = $bio_error = "";
+$bdate = null;
+
 if($_SERVER["REQUEST_METHOD"] == "POST"){
  
     $valid = true;
@@ -63,7 +65,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             $valid = false;
         }
     
-        else if (!filter_var(trim($_POST["email"],FILTER_VALIDATE_EMAIL))) {
+        else if (!(filter_var($_POST["email"],FILTER_VALIDATE_EMAIL))) {
             $email_error = "!!! Invalid email, please check your input !!!";
             $valid = false;
             $email = htmlspecialchars($_POST["email"]);
@@ -99,7 +101,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
     //Password validation
 
-if (!isset($_POST["password"]) || !isset($_POST["password_confirm"])) {
+    if (!isset($_POST["password"]) || !isset($_POST["password_confirm"])) {
         $password_confirm_error = $password_error = "!!! Sorry, password was not set !!!";
         $valid = false;
     }
@@ -120,8 +122,154 @@ if (!isset($_POST["password"]) || !isset($_POST["password_confirm"])) {
         $password_confirm_error = $password_error = "!!! Please enter a longer password, think of 4 random words !!!";
         $valid = false; 
     }
+    //End of password validation
 
+    //Start pronoun validation
+    if (!isset($_POST["pronouns"])) {
+        $pronouns_error = "!!! Sorry, pronouns were not set !!!";
+        $valid = false;
+    }
+
+    elseif(empty(trim($_POST["pronouns"]))){
+        $pronouns_error = "!!! Sorry, pronouns were empty !!!";
+        $valid = false;
+
+    }
+    elseif($_POST["pronouns"] !== "he/him" && $_POST["pronouns"] !== "she/her" && $_POST["pronouns"] !== "they/them"){
+        $pronouns_error = "!!! Sorry, pronouns must be he/him, she/her or they/them !!!";
+        $valid = false;
+    }
+    //End of pronoun validation
+
+    //Validate date of birth
+    if (!isset($_POST["date_of_birth"])) {
+        $date_of_birth_error = "!!! Sorry, date of birth was not set !!!";
+        $valid = false;
+    }
+
+    elseif(empty(trim($_POST["date_of_birth"]))){
+        $date_of_birth_error = "!!! Sorry, date of birth is empty !!!";
+        $valid = false;
+
+    }
+
+    //If not empty, then check the date
+    else {
+        $bdate = new DateTime($_POST["date_of_birth"]);
+        
+        //No under 18s
+        $min = DateInterval::createFromDateString("18 years");
+        //No over 100s
+        $max = DateInterval::createFromDateString("100 years");
     
+        $date_now = new DateTime();
+        $min_dob = (new DateTime())->sub($min);
+        $max_dob = (new DateTime())->sub($max);
+
+        if ($bdate > $date_now) {
+            
+            $date_of_birth_error = "!!! No dates in the future !!!";
+            $valid = false;
+        }
+
+        elseif ($bdate <= $max_dob) {
+            $date_of_birth_error = "!!! No over 100s !!!";
+            $valid = false;
+        }
+
+        elseif ($bdate >= $min_dob) {
+            $date_of_birth_error = "!!! No under 18s !!!";
+            $valid = false;
+        }
+    
+        $date_of_birth = htmlspecialchars(strval($bdate->format("Y-m-d")));
+    }
+    //End of date of birth validation
+
+    //Validate phone number
+    //Format of 0xXxXxXxXxX
+    $mobile_pattern = "/\d{11}/";
+
+    if (!isset($_POST["phone_num"])) {
+        $phone_num_error = "!!! Sorry, phone number was not set !!!";
+        $valid = false;
+    }
+
+    elseif(empty(trim($_POST["phone_num"]))){
+        $phone_num_error = "!!! Sorry, phone number is empty !!!";
+        $valid = false;
+    }
+
+    elseif (preg_match($mobile_pattern, $_POST["phone_num"])) {
+        $phone_num_error = "!!! Sorry, phone number must match format of 01234567890 !!!";
+        $valid = false;
+        $phone_num = htmlentities($_POST["phone_num"]);
+    }
+    
+    //Stop phone number validation
+    //End of date of birth validation
+
+    //Validate favourite bike
+    if (!isset($_POST["favourite_bike"])) {
+        $favourite_bike_error = "!!! Sorry, favourite bike was not set !!!";
+        $valid = false;
+    }
+
+    elseif(empty(trim($_POST["favourite_bike"]))){
+        $favourite_bike_error = "!!! Sorry, favourite bike is empty !!!";
+        $valid = false;
+    }
+
+    elseif (strlen($_POST["favourite_bike"]) > 100) {
+        $favourite_bike_error = "!!! Sorry, favourite bike must be less than 100 characters !!!";
+        $valid = false;
+        $favourite_bike = htmlentities($_POST["favourite_bike"]);
+    }
+    
+    //Stop favourite bike validation
+
+    //Validate bio (Not REQUIRED)
+    if(!empty(trim($_POST["bio"]))) {
+        
+        if (strlen($_POST["bio"]) > 200) {
+        $bio_error = "!!! Sorry, bio was too long, must be 200 characters or less !!!";
+        $bio = htmlentities($_POST["bio"]);
+        $valid = false;
+        }
+    }
+
+    //Stop bio validation
+
+    //Profile Picture Validation
+    error_log(empty($_FILES["profile_pic"]));
+    if (!empty($_FILES["profile_pic"])) {
+        $target_path = "assets/users/profile_pictures";
+        $tempname = tempnam($target_path,"img");
+        $original_file_name = strtolower($_FILES["profile_pic"]["name"]);
+        $extension = pathinfo($original_file_name, PATHINFO_EXTENSION);
+        
+        //Basically, PHP's tempnam GUARANTEES a unique filename, but I want to store the file as <TEMPNAM_NAME>.<EXTENSION>, but if I rename it, then that will make it possible for a collision. So I'm just copying the file and creating a new one
+        $target = $tempname . "." . $extension;
+        copy($tempname,$target);
+        
+
+        //Allowed Extensions
+        $allowed = array('gif', 'png', 'jpg',"jpeg");
+
+        if (!in_array($extension,$allowed)) {
+            $profile_pic_error = "!!! Only gif, png, jpg or jpeg allowed !!!";
+        }
+
+        move_uploaded_file($_FILES["profile_pic"]["tmp_name"],$target);
+
+        error_log("Hi",0);
+
+    }
+    
+    
+    
+    //End profile picture validation
+
 
 }
 
