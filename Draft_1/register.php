@@ -2,7 +2,7 @@
 require_once "config.php";
 
 //Set all variables to ""
-$firstname = $lastname = $email = $username = $password = $password_confirm = $pronouns = $date_of_birth = $phone_num = $favourite_bike = $bio = ""; 
+$firstname = $lastname = $email = $username = $password = $password_confirm = $pronouns = $date_of_birth = $phone_num = $favourite_bike = $bio = $profile_pic_error = $error = ""; 
 $firstname_error = $lastname_error = $email_error = $username_error = $password_error = $password_confirm_error = $pronouns_error = $date_of_birth_error = $phone_num_error = $favourite_bike_error = $bio_error = "";
 if($_SERVER["REQUEST_METHOD"] == "POST"){
  
@@ -58,7 +58,6 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             $valid = false;
         }
     
-    
         else if (!filter_var(trim($_POST["email"],FILTER_VALIDATE_EMAIL))) {
             $email_error = "!!! Invalid email, please check your input !!!";
             $valid = false;
@@ -70,13 +69,26 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
     // Validate username
     if(empty(trim($_POST["username"]))){
-        $username_error = "Please enter a username.";
+        $username_error = "!!! Please enter a username !!!";
+        $valid = false;
     } elseif(!preg_match('/[a-zA-Z0-9_]{1,20}/', trim($_POST["username"]))){
-        $username_error = "Username can only contain letters, numbers, and underscores.";
+        $username_error = "!!! Username can only contain letters, numbers, and underscores. !!!";
+        $valid = false;
+        $username = htmlspecialchars($_POST["username"]);
+    }
+    //TODO!!!
+    elseif (!username_taken($_POST["username"])) {
+        $username_error = "!!! Sorry, username taken, try something else !!!";
+        $valid = false;
+        $username = htmlspecialchars($_POST["username"]);
     }
 
     $username = $_POST["username"];
 
+}
+
+else {
+    $username_error = "!!!BAD USERNAME!!!";
 }
 
 ?>
@@ -161,7 +173,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                                         <div class="input_col" id="username_column">
                                             <label for="username">Username *</label>
                                             <input type="text" placeholder="Your new username" id="username" name="username" required autocomplete="off" maxlength="20" value="<?php echo $username; ?>"></input>
-                                            <div id="username_error_div" class="error_div"></div>
+                                            <div id="username_error_div" class="error_div"><p><?php echo $username_error; ?></p></div>
                                         </div>
                                     </div>
 
@@ -169,14 +181,14 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                                     <div class="input_row">
                                         <div class="input_col" id="password_col">
                                             <label for="password">Password *</label>
-                                            <input type="password" placeholder="Strong Password!" id="password" name="password" required autocomplete="off"></input>
-                                            <div id="password_error_div" class="error_div"></div>
+                                            <input type="password" placeholder="Strong Password!" id="password" name="password" required autocomplete="off" value="<?php echo $password; ?>"></input>
+                                            <div id="password_error_div" class="error_div"><p><?php echo $password_error; ?></p></div>
                                         </div>
 
                                         <div class="input_col" id="password_confirm_col">
                                             <label for="password_confirm">Password (Confirmation) *</label>
-                                            <input type="password" placeholder="Strong Password Again!" id="password_confirm" name="password_confirm" required autocomplete="off"></input>
-                                            <div id="password_confirm_error_div" class="error_div"></div>
+                                            <input type="password" placeholder="Strong Password Again!" id="password_confirm" name="password_confirm" required autocomplete="off" value="<?php echo $password_confirm; ?>"></input>
+                                            <div id="password_confirm_error_div" class="error_div"><p><?php echo $password_confirm_error; ?></p></div>
                                         </div>
                                     </div>
 
@@ -190,13 +202,13 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                                                 <option value="she/her">She/her</option>
                                                 <option value="they/them">They/them</option>
                                               </select>
-                                              <div id="pronoun_error_div" class="error_div"></div>                                            
+                                              <div id="pronoun_error_div" class="error_div"><p><?php echo $pronouns_error; ?></p></div>                                            
                                         </div>
 
                                         <div class="input_col">
                                             <label for="date_of_birth">Date of Birth *</label>
-                                            <input type="date" placeholder="01/01/2000" id="date_of_birth" name="date_of_birth" required autocomplete="off"></input>
-                                            <div id="date_of_birth_error_div" class="error_div"></div>
+                                            <input type="date" placeholder="01/01/2000" id="date_of_birth" name="date_of_birth" required autocomplete="off" value="<?php echo $date_of_birth; ?>"></input>
+                                            <div id="date_of_birth_error_div" class="error_div"><p><?php echo $date_of_birth_error; ?></p></div>
                                         </div>
                                     </div>
 
@@ -206,14 +218,14 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                                     <div class="input_row">
                                         <div class="input_col">
                                             <label for="phone_num">Phone Number *</label>
-                                            <input placeholder="07924424222" type="tel" id="phone_num" name="phone_num" required autocomplete="off"></input>
-                                            <div id="phone_num_error_div" class="error_div"></div>
+                                            <input placeholder="07924424222" type="tel" id="phone_num" name="phone_num" required autocomplete="off" value="<?php echo $phone_num; ?>"></input>
+                                            <div id="phone_num_error_div" class="error_div"><p><?php echo $phone_num_error; ?></p></div>
                                         </div>
 
                                         <div class="input_col">
                                             <label for="favourite_bike">Favourite Bike *</label>
-                                            <input type="text" placeholder="Road Bike" id="favourite_bike" name="favourite_bike" autocomplete="off" maxlength="100" required></input>
-                                            <div id="fave_bike_error_div" class="error_div"></div>
+                                            <input type="text" placeholder="Road Bike" id="favourite_bike" name="favourite_bike" autocomplete="off" maxlength="100" required value="<?php echo $favourite_bike; ?>"></input>
+                                            <div id="fave_bike_error_div" class="error_div"><p><?php echo $favourite_bike_error; ?></p></div>
                                         </div>
                                     </div>
 
@@ -221,20 +233,20 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                                         <div class="input_col">
                                             <label for="profile_pic">Upload Profile Picture</label>
                                             <input type="file" id="profile_pic" name="profile_pic" autocomplete="off" maxlength="250" accept="image/gif, image/jpg, image/jpeg, image/png"></input>
-                                            <div id="profile_pic_error_div" class="error_div"></div>
+                                            <div id="profile_pic_error_div" class="error_div"><p><?php echo $profile_pic_error; ?></p></div>
                                         </div>
                                     </div>
 
                                     <div class="input_row">
                                         <div class="input_col">
                                             <label for="bio">Short Bio</label>
-                                            <textarea id="bio" name="bio" autocomplete="off" placeholder="I am a lover of bikes"></textarea>
-                                            <div id="bio_error_div" class="error_div"></div>
+                                            <textarea id="bio" name="bio" autocomplete="off" placeholder="I am a lover of bikes" value="<?php echo $bio; ?>"></textarea>
+                                            <div id="bio_error_div" class="error_div"><p><?php echo $bio_error; ?></p></div>
                                         </div>
                                     </div>
 
                                     <div id="error_message_row">
-                                        
+                                    <p><?php echo $error; ?></p>
                                     </div>
 
                                     <div class="input_row" id="button_row">
