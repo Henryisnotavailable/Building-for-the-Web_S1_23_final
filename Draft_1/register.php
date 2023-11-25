@@ -1,4 +1,9 @@
 <?php
+
+function username_taken($username) {
+    return false;
+}
+
 require_once "config.php";
 
 //Set all variables to ""
@@ -68,22 +73,55 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
 
     // Validate username
-    if(empty(trim($_POST["username"]))){
+
+    if (!isset($_POST["username"])) {
+        $username_error = "!!! Sorry, username was not set !!!";
+        $valid = false;
+    }
+
+    elseif(empty(trim($_POST["username"]))){
         $username_error = "!!! Please enter a username !!!";
         $valid = false;
+
     } elseif(!preg_match('/[a-zA-Z0-9_]{1,20}/', trim($_POST["username"]))){
         $username_error = "!!! Username can only contain letters, numbers, and underscores. !!!";
         $valid = false;
         $username = htmlspecialchars($_POST["username"]);
     }
     //TODO!!!
-    elseif (!username_taken($_POST["username"])) {
+    elseif (username_taken($_POST["username"])) {
         $username_error = "!!! Sorry, username taken, try something else !!!";
         $valid = false;
         $username = htmlspecialchars($_POST["username"]);
     }
 
-    $username = $_POST["username"];
+    //End of username validation
+
+    //Password validation
+
+if (!isset($_POST["password"]) || !isset($_POST["password_confirm"])) {
+        $password_confirm_error = $password_error = "!!! Sorry, password was not set !!!";
+        $valid = false;
+    }
+
+    elseif(empty(trim($_POST["password"])) || empty(trim($_POST["password_confirm"]))){
+        $password_confirm_error = $password_error = "!!! Please enter a password and confirm it!!!";
+        $valid = false;
+
+    }
+
+    elseif ($_POST["password"] !== $_POST["password_confirm"]) {
+        $password_confirm_error = $password_error = "!!! Passwords DON'T match !!!";
+        $valid = false; 
+    }
+
+
+    elseif (strlen($_POST["password"]) < 10) {
+        $password_confirm_error = $password_error = "!!! Please enter a longer password, think of 4 random words !!!";
+        $valid = false; 
+    }
+
+    
 
 }
 
@@ -143,7 +181,7 @@ else {
                     <div class='right-column'>
                         <div class="main_body_container">
                             
-                            <form id="register_form" action="https://webhook.site/0d537031-06db-4369-96c3-e34f6daff514"
+                            <form id="register_form" action="./register.php"
                                 method="post" enctype="multipart/form-data">
                                 <div class="form_main">
                                     <h1><u>Enter your details!</u></h1>
@@ -181,13 +219,13 @@ else {
                                     <div class="input_row">
                                         <div class="input_col" id="password_col">
                                             <label for="password">Password *</label>
-                                            <input type="password" placeholder="Strong Password!" id="password" name="password" required autocomplete="off" value="<?php echo $password; ?>"></input>
+                                            <input type="password" placeholder="Strong Password!" id="password" minlength="10" name="password" required autocomplete="off" value="<?php echo $password; ?>"></input>
                                             <div id="password_error_div" class="error_div"><p><?php echo $password_error; ?></p></div>
                                         </div>
 
                                         <div class="input_col" id="password_confirm_col">
                                             <label for="password_confirm">Password (Confirmation) *</label>
-                                            <input type="password" placeholder="Strong Password Again!" id="password_confirm" name="password_confirm" required autocomplete="off" value="<?php echo $password_confirm; ?>"></input>
+                                            <input type="password" placeholder="Strong Password Again!" id="password_confirm" minlength="10" name="password_confirm" required autocomplete="off" value="<?php echo $password_confirm; ?>"></input>
                                             <div id="password_confirm_error_div" class="error_div"><p><?php echo $password_confirm_error; ?></p></div>
                                         </div>
                                     </div>
