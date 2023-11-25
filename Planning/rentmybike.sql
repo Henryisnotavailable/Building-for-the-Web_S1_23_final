@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS `users` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `vehicle_details`
+-- Table structure for table `bike_details`
 --
 
 DROP TABLE IF EXISTS `bike_details`;

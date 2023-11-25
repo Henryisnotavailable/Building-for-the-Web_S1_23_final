@@ -32,6 +32,10 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         $valid = false;
         $firstname = htmlspecialchars($_POST["firstname"]);
     }
+
+    else {
+        $firstname = htmlspecialchars($_POST["firstname"]);
+    }
     //End of first name validation
 
 
@@ -52,6 +56,10 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             $valid = false;
             $lastname = htmlspecialchars($_POST["lastname"]);
         }
+
+        else {
+            $lastname = htmlspecialchars($_POST["lastname"]);
+        }
         //End of last name validation
 
         //Email validation
@@ -68,6 +76,10 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         else if (!(filter_var($_POST["email"],FILTER_VALIDATE_EMAIL))) {
             $email_error = "!!! Invalid email, please check your input !!!";
             $valid = false;
+            $email = htmlspecialchars($_POST["email"]);
+        }
+
+        else {
             $email = htmlspecialchars($_POST["email"]);
         }
         //End of email validation
@@ -97,6 +109,10 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         $username = htmlspecialchars($_POST["username"]);
     }
 
+    else {
+        $username = htmlspecialchars($_POST["username"]);
+    }
+
     //End of username validation
 
     //Password validation
@@ -120,8 +136,14 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
     elseif (strlen($_POST["password"]) < 10) {
         $password_confirm_error = $password_error = "!!! Please enter a longer password, think of 4 random words !!!";
-        $valid = false; 
+        $valid = false;
+
     }
+
+    else {
+        $password = $password_confirm = htmlspecialchars($_POST["password"]);
+    }
+
     //End of password validation
 
     //Start pronoun validation
@@ -205,9 +227,14 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         $valid = false;
         $phone_num = htmlentities($_POST["phone_num"]);
     }
+
+    else {
+        $phone_num = htmlentities($_POST["phone_num"]);
+    }
     
     //Stop phone number validation
-    //End of date of birth validation
+
+
 
     //Validate favourite bike
     if (!isset($_POST["favourite_bike"])) {
@@ -225,6 +252,10 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         $valid = false;
         $favourite_bike = htmlentities($_POST["favourite_bike"]);
     }
+
+    else {
+        $favourite_bike = htmlentities($_POST["favourite_bike"]);
+    }
     
     //Stop favourite bike validation
 
@@ -236,41 +267,96 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         $bio = htmlentities($_POST["bio"]);
         $valid = false;
         }
+
+        else {
+            $bio = htmlentities($_POST["bio"]);
+        }
     }
 
     //Stop bio validation
 
     //Profile Picture Validation
-    error_log(empty($_FILES["profile_pic"]));
+    
+    //If file is not empty
     if (!empty($_FILES["profile_pic"])) {
+
+        //Base path for profile pictures
         $target_path = "assets/users/profile_pictures";
-        $tempname = tempnam($target_path,"img");
+        //Generate a random filename
+
+        //Get the original file name to get the extension of original file
         $original_file_name = strtolower($_FILES["profile_pic"]["name"]);
         $extension = pathinfo($original_file_name, PATHINFO_EXTENSION);
-        
-        //Basically, PHP's tempnam GUARANTEES a unique filename, but I want to store the file as <TEMPNAM_NAME>.<EXTENSION>, but if I rename it, then that will make it possible for a collision. So I'm just copying the file and creating a new one
-        $target = $tempname . "." . $extension;
-        copy($tempname,$target);
-        
 
+        //Get the filetype of the "image"
+        $mime_type = exif_imagetype($_FILES["profile_pic"]["tmp_name"]);
         //Allowed Extensions
-        $allowed = array('gif', 'png', 'jpg',"jpeg");
-
-        if (!in_array($extension,$allowed)) {
-            $profile_pic_error = "!!! Only gif, png, jpg or jpeg allowed !!!";
+        $allowed_ext = array('gif', 'png', 'jpg',"jpeg");
+        $allowed_mime_type = array(IMAGETYPE_GIF,IMAGETYPE_JPEG,IMAGETYPE_PNG);
+        
+        //If extension not allowed, error
+        if (!in_array($extension,$allowed_ext)) {
+            $profile_pic_error = "!!! Only gif, png, jpg or jpeg extenstions allowed !!!";
+            $valid = false;
+        }
+        
+        //Check if a valid image mime type
+        else if (!in_array($mime_type,$allowed_mime_type)) {
+            $profile_pic_error = "!!! Only gif, png or jpg file types allowed !!!";
+            $valid = false;
         }
 
-        move_uploaded_file($_FILES["profile_pic"]["tmp_name"],$target);
-
-        error_log("Hi",0);
+        //Create the file and store in $target (a random file name in assets/users/profile_pictures)
+        else{
+            
+            $tempname = tempnam($target_path,"img");
+            $target = $tempname . "." . $extension;
+            //Basically, PHP's tempnam GUARANTEES a unique filename, but I want to store the file as <TEMPNAM_NAME>.<EXTENSION>, but if I rename it, then that will make it possible for a collision. So I'm just copying the file and creating a new one
+            copy($tempname,$target);
+            move_uploaded_file($_FILES["profile_pic"]["tmp_name"],$target);
+    }
+        
 
     }
-    
-    
-    
     //End profile picture validation
 
+    //Now save the info
 
+    if ($valid == true) {
+        error_log("VALID!",0);
+
+        $sql_insert_statement = "INSERT INTO users 
+        (username,password,email,first_name,last_name,pronouns,dateofbirth,description,favourite_bike,telephone,profile_url,visibility,registration_date)
+        VALUES (?,?,?,?,?,?,?,DATE(?),?,?,?,?,DATE(?))";
+
+        if ($statement = mysqli_prepare($conn,$sql_insert_statement)) {
+            error_log("Statement there",0);
+            mysqli_stmt_bind_param($statement,"sssssssssssss",$param_username,$param_password,$param_email,$param_first_name,$param_last_name,$param_pronouns,$param_dateofbirth,$param_description,$param_favourite_bike,$param_telephone,$param_profile_url,$param_visibility,$param_registration_date);
+        }
+        else {
+            error_log("Bad :(",0);
+        }
+
+        /*
+          `user_id` int(11) NOT NULL AUTO_INCREMENT,
+  `username` varchar(20) NOT NULL,
+  `password` char(60) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `first_name` varchar(50) NOT NULL,
+  `last_name` varchar(50) NOT NULL,
+  `pronouns` varchar(6) NOT NULL,
+  `dateofbirth` DATE NOT NULL,
+  `description` varchar(200) DEFAULT NULL,
+  `favourite_bike` varchar(50) DEFAULT NULL,
+  `telephone` varchar(15) NOT NULL,
+  `profile_blob` longblob,
+  `profile_url` varchar(100) DEFAULT NULL,
+  `visibility` BOOL NOT NULL,
+  `registration_date` DATE NOT NULL, */
+    }
+    else {
+        $error = "!!! Errors, please fix !!!";
+    }
 }
 
 else {
