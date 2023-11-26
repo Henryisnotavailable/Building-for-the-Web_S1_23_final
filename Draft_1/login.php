@@ -10,7 +10,7 @@ if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true) {
 }
 
 if (isset($_GET["msg"])) {
-    $error = $msg;
+    $error = $_GET["msg"];
 }
 
 else {

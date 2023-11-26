@@ -340,7 +340,9 @@ nav img {
     color: white;
     background-color: #9068be;
     border-radius: 7px;
-    margin-top:5px
+    margin-top:5px;
+    padding-left: 5px;
+    padding-right: 5px;
 }
 
 

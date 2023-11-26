@@ -401,7 +401,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
  
 
             if($statement->execute()) {
-                header("Location: login.php");
+                header("Location: login.php?msg=Registered Succesfully, Please Login!");
             }
             else {
                 error_log("ERROR: Executing statement",0);
