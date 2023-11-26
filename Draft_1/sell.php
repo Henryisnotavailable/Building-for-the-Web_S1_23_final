@@ -11,19 +11,343 @@ if(!isset($_SESSION["loggedin"])) {
 
 //Set all variables to ""
 $ad_title = $bike_model = $asking_price_lower = $asking_price_upper = $bike_date_of_birth  = $bike_seats = $is_bike_electric = $bike_colour = $bike_bio = "";
-$ad_title_error = $bike_model_error = $asking_price_lower_error = $asking_price_upper_error = $bike_quality_error = $bike_date_of_birth_error = $bike_mileage_error = $bike_seats_error = $is_bike_electric_error = $bike_colour_error = $bike_bio_error = "";
+$ad_title_error = $bike_model_error = $asking_price_lower_error = $asking_price_upper_error = $bike_mileage_error = $bike_date_of_birth_error = $bike_mileage_error = $bike_seats_error = $is_bike_electric_error = $bike_colour_error = $bike_bio_error = "";
 
 $bike_photo_error = $bike_other_media_error = "";
 
-
+$error = "";
 
 //This must be -1 for the slider to work properly.
-$bike_quality = $bike_mileage  = -1;
+$bike_mileage = $bike_mileage  = -1;
 
 //This is the default
 $bike_colour = "#e62739";
 
+if($_SERVER["REQUEST_METHOD"] == "POST"){
+    $valid = true;
 
+
+    //Validate advert title
+    if(!isset($_POST["advert_title"])){
+        $valid = false;
+        $ad_title_error = "!!! Please set advert title !!!";
+    }
+    else if (empty(trim($_POST["advert_title"]))) {
+        $ad_title_error = "!!! The advert title cannot be empty !!!";
+        $valid = false;
+    }
+
+    elseif (!preg_match("/[a-zA-Z0-9_'\-\.]{4,50}/", trim($_POST["advert_title"]))) {
+        $ad_title_error = "!!! Invalid advert title, it should be less than 50 alphanumeric characters !!!";
+        $valid = false;
+        $ad_title = htmlspecialchars($_POST["advert_title"]);
+    }
+
+    else {
+        $ad_title = htmlspecialchars($_POST["advert_title"]);
+    }
+    //End of ad title validation
+    
+
+    //Validate bike model
+    if(!isset($_POST["bike_model"])){
+        $valid = false;
+        $bike_model_error = "!!! Please set bike model !!!";
+    }
+    else if (empty(trim($_POST["bike_model"]))) {
+        $bike_model_error = "!!! The bike model cannot be empty !!!";
+        $valid = false;
+    }
+
+    elseif (!preg_match("/[a-zA-Z0-9_'\-\.]{4,30}/", trim($_POST["bike_model"]))) {
+        $bike_model_error = "!!! Invalid bike model, it should be less than 30 alphanumeric characters !!!";
+        $valid = false;
+        $bike_model = htmlspecialchars($_POST["bike_model"]);
+    }
+
+    else {
+        $bike_model = htmlspecialchars($_POST["bike_model"]);
+    }
+    //End of bike model validation
+
+    //Validate lower and upper asking price
+        if(!isset($_POST["asking_price_lower"])){
+            $valid = false;
+            $asking_price_lower_error = "!!! Please set lower asking price !!!";
+        }
+
+        else if (empty(trim($_POST["asking_price_lower"]))) {
+            $asking_price_lower_error = "!!! The lower asking price cannot be empty !!!";
+            $valid = false;
+        }
+    
+
+
+
+        if(!isset($_POST["asking_price_upper"])){
+            $valid = false;
+            $asking_price_upper_error = "!!! Please set upper asking price !!!";
+        }
+
+        else if (empty(trim($_POST["asking_price_upper"]))) {
+            $asking_price_upper_error = "!!! The upper asking price cannot be empty !!!";
+            $valid = false;
+        }
+
+        $both_positive = true;
+        //Check if positive number
+        if (!ctype_digit(trim($_POST["asking_price_lower"]))) {
+            $asking_price_lower_error = "!!! Invalid lower asking price, it must be a positive whole number !!!";
+            $valid = false;
+            $asking_price_lower = htmlspecialchars($_POST["asking_price_lower"]);
+            $both_positive = false;
+        }
+
+        if (!ctype_digit(trim($_POST["asking_price_upper"]))) {
+            $asking_price_upper_error = "!!! Invalid upper asking price, it must be a positive whole number !!!";
+            $valid = false;
+            $asking_price_upper = htmlspecialchars($_POST["asking_price_upper"]);
+            $both_positive = false;
+        }
+
+        //If both are numbers, cast to ints
+        if ($both_positive === true) {
+            $lower_int = intval(trim($_POST["asking_price_lower"]));
+            $upper_int = intval(trim($_POST["asking_price_upper"]));
+
+            if ($lower_int > $upper_int) {
+                $asking_price_lower_error = $asking_price_upper_error = "!!! The lower price cannot be more than the upper price !!!";
+                $valid = false;
+                }
+            else if ($lower_int > 10000 || $lower_int < 50) {
+                $asking_price_lower_error = "!!! Lower asking price must be between 50 - 10,000!!!";
+                $valid = false;
+            }
+
+            if ($upper_int > 10000 || $upper_int < 50) {
+                $asking_price_upper_error = "!!! Upper asking price must be between 50 - 10,000!!!";
+                $valid = false;
+            }
+            
+            $asking_price_upper = htmlspecialchars($_POST["asking_price_upper"]);
+            $asking_price_lower = htmlspecialchars($_POST["asking_price_lower"]);
+            
+        }
+    //End of bike price validation
+
+    //Validate bike quality values
+    if(!isset($_POST["bike_mileage"])){
+        $valid = false;
+        $bike_mileage_error = "!!! Please set bike quality !!!";
+    }
+    else if (empty(trim($_POST["bike_mileage"]))) {
+        $bike_mileage_error = "!!! The bike quality cannot be empty !!!";
+        $valid = false;
+    }
+
+    //If the user submits via HTML this >should< always be a number (because it's a slider)
+    else if (!ctype_digit($_POST["bike_mileage"])) {
+        $bike_mileage_error = "!!! The bike quality must be a number between 0-5 !!!";
+        $valid = false;
+    }
+
+
+    elseif (intval(trim($_POST["bike_mileage"])) > 5 || intval(trim($_POST["bike_mileage"])) < 0) {
+        $bike_mileage_error = "!!! Invalid bike quality, it should be a number between 0-5 !!!";
+        $valid = false;
+    }
+
+    else {
+        $bike_mileage = htmlspecialchars($_POST["bike_mileage"]);
+    }
+    //End of validation for bike quality values
+
+    //Validate bike manufacture year
+    if(!isset($_POST["bike_date_of_birth"])){
+        
+        $valid = false;
+        $bike_date_of_birth_error = "!!! Please set bike year of birth !!!";
+    }
+    else if (empty(trim($_POST["bike_date_of_birth"]))) {
+        $bike_date_of_birth_error = "!!! The bike year of birth cannot be empty !!!";
+        $valid = false;
+    }
+
+    //If the user submits via HTML this >should< always be a number (because it's a slider)
+    else if (!ctype_digit($_POST["bike_date_of_birth"])) {
+        $bike_date_of_birth_error = "!!! The bike year of birth must be a number !!!";
+        $valid = false;
+        $bike_date_of_birth = htmlspecialchars($_POST["bike_date_of_birth"]);
+   
+    }
+
+
+    //If bike was made in the future, error
+    elseif (intval(trim($_POST["bike_date_of_birth"])) > intval((new DateTime)->format("Y")) ) {
+        $bike_date_of_birth_error = "!!! The bike cannot be made in the future, sorry... !!!";
+        $bike_date_of_birth = htmlspecialchars($_POST["bike_date_of_birth"]);
+        $valid = false;
+    }
+
+    //If bike was made before the first ever bike (Full disclosure, 1817 was the first result from google. It may be wrong)
+    elseif (intval(trim($_POST["bike_date_of_birth"])) < 1817) {
+        $bike_date_of_birth_error = "!!! The first bike was made in 1817, I doubt your bike was made before that !!!";
+        $bike_date_of_birth = htmlspecialchars($_POST["bike_date_of_birth"]);
+        $valid = false;
+    }
+
+    else {
+        $bike_date_of_birth = htmlspecialchars($_POST["bike_date_of_birth"]);
+    }
+
+    //End of bike manufacture date validation
+
+        //Validate bike mileage values
+        
+        if(!isset($_POST["bike_mileage"])){
+            $valid = false;
+            $bike_mileage_error = "!!! Please set bike mileage !!!";
+        }
+        else if (empty(trim($_POST["bike_mileage"]))) {
+            $bike_mileage_error = "!!! The bike mileage cannot be empty !!!";
+            $valid = false;
+        }
+    
+        //If the user submits via HTML this >should< always be a number (because it's a slider)
+        else if (!ctype_digit($_POST["bike_mileage"])) {
+            $bike_mileage_error = "!!! The bike mileage must be a ->number<- between 0-1100+ !!!";
+            $valid = false;
+            $bike_mileage = htmlspecialchars($_POST["bike_mileage"]);
+        }
+    
+    
+        elseif (intval(trim($_POST["bike_mileage"])) > 1100 || intval(trim($_POST["bike_mileage"])) < 0) {
+            $bike_mileage_error = "!!! The bike mileage must be a number between 0-1100+ !!!";
+            $valid = false;
+            $bike_mileage = htmlspecialchars($_POST["bike_mileage"]);
+        }
+    
+        //Check if divisible by 100, to ensure the value is in steps of 100 (same as the HTML slider)
+        elseif (intval(trim($_POST["bike_mileage"])) % 100 !== 0) {
+            $bike_mileage_error = "!!! The bike mileage must be a number divisible by 100 between 0-1100+ (e.g. 300, 700, 1000) !!!";
+            $valid = false;
+            $bike_mileage = htmlspecialchars($_POST["bike_mileage"]);
+        }
+
+        else {
+            $bike_mileage = htmlspecialchars($_POST["bike_mileage"]);
+        }
+        //End of validation for bike mileage values
+
+
+
+        //Start of Bike seats validation
+        
+        if(!isset($_POST["bike_seats"])){
+            $valid = false;
+            $bike_seats_error = "!!! Please set bike seats !!!";
+        }
+        else if (empty(trim($_POST["bike_seats"]))) {
+            $bike_seats_error = "!!! The bike seats cannot be empty !!!";
+            $valid = false;
+        }
+    
+        //If the user submits via HTML this >should< always be a number (because it's a slider)
+        else if (!ctype_digit($_POST["bike_seats"])) {
+            $bike_seats_error = "!!! The bike seat must be a ->number<- between 1-3 !!!";
+            $valid = false;
+            $bike_seats = htmlspecialchars($_POST["bike_seats"]);
+        }
+    
+    
+        elseif (intval(trim($_POST["bike_seats"])) > 3 || intval(trim($_POST["bike_seats"])) < 1) {
+            $bike_seats_error = "!!! The bike seat must be a ->number<- between 1-3 !!!";
+            $valid = false;
+            $bike_seats = htmlspecialchars($_POST["bike_seats"]);
+        }
+
+
+        else {
+            $bike_seats = htmlspecialchars($_POST["bike_seats"]);
+        }
+        //End of validation for bike seats
+
+        //Start of Bike seats validation
+        //If a checkbox is NOT selected, it isn't even sent.
+                if(isset($_POST["is_electric"])){
+                    $is_bike_electric = true;
+                }
+                else {
+                    $is_bike_electric = false;
+                }
+        //End of bike seats validation
+        
+        //Validate bike colour
+
+        $colour_pattern = "/#[a-fA-F0-9]{6}/";
+        if(!isset($_POST["bike_colour"])){
+            $valid = false;
+            $bike_colour_error = "!!! Please set bike colour !!!";
+        }
+        else if (empty(trim($_POST["bike_colour"]))) {
+            $bike_colour_error = "!!! The bike colour cannot be empty !!!";
+            $valid = false;
+        }
+
+        //If not matches hex pattern like #BEDEAD
+        else if (!preg_match($colour_pattern, trim($_POST["bike_colour"]))) {
+            $bike_colour_error = "!!! The bike colour must be a valid hex code with # !!!";
+            $valid = false;
+        }
+
+        else {
+            $bike_colour = htmlspecialchars($_POST["bike_colour"]);
+        }
+        //End bike colour validation
+
+        //Validate bike description
+                if(!isset($_POST["bike_desc"])){
+                    $valid = false;
+                    $bike_bio_error = "!!! Please set bike bio !!!";
+                }
+                else if (empty(trim($_POST["bike_desc"]))) {
+                    $bike_bio_error = "!!! The bike bio cannot be empty !!!";
+                    $valid = false;
+                }
+        
+                //200 Characters is the max length
+                else if (strlen($_POST["bike_desc"]) > 200) {
+                    $bike_bio_error = "!!! The bike bio cannot be more than 200 characters !!!";
+                    $valid = false;
+                    $bike_bio = htmlspecialchars($_POST["bike_desc"]);
+                }
+        
+                else {
+                    $bike_bio = htmlspecialchars($_POST["bike_desc"]);
+                }
+
+                //End bike description validation
+
+
+            //Validate bike_pic
+
+            if(!isset($_POST["bike_pic"])){
+                $valid = false;
+                $bike_photo_error = "!!! Please set the bike picture !!!";
+            }
+
+            else if (file_exists($_FILES['profile_pic']['tmp_name']) || is_uploaded_file($_FILES['profile_pic']['tmp_name'])) {
+                error_log("Hit file upload part",0);
+            }
+
+            else {
+                $bike_photo_error = "!!! Please choose a picture of the bike !!!";
+            
+            }
+
+            //End of bike_pic validation
+
+}
 
 
 
@@ -144,18 +468,18 @@ $bike_colour = "#e62739";
 
                                     <div class="input_row">
                                         <div class="input_col">
-                                            <label for="bike_quality">Select bike quality: *<span
+                                            <label for="bike_mileage">Select bike quality: *<span
                                                     id="bike_slider_value">Ok</span></label>
-                                            <input id="bike_quality" autocomplete="off" type="range" min="0" max="5"
-                                                step="1" value="<?php echo $bike_quality; ?>" class="slider" name="bike_quality" required></input>
-                                                <div id="bike_quality_error_div" class="error_div"><p><?php echo $bike_quality_error; ?></p></div>
+                                            <input id="bike_mileage" autocomplete="off" type="range" min="0" max="5"
+                                                step="1" value="<?php echo $bike_mileage; ?>" class="slider" name="bike_mileage" required></input>
+                                                <div id="bike_mileage_error_div" class="error_div"><p><?php echo $bike_mileage_error; ?></p></div>
 
 
                                         </div>
 
                                         <div class="input_col">
                                             <label for="bike_date_of_birth">The year the bike was made *</label>
-                                            <input type="number" min="1817" max="2099" step="1" placeholder="2023"
+                                            <input type="number" min="1817" max="<?php echo (new DateTime)->format('Y'); ?>" step="1" placeholder="2023"
                                                 id="bike_date_of_birth" name="bike_date_of_birth" autocomplete="off" required value="<?php echo $bike_date_of_birth; ?>"></input>
                                                 <div id="bike_date_of_birth_error" class="error_div"><p><?php echo $bike_date_of_birth_error; ?></p></div>
                                         </div>
