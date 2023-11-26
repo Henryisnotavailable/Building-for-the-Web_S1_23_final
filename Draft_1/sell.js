@@ -1,6 +1,36 @@
 
 
 
+function decide_mileage_slider_colour(value) {
+    
+    if (value > 1000) {
+        return ["<br> More than 1000 miles","darkred"];
+    }
+    
+    if (value <= 200) {
+        //mileage_output.style.color = "purple";
+        //mileage_slider.style.accentColor = "purple";
+        return [`<br> Around ${value} miles`,"purple"];
+    }
+    else if (value <= 500) {
+        return [`<br> Around ${value} miles`,"green"];
+    }
+
+    else if (value <= 800) {
+
+        return [`<br> Around ${value} miles`,"orange"];
+    }
+
+    else if (value > 800) {
+        return [`<br> Around ${value} miles`,"red"];
+    }
+
+    else {
+        return [`<br> Unknown miles: ${value}`,"gray"];
+    }
+}
+
+
 function alert_user_error(column,message) {
     let error_msg = document.createElement("p");
     let error_div = document.getElementById(column);
@@ -152,10 +182,25 @@ function decide_slider_colour(value) {
 
 var slider = document.getElementById("bike_quality");
 var output = document.getElementById("bike_slider_value");
+
+//If no value, then set to gray
+if (slider.value == "0") {
 //Initial DOM setup
 output.innerHTML = "<br>Slide the bar!";
 output.style.color = "red";
 slider.style.accentColor = "gray";
+}
+
+//Otherwise, set colours
+else {
+
+    let [sliderValue,sliderColour] = decide_slider_colour(slider.value);
+    output.innerHTML = "<br>"+sliderValue;
+    output.style.color = sliderColour;
+    slider.style.accentColor =sliderColour;
+}
+
+
 //On enter, change the colour of slider
 slider.addEventListener("input", function (e) {
 
@@ -169,9 +214,22 @@ slider.addEventListener("input", function (e) {
 var mileage_slider = document.getElementById("bike_mileage");
 var mileage_output = document.getElementById("bike_mileage_span");
 //Initial DOM setup
-mileage_output.innerHTML = "<br>Slide the bar!";
-mileage_output.style.color = "red";
-mileage_slider.style.accentColor = "gray";
+
+if (mileage_slider.value == "0") {
+
+    mileage_output.innerHTML = "<br>Slide the bar!";
+    mileage_output.style.color = "red";
+    mileage_slider.style.accentColor = "gray";
+}
+
+else {
+    let [mileage_slider_value,mileage_slider_colour] = decide_mileage_slider_colour(mileage_slider.value);
+    mileage_output.innerHTML = mileage_slider_value;
+    mileage_output.style.color = mileage_slider_colour;
+    mileage_slider.style.accentColor =mileage_slider_colour;
+}
+
+
 //On enter, change the colour of slider as miles increase
 mileage_slider.addEventListener("input", function (e) {
 

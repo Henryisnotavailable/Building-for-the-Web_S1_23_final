@@ -348,6 +348,12 @@ input[type="checkbox"]:checked + label::after {
     cursor: pointer;
 }
 
+.error_div p {
+    color: white;
+    background-color: #e62739;
+    border-radius: 7px;
+    margin-top:5px
+}
 
 
 

@@ -332,13 +332,10 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
     //Profile Picture Validation
     
-    //If file is not empty
+    //Not required, so no error if no profile picture
     if (file_exists($_FILES['profile_pic']['tmp_name']) || is_uploaded_file($_FILES['profile_pic']['tmp_name'])) {
 
         error_log("File not empty",0);
-        //Base path for profile pictures
-        
-        //Generate a random filename
 
         //Get the original file name to get the extension of original file
         $original_file_name = strtolower($_FILES["profile_pic"]["name"]);
@@ -347,18 +344,18 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         //Get the filetype of the "image"
         $mime_type = exif_imagetype($_FILES["profile_pic"]["tmp_name"]);
         //Allowed Extensions
-        $allowed_ext = array('gif', 'png', 'jpg',"jpeg");
-        $allowed_mime_type = array(IMAGETYPE_GIF,IMAGETYPE_JPEG,IMAGETYPE_PNG);
-        
+        $allowed_ext = array('gif', 'png', 'jpg',"jpeg","webp");
+        $allowed_mime_type = array(IMAGETYPE_GIF,IMAGETYPE_JPEG,IMAGETYPE_PNG,IMAGETYPE_WEBP);
+        $str_extensions = implode(", ",$allowed_ext);
         //If extension not allowed, error
         if (!in_array($extension,$allowed_ext)) {
-            $profile_pic_error = "!!! Only gif, png, jpg or jpeg extenstions allowed !!!";
+            $profile_pic_error = "!!! Only {$str_extensions} extensions allowed !!!";
             $valid = false;
         }
         
         //Check if a valid image mime type
         else if (!in_array($mime_type,$allowed_mime_type)) {
-            $profile_pic_error = "!!! Only gif, png or jpg file types allowed !!!";
+            $profile_pic_error = "!!! Only {$str_extensions} extensions allowed !!!";
             $valid = false;
         }
 

@@ -10,15 +10,15 @@ if(!isset($_SESSION["loggedin"])) {
 
 
 //Set all variables to ""
-$ad_title = $bike_model = $asking_price_lower = $asking_price_upper = $bike_date_of_birth  = $bike_seats = $is_bike_electric = $bike_colour = $bike_bio = "";
-$ad_title_error = $bike_model_error = $asking_price_lower_error = $asking_price_upper_error = $bike_mileage_error = $bike_date_of_birth_error = $bike_mileage_error = $bike_seats_error = $is_bike_electric_error = $bike_colour_error = $bike_bio_error = "";
+$ad_title = $bike_model = $asking_price_lower = $asking_price_upper = $bike_date_of_birth  = $bike_seats = $is_bike_electric = $bike_bio = "";
+$ad_title_error = $bike_model_error = $asking_price_lower_error = $asking_price_upper_error = $bike_quality_error = $bike_date_of_birth_error = $bike_mileage_error = $bike_seats_error = $is_bike_electric_error = $bike_colour_error = $bike_bio_error = "";
 
 $bike_photo_error = $bike_other_media_error = "";
 
 $error = "";
 
 //This must be -1 for the slider to work properly.
-$bike_mileage = $bike_mileage  = -1;
+$bike_mileage = $bike_quality  = -1;
 
 //This is the default
 $bike_colour = "#e62739";
@@ -136,29 +136,29 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     //End of bike price validation
 
     //Validate bike quality values
-    if(!isset($_POST["bike_mileage"])){
+    if(!isset($_POST["bike_quality"])){
         $valid = false;
-        $bike_mileage_error = "!!! Please set bike quality !!!";
+        $bike_quality_error = "!!! Please set bike quality !!!";
     }
-    else if (empty(trim($_POST["bike_mileage"]))) {
-        $bike_mileage_error = "!!! The bike quality cannot be empty !!!";
+    else if (empty(trim($_POST["bike_quality"]))) {
+        $bike_quality_error = "!!! The bike quality cannot be empty !!!";
         $valid = false;
     }
 
     //If the user submits via HTML this >should< always be a number (because it's a slider)
-    else if (!ctype_digit($_POST["bike_mileage"])) {
-        $bike_mileage_error = "!!! The bike quality must be a number between 0-5 !!!";
+    else if (!ctype_digit($_POST["bike_quality"])) {
+        $bike_quality_error = "!!! The bike quality must be a number between 0-5 !!!";
         $valid = false;
     }
 
 
-    elseif (intval(trim($_POST["bike_mileage"])) > 5 || intval(trim($_POST["bike_mileage"])) < 0) {
-        $bike_mileage_error = "!!! Invalid bike quality, it should be a number between 0-5 !!!";
+    elseif (intval(trim($_POST["bike_quality"])) > 5 || intval(trim($_POST["bike_quality"])) < 0) {
+        $bike_quality_error = "!!! Invalid bike quality, it should be a number between 0-5 !!!";
         $valid = false;
     }
 
     else {
-        $bike_mileage = htmlspecialchars($_POST["bike_mileage"]);
+        $bike_quality = htmlspecialchars($_POST["bike_quality"]);
     }
     //End of validation for bike quality values
 
@@ -285,39 +285,37 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         //Validate bike colour
 
         $colour_pattern = "/#[a-fA-F0-9]{6}/";
-        if(!isset($_POST["bike_colour"])){
+        if(!isset($_POST["favourite_bike_colour"])){
             $valid = false;
             $bike_colour_error = "!!! Please set bike colour !!!";
         }
-        else if (empty(trim($_POST["bike_colour"]))) {
+        else if (empty(trim($_POST["favourite_bike_colour"]))) {
             $bike_colour_error = "!!! The bike colour cannot be empty !!!";
             $valid = false;
         }
 
         //If not matches hex pattern like #BEDEAD
-        else if (!preg_match($colour_pattern, trim($_POST["bike_colour"]))) {
+        else if (!preg_match($colour_pattern, trim($_POST["favourite_bike_colour"]))) {
             $bike_colour_error = "!!! The bike colour must be a valid hex code with # !!!";
             $valid = false;
+            $bike_colour = htmlspecialchars($_POST["favourite_bike_colour"]);
         }
 
+
+
         else {
-            $bike_colour = htmlspecialchars($_POST["bike_colour"]);
+            $bike_colour = htmlspecialchars($_POST["favourite_bike_colour"]);
         }
         //End bike colour validation
 
-        //Validate bike description
-                if(!isset($_POST["bike_desc"])){
-                    $valid = false;
-                    $bike_bio_error = "!!! Please set bike bio !!!";
-                }
-                else if (empty(trim($_POST["bike_desc"]))) {
-                    $bike_bio_error = "!!! The bike bio cannot be empty !!!";
-                    $valid = false;
-                }
+        //Validate bike description (Not required)
+                if(isset($_POST["bike_desc"])){
+
+               
         
                 //200 Characters is the max length
-                else if (strlen($_POST["bike_desc"]) > 200) {
-                    $bike_bio_error = "!!! The bike bio cannot be more than 200 characters !!!";
+                if (strlen($_POST["bike_desc"]) > 200) {
+                    $bike_bio_error = "!!! The bike description cannot be more than 200 characters !!!";
                     $valid = false;
                     $bike_bio = htmlspecialchars($_POST["bike_desc"]);
                 }
@@ -325,27 +323,91 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                 else {
                     $bike_bio = htmlspecialchars($_POST["bike_desc"]);
                 }
-
+            }
                 //End bike description validation
 
 
-            //Validate bike_pic
+            //Validate bike_pic, we will save it later
+            if (file_exists($_FILES['bike_pic']['tmp_name']) || is_uploaded_file($_FILES['bike_pic']['tmp_name'])) {
+                
+                
+                $original_file_name = strtolower($_FILES["bike_pic"]["name"]);
+                $bike_img_extension = pathinfo($original_file_name, PATHINFO_EXTENSION);
 
-            if(!isset($_POST["bike_pic"])){
-                $valid = false;
-                $bike_photo_error = "!!! Please set the bike picture !!!";
-            }
-
-            else if (file_exists($_FILES['profile_pic']['tmp_name']) || is_uploaded_file($_FILES['profile_pic']['tmp_name'])) {
-                error_log("Hit file upload part",0);
+                //Get the filetype of the "image"
+                $mime_type = exif_imagetype($_FILES["bike_pic"]["tmp_name"]);
+                //Allowed Extensions
+                $allowed_ext = array('gif', 'png', 'jpg',"jpeg","webp");
+                $allowed_mime_type = array(IMAGETYPE_GIF,IMAGETYPE_JPEG,IMAGETYPE_PNG,IMAGETYPE_WEBP);
+                $str_extensions = implode(", ",$allowed_ext);
+                //If extension not allowed, error
+                if (!in_array($bike_img_extension,$allowed_ext)) {
+                    $bike_photo_error = "!!! Only {$str_extensions} extensions allowed !!!";
+                    $valid = false;
+                }
+                
+                //Check if a valid image mime type
+                else if (!in_array($mime_type,$allowed_mime_type)) {
+                    $bike_photo_error = "!!! Only {$str_extensions} file types allowed !!!";
+                    $valid = false;
+                }
             }
 
             else {
                 $bike_photo_error = "!!! Please choose a picture of the bike !!!";
+                $valid =false;
             
             }
-
             //End of bike_pic validation
+
+
+
+            //Validate extra media (not required, so no error if not there)
+
+            if(isset($_FILES["upload_media"])) {
+
+                if (file_exists($_FILES['upload_media']['tmp_name']) || is_uploaded_file($_FILES['upload_media']['tmp_name'])) {
+                    error_log("Hit media upload part",0);
+                    $original_file_name = strtolower($_FILES["upload_media"]["name"]);
+                    $other_media_extension = pathinfo($original_file_name, PATHINFO_EXTENSION);
+                    //Get the filetype of the "image"
+                    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+                    $mime_type = finfo_file($finfo,$_FILES["upload_media"]["tmp_name"]);
+                    //Allowed Extensions
+                    $allowed_ext = array('gif', 'png', 'jpg',"jpeg","webm","mp4","webm","ogg","ogv");
+                    $allowed_mime_type = array("image/gif","image/png","image/jpg","image/jpeg","video/mp4","video/webm","video/webp","video/ogg");
+                    $str_extensions = implode(", ",$allowed_ext);
+                    
+                    //If extension not allowed, error
+                    if (!in_array($extension,$allowed_ext)) {
+                        $bike_other_media_error = "!!! Only {$str_extensions} extensions allowed !!!";
+                        $valid = false;
+                    }
+                    
+                    //Check if a valid image mime type
+                    else if (!in_array($mime_type,$allowed_mime_type)) {
+                        $bike_other_media_error = "!!! Only {$str_extensions} file types allowed !!!";
+                        $valid = false;
+                    }
+                }
+
+                //If file is too big, then handle
+                else if ($_FILES["upload_media"]["error"] === UPLOAD_ERR_INI_SIZE) {
+                    $max_upload = (int)(ini_get('upload_max_filesize'));
+                    $bike_other_media_error = "!!! Sorry, uploaded file is too big, max size is {$max_upload}MB!!!";
+                    $valid = false;
+                }
+        }
+
+
+            if ($valid == true) {
+                //Something
+                1+1;
+            }
+            else {
+                $error = "!!! Errors, please review !!!";
+            }
+
 
 }
 
@@ -468,11 +530,11 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
                                     <div class="input_row">
                                         <div class="input_col">
-                                            <label for="bike_mileage">Select bike quality: *<span
+                                            <label for="bike_quality">Select bike quality: *<span
                                                     id="bike_slider_value">Ok</span></label>
-                                            <input id="bike_mileage" autocomplete="off" type="range" min="0" max="5"
-                                                step="1" value="<?php echo $bike_mileage; ?>" class="slider" name="bike_mileage" required></input>
-                                                <div id="bike_mileage_error_div" class="error_div"><p><?php echo $bike_mileage_error; ?></p></div>
+                                            <input id="bike_quality" autocomplete="off" type="range" min="0" max="5"
+                                                step="1" value="<?php echo $bike_quality; ?>" class="slider" name="bike_quality" required></input>
+                                                <div id="bike_quality_error_div" class="error_div"><p><?php echo $bike_quality_error; ?></p></div>
 
 
                                         </div>
@@ -529,8 +591,8 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
                                     <div class="input_row">
                                         <div class="input_col" id="FaveColourBike">
-                                            <label for="bike_colour">Select Bike's Colour</label>
-                                            <input type="color" placeholder="#e62739" id="favourite_bike_colour"
+                                            <label for="bike_colour">Select Bike's Colour *</label>
+                                            <input type="color" id="favourite_bike_colour"
                                                 autocomplete="off" name="favourite_bike_colour" autocomplete="off" value="<?php echo $bike_colour; ?>"></input>
                                                 <div id="favourite_bike_colour_error" class="error_div"><p><?php echo $bike_colour_error; ?></p></div>
                                         </div>
@@ -549,7 +611,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                                         </div>
                                     </div>
 
-                                    <div id="error_message_row">
+                                    <div id="error_message_row" class="error_div" style="font-size: x-large">
                                         <p><?php echo $error; ?></p>
                                     </div>
                                     <div class="input_row" id="button_row">
