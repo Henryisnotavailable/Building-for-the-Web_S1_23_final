@@ -1,15 +1,60 @@
 <?php
 
-function username_taken($username) {
-    return false;
+require_once "config.php";
+
+//Query the table for the username
+
+function save_user_profile_pic($extension) {
+
+    $target_path = "assets/users/profile_pictures";
+    $tempname = tempnam($target_path,"img");
+    $target = $tempname . "." . $extension;
+    copy($tempname,$target);
+    move_uploaded_file($_FILES["profile_pic"]["tmp_name"],$target);
+    //tempnam returns a FULL path (e.g. /var/www/html/...) I just want a relative path
+    $relative_path = $target_path."/". basename($target);
+    //REMOVEME
+    unlink($target);
+    unlink($tempname);
+    return $relative_path;
 }
 
-require_once "config.php";
+function username_taken($username,$mysqli) {
+
+
+    $sql = "SELECT user_id FROM users WHERE username = ?";
+    if($stmt = $mysqli->prepare($sql)) {
+        $param_username = trim($_POST["username"]);
+        $stmt->bind_param("s", $param_username);
+        
+
+        if($stmt->execute()) {
+            $stmt->store_result();
+
+            if($stmt->num_rows == 1) {
+                $taken = true;
+            }
+
+            else {
+                $taken = false;
+            }
+
+        }
+
+        $stmt->close();
+
+    }
+
+    return $taken;
+}
+
+
 
 //Set all variables to ""
 $firstname = $lastname = $email = $username = $password = $password_confirm = $pronouns = $date_of_birth = $phone_num = $favourite_bike = $bio = $profile_pic_error = $error = ""; 
 $firstname_error = $lastname_error = $email_error = $username_error = $password_error = $password_confirm_error = $pronouns_error = $date_of_birth_error = $phone_num_error = $favourite_bike_error = $bio_error = "";
 $bdate = null;
+$target = null;
 
 if($_SERVER["REQUEST_METHOD"] == "POST"){
  
@@ -103,7 +148,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         $username = htmlspecialchars($_POST["username"]);
     }
     //TODO!!!
-    elseif (username_taken($_POST["username"])) {
+    elseif (username_taken($_POST["username"],$mysqli)) {
         $username_error = "!!! Sorry, username taken, try something else !!!";
         $valid = false;
         $username = htmlspecialchars($_POST["username"]);
@@ -131,13 +176,21 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     elseif ($_POST["password"] !== $_POST["password_confirm"]) {
         $password_confirm_error = $password_error = "!!! Passwords DON'T match !!!";
         $valid = false; 
+        $password  = htmlspecialchars($_POST["password"]);
+        $password_confirm = htmlspecialchars($_POST["password_confirm"]);
     }
 
 
     elseif (strlen($_POST["password"]) < 10) {
         $password_confirm_error = $password_error = "!!! Please enter a longer password, think of 4 random words !!!";
         $valid = false;
+        $password = $password_confirm = htmlspecialchars($_POST["password"]);
+    }
 
+    elseif (strlen($_POST["password"]) > 72) {
+        $password_confirm_error = $password_error = "!!! Please enter a shorter password, 72 characters is the max !!!";
+        $valid = false;
+        $password = $password_confirm = htmlspecialchars($_POST["password"]);
     }
 
     else {
@@ -175,7 +228,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
     }
 
-    //If not empty, then check the date
+    //If date is not empty, then perform date checks
     else {
         $bdate = new DateTime($_POST["date_of_birth"]);
         
@@ -209,7 +262,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     //End of date of birth validation
 
     //Validate phone number
-    //Format of 0xXxXxXxXxX
+    //Format of 01234567890
     $mobile_pattern = "/\d{11}/";
 
     if (!isset($_POST["phone_num"])) {
@@ -222,7 +275,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         $valid = false;
     }
 
-    elseif (preg_match($mobile_pattern, $_POST["phone_num"])) {
+    elseif (!preg_match($mobile_pattern, $_POST["phone_num"])) {
         $phone_num_error = "!!! Sorry, phone number must match format of 01234567890 !!!";
         $valid = false;
         $phone_num = htmlentities($_POST["phone_num"]);
@@ -281,7 +334,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     if (!empty($_FILES["profile_pic"])) {
 
         //Base path for profile pictures
-        $target_path = "assets/users/profile_pictures";
+        
         //Generate a random filename
 
         //Get the original file name to get the extension of original file
@@ -306,15 +359,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             $valid = false;
         }
 
-        //Create the file and store in $target (a random file name in assets/users/profile_pictures)
-        else{
-            
-            $tempname = tempnam($target_path,"img");
-            $target = $tempname . "." . $extension;
-            //Basically, PHP's tempnam GUARANTEES a unique filename, but I want to store the file as <TEMPNAM_NAME>.<EXTENSION>, but if I rename it, then that will make it possible for a collision. So I'm just copying the file and creating a new one
-            copy($tempname,$target);
-            move_uploaded_file($_FILES["profile_pic"]["tmp_name"],$target);
-    }
+        
         
 
     }
@@ -323,45 +368,61 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     //Now save the info
 
     if ($valid == true) {
-        error_log("VALID!",0);
+        //If valid, THEN save the profile picture
+        //Create the file and store in $target (a random file name in assets/users/profile_pictures    
+
+        $relative_path = save_user_profile_pic($extension);
 
         $sql_insert_statement = "INSERT INTO users 
         (username,password,email,first_name,last_name,pronouns,dateofbirth,description,favourite_bike,telephone,profile_url,visibility,registration_date)
-        VALUES (?,?,?,?,?,?,?,DATE(?),?,?,?,?,DATE(?))";
+        VALUES (?,?,?,?,?,?,DATE(?),?,?,?,?,?,DATE(?))";
 
-        if ($statement = mysqli_prepare($conn,$sql_insert_statement)) {
+        if ($statement = $mysqli->prepare($sql_insert_statement)) {
             error_log("Statement there",0);
-            mysqli_stmt_bind_param($statement,"sssssssssssss",$param_username,$param_password,$param_email,$param_first_name,$param_last_name,$param_pronouns,$param_dateofbirth,$param_description,$param_favourite_bike,$param_telephone,$param_profile_url,$param_visibility,$param_registration_date);
+            $statement->bind_param("sssssssssssis",$param_username,$param_password,$param_email,$param_first_name,$param_last_name,$param_pronouns,$param_dateofbirth,$param_description,$param_favourite_bike,$param_telephone,$param_profile_url,$param_visibility,$param_registration_date);
+            
+            $param_username = trim($_POST["username"]);
+            //Hash the password, never store in plainext ;)
+            $param_password = password_hash($_POST["password"],PASSWORD_BCRYPT);
+            $param_email = $_POST["email"];
+            $param_first_name = $_POST["firstname"];
+            $param_last_name = $_POST["lastname"];
+            $param_pronouns = $_POST["pronouns"];
+            $param_dateofbirth = $_POST["date_of_birth"];
+            $param_description = $_POST["bio"];
+            $param_favourite_bike = $_POST["favourite_bike"];
+            $param_telephone = $_POST["phone_num"];
+            $param_profile_url = $relative_path;
+            $param_visibility = 1;
+            $param_registration_date = (new DateTime())->format("Y-m-d");
+ 
+
+            if($statement->execute()) {
+                header("Location: login.php");
+            }
+            else {
+                error_log("ERROR: Executing statement",0);
+            }
+
+            $statement->close();
+
         }
         else {
             error_log("Bad :(",0);
         }
 
-        /*
-          `user_id` int(11) NOT NULL AUTO_INCREMENT,
-  `username` varchar(20) NOT NULL,
-  `password` char(60) NOT NULL,
-  `email` varchar(100) NOT NULL,
-  `first_name` varchar(50) NOT NULL,
-  `last_name` varchar(50) NOT NULL,
-  `pronouns` varchar(6) NOT NULL,
-  `dateofbirth` DATE NOT NULL,
-  `description` varchar(200) DEFAULT NULL,
-  `favourite_bike` varchar(50) DEFAULT NULL,
-  `telephone` varchar(15) NOT NULL,
-  `profile_blob` longblob,
-  `profile_url` varchar(100) DEFAULT NULL,
-  `visibility` BOOL NOT NULL,
-  `registration_date` DATE NOT NULL, */
+        $mysqli->close();
+
     }
+    //If input is invalid
     else {
         $error = "!!! Errors, please fix !!!";
     }
 }
 
-else {
-    $username_error = "!!!BAD USERNAME!!!";
-}
+
+//If NOT a POST request
+
 
 ?>
 
@@ -512,13 +573,13 @@ else {
                                     <div class="input_row">
                                         <div class="input_col">
                                             <label for="bio">Short Bio</label>
-                                            <textarea id="bio" name="bio" autocomplete="off" placeholder="I am a lover of bikes" value="<?php echo $bio; ?>"></textarea>
+                                            <textarea id="bio" name="bio" autocomplete="off" placeholder="I am a lover of bikes"><?php echo $bio; ?></textarea>
                                             <div id="bio_error_div" class="error_div"><p><?php echo $bio_error; ?></p></div>
                                         </div>
                                     </div>
 
-                                    <div id="error_message_row">
-                                    <p><?php echo $error; ?></p>
+                                    <div id="error_message_row" class="error_div">
+                                    <p style="font-size: x-large"><?php echo $error; ?></p>
                                     </div>
 
                                     <div class="input_row" id="button_row">
