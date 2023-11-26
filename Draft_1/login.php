@@ -9,12 +9,20 @@ if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true) {
     exit;
 }
 
+if (isset($_GET["msg"])) {
+    $error = $msg;
+}
+
+else {
+    $error = "";
+}
+
 
 //Inclue SQL connection
 require_once "config.php";
 
 $username = $password = "";
-$username_error = $password_error = $error = "";
+$username_error = $password_error = "";
 $valid = true;
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
@@ -66,7 +74,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 
     if ($valid === true) {
-        //Magic SQL to check if user is there
+        //SQL to check if user exists is there
         $sql = "SELECT user_id,username,password,profile_url FROM users WHERE username = ?";
 
         if ($q = $mysqli->prepare($sql)) {
@@ -80,12 +88,37 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
                 if($q->num_rows == 1) {
                     $q->bind_result($id,$username, $pwd_hash, $profile_pic_url);
-                }
+                    if ($q -> fetch()) {
+                        if(password_verify(trim($_POST["password"]),$pwd_hash)) {
+                                session_destroy();
+                                session_start();
 
+                                $_SESSION["loggedin"] = true;
+                                $_SESSION["id"] = $id;
+                                $_SESSION["username"] = $username;
+                                $_SESSION["profile_picture"] = $profile_pic_url;
+
+                                header("Location: index.php");
+
+                        }
+                        //Invalid PASSWORD
+                        else {
+                            //Generic error message SLIGHTLY different message...
+                            $error = "!!! Invalid credentials, Please review !!!";
+                        }
+                    }
+
+
+                   
+                }
+                
+
+                //Invalid USERNAME
                 else {
                     //Generic error message is more secure
                     $error = "!!! Invalid credentials, please review !!!";
                 }
+                $q->close();
 
             }
 
@@ -100,6 +133,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     else {
         $error = "!!! Error, please review !!!";
     }
+
+    $mysqli->close();
 
 
 }
@@ -184,6 +219,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 
                                     
+                                    
+
                                     <div id="error_message_row" class="error_div">
                                     <p style="font-size: x-large"><?php echo $error; ?></p>
                                     </div>
