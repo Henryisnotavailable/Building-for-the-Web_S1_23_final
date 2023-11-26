@@ -40,7 +40,7 @@ session_start();
                         </li>
                         
                         <li id="placeholder"><a></a></li>
-                        <li id="logout_button"><a href="#5"><img
+                        <li id="logout_button"><a href="./logout.php"><img
                                     src="./assets/icons/2931185_door_enter_exit_leave_out_icon(1).png" />Logout</a>
                         </li>
                     </ul>
