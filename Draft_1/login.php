@@ -166,16 +166,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             <div id="navbarWrapper">
                 <nav>
                     <ul>
-                        <li><a href="./welcome.html"><img src="./assets/icons/10406450_hi_gesture_hand_hello_interaction_icon.png" />Welcome</a></li>
+                        <li><a href="./welcome.php"><img src="./assets/icons/10406450_hi_gesture_hand_hello_interaction_icon.png" />Welcome</a></li>
                         
                         
                                 
 
-                                <li><a href="./login.html"><img src="./assets/icons/10523360_login_1_icon.png" />Login</a>
+                                <li><a href="./login.php"><img src="./assets/icons/10523360_login_1_icon.png" />Login</a>
                                 </li>
-                                <li><a href="./register.html"><img src="./assets/icons/11030003_user_up_account_profile_icon.png" />Register</a>
+                                <li><a href="./register.php"><img src="./assets/icons/11030003_user_up_account_profile_icon.png" />Register</a>
                                 </li>
-                        <li><a href="./about_unauth.html"><img src="./assets/icons/430101_help_question_icon.png" />About Us</a>
+                        <li><a href="./about_unauth.php"><img src="./assets/icons/430101_help_question_icon.png" />About Us</a>
                         </li>
                         
                         <li id="placeholder"><a></a></li>
