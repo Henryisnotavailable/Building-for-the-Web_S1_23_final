@@ -68,7 +68,6 @@ CREATE TABLE IF NOT EXISTS `bike_details` (
   `bike_upper_price` int(4) NOT NULL,
   `bike_quality` int(1) NOT NULL,
   `bike_mileage` int(5) NOT NULL,
-  `mileage` varchar(100) NOT NULL,
   `manufacture_year` varchar(5) NOT NULL,
   `num_seats` int(2) NOT NULL,
   `other_media_url` varchar(100) DEFAULT NULL,

@@ -1,5 +1,28 @@
 <?php
 
+function save_media($file_tempname,$extension) {
+    error_log("DEBUG: Uploading new image {$file_tempname}",0);
+    $target_path = "./assets/users/bikes";  
+    //Generate a new unique EMPTY file  
+    $tempname = tempnam($target_path,"img");
+
+    //New filename = random + old_extension
+    $target = $tempname . "." . $extension;
+
+    //Copy unique empty file to new filename 
+    copy($tempname,$target);
+
+    //Move temporary file to ./assets/users/bikes/
+    move_uploaded_file($file_tempname,$target);
+    //tempnam returns a FULL path (e.g. /var/www/html/...) I just want a relative path
+    $relative_path =  $target_path."/". basename($target);
+
+    //unlink($target);
+    //unlink($tempname);
+    
+    return $relative_path;
+}
+
 
 //Make sure user is logged in
 session_start();
@@ -8,6 +31,7 @@ if(!isset($_SESSION["loggedin"])) {
     exit;
 }
 
+require_once "config.php";
 
 //Set all variables to ""
 $ad_title = $bike_model = $asking_price_lower = $asking_price_upper = $bike_date_of_birth  = $bike_seats = $is_bike_electric = $bike_bio = "";
@@ -370,6 +394,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                     error_log("Hit media upload part",0);
                     $original_file_name = strtolower($_FILES["upload_media"]["name"]);
                     $other_media_extension = pathinfo($original_file_name, PATHINFO_EXTENSION);
+                    error_log($other_media_extension,0);
                     //Get the filetype of the "image"
                     $finfo = finfo_open(FILEINFO_MIME_TYPE);
                     $mime_type = finfo_file($finfo,$_FILES["upload_media"]["tmp_name"]);
@@ -379,7 +404,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                     $str_extensions = implode(", ",$allowed_ext);
                     
                     //If extension not allowed, error
-                    if (!in_array($extension,$allowed_ext)) {
+                    if (!in_array($other_media_extension,$allowed_ext)) {
                         $bike_other_media_error = "!!! Only {$str_extensions} extensions allowed !!!";
                         $valid = false;
                     }
@@ -401,12 +426,79 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
 
             if ($valid == true) {
-                //Something
-                1+1;
+                if (isset($_FILES["bike_pic"]["tmp_name"])) {
+                    //Save image to disk, and return relative path
+                    $relative_bike_img_path = save_media($_FILES["bike_pic"]["tmp_name"],$bike_img_extension);
+                }
+                if (isset($_FILES["upload_media"]["tmp_name"])) {
+                    //Save media to disk and return relative path
+                    $relative_bike_media_path = save_media($_FILES["upload_media"]["tmp_name"],$other_media_extension);
+                }
+                $sql_insert_statement = "INSERT INTO bike_details 
+        (user_id,advert_title,description,bike_model,bike_lower_price,
+        bike_upper_price,bike_quality,bike_mileage,manufacture_year,num_seats,
+        other_media_url,image_url,colour,is_electric)
+        VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                /*
+                  `vehicle_id` int(11) NOT NULL AUTO_INCREMENT,
+                    `user_id` int(11) NOT NULL,
+                    `advert_title` varchar(50) NOT NULL,
+                    `description` varchar(200) NOT NULL,
+                    `bike_model` varchar(50) NOT NULL,
+                    `bike_lower_price` int(4) NOT NULL,
+                    `bike_upper_price` int(4) NOT NULL,
+                    `bike_quality` int(1) NOT NULL,
+                    `bike_mileage` int(5) NOT NULL,
+                    `mileage` varchar(100) NOT NULL,
+                    `manufacture_year` varchar(5) NOT NULL,
+                    `num_seats` int(2) NOT NULL,
+                    `other_media_url` varchar(100) DEFAULT NULL,
+                    `image_url` varchar(100) DEFAULT NULL,
+                    `colour` varchar(7) NOT NULL,
+                    `is_electric` BOOL NOT NULL,
+                    PRIMARY KEY (`vehicle_id`),
+                    KEY `user_id` (`user_id`)
+   */
+            if ($statement = $mysqli->prepare($sql_insert_statement)) {
+                error_log("DEBUG: Binding parameters",0);
+                $statement->bind_param("ssssiiiisisssi",$param_user_id,$param_advert_title,$param_description,$param_bike_model,$param_bike_lower_price,$param_bike_upper_price,$param_bike_quality,$param_bike_mileage,$param_manufacture_year,$param_num_seats,$param_other_media_url,$param_image_url,$param_colour,$param_is_electric);
+                
+                $param_user_id = $_SESSION["id"];
+                $param_advert_title = trim($_POST["advert_title"]);
+                $param_description = trim($_POST["bike_desc"]);
+                $param_bike_model = trim($_POST["bike_model"]);
+                $param_bike_lower_price	= intval(trim($_POST["asking_price_lower"]));
+                $param_bike_upper_price	= intval(trim($_POST["asking_price_upper"]));
+                $param_bike_quality	= intval(trim($_POST["bike_quality"]));
+                $param_bike_mileage	= intval(trim($_POST["bike_mileage"]));
+                $param_manufacture_year	= (trim($_POST["bike_date_of_birth"]));
+                $param_num_seats = intval(trim($_POST["bike_seats"]));
+                $param_other_media_url = $relative_bike_media_path;
+                $param_image_url = $relative_bike_img_path;
+                $param_colour = $_POST["favourite_bike_colour"];
+                $param_is_electric = $is_bike_electric ? 1 : 0;
+                
+
+                if($statement->execute()) {
+                    header("Location: a_bike_owner.php?msg=Registered Succesfully, Please Login!");
+                }
+                else {
+                    error_log("ERROR: Executing statement",0);
+                }
+
+                $statement->close();
+
+            }
+            else {
+                error_log("ERROR: Could not prepare statement",0);
+            }
+                
             }
             else {
                 $error = "!!! Errors, please review !!!";
             }
+
+            $mysqli->close();
 
 
 }
