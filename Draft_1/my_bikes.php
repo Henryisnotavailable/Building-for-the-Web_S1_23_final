@@ -80,10 +80,10 @@ if(!isset($_SESSION["loggedin"])) {
 
                                     <div class="slider-wrapper">
                                         <div class="carousel-buttons">
-                                            <button class="slider_button" id="prev-button" aria-label="Previous Slide"
-                                                onclick="plusDivs(-1)">❮</button>
-                                            <button class="slider_button" id="next-button" aria-label="Next Slide"
-                                                onclick="plusDivs(1)">❯</button>
+                                            <button class="slider_button" id="prev_button" aria-label="Previous Slide"
+                                                >❮</button>
+                                            <button class="slider_button" id="next_button" aria-label="Next Slide"
+                                                >❯</button>
 
                                         </div>
                                         <div class="slides_wrapper">
@@ -165,7 +165,7 @@ if(!isset($_SESSION["loggedin"])) {
         </footer>
     </article>
     <script src="./my_bikes.js"></script>
-    <script><?php echo "var temp_fetched_data = {$user_bikes}" ?></script>
+    
 </body>
 
 </html>

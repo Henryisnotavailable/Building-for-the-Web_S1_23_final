@@ -263,13 +263,20 @@ nav img {
 }
 
 
-.mySlides {
-    max-width: 50%;
-    max-height: 50%;
-}
+
 
 .slides_wrapper {
     display: flex;
+}
+
+.mySlides {
+    max-width: 50%;
+    max-height: 50%;
+	display: none;
+}
+
+.showing {
+display: flex;
 }
 
 

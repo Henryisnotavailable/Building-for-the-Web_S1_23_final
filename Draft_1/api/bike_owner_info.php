@@ -1,5 +1,37 @@
 <?php
 
+
+function get_quality($quality) {
+    $quality = (int) $quality;
+    switch ($quality) {
+        case 0:
+            return "Broken";
+            break;
+        case 1:
+            return "Poor";
+            break;
+        case 2:
+            return "Ok";
+            break;
+
+        case 3:
+            return "Good";
+            break;
+
+        case 4:
+            return "Great";
+            break;
+
+        case 5:
+            return "Perfect";
+            break;
+
+        default:
+            return "Unknown";
+            break;
+    }
+}
+
 session_start();
 
 if(!isset($_SESSION["loggedin"])) {
@@ -33,8 +65,16 @@ if ($q = $mysqli->prepare($sql)) {
         
                 error_log("DEBUG: HIT {$user_id}");
                 $test = [
-                    "vehicle_id" => $vehicle_id,
-                    "user_id" => $user_id
+                    "bike_id" => $vehicle_id,
+                    "bike_ad_name" => $title,
+                    "bike_model" => $bike_model,
+                    "lower_asking_price" => $bike_lower_price,
+                    "upper_asking_price" => $bike_upper_price,
+                    "bike_quality" => get_quality($bike_quality),
+                    "bike_birthday" => $manufacture_year,
+                    "image_url" => $image_url,
+                    "bike_colour_code" =>$colour,
+                    "description" => $description
                 ];
                 array_push($result,$test); 
             }
@@ -63,39 +103,14 @@ else {
     error_log("ERROR: Failed preparing statement",0);
 }
 
-var_dump($result,0);
+//var_dump($result,0);
 
-/*
 
-$data = [
-    [
-        "bike_id" => "0xdeadbeef",
-        "bike_ad_name" => "Greg's Bike for sale",
-        "bike_model" => "Brompton Mk1",
-        "lower_asking_price" => "1000",
-        "upper_asking_price" => "2000",
-        "bike_quality" => "Poor",
-        "bike_birthday" => "2023",
-        "image_url" => "./assets/images/bike_1.jpg",
-        "bike_colour_code" => "#1F00A2",
-        "description" => "This is a stellar bike, that's got 1 mile"
-    ],
-    [
-        "bike_id" => "0xdeadbeef",
-        "bike_ad_name" => "Greg's Bike for sale",
-        "bike_model" => "Brompton Mk1",
-        "lower_asking_price" => "1000",
-        "upper_asking_price" => "2000",
-        "bike_quality" => "Poor",
-        "bike_birthday" => "2023",
-        "image_url" => "./assets/images/bike_1.jpg",
-        "bike_colour_code" => "#1F00A2",
-        "description" => "This is a stellar bike, that's got 1 mile"
-    ]
-];
+
+$jason = $result;
 
 // Convert data to JSON
-$jsonResult = json_encode($data, JSON_PRETTY_PRINT);
+$jsonResult = json_encode($jason, JSON_PRETTY_PRINT);
 
 // Set response headers to indicate JSON content
 header('Content-Type: application/json');
@@ -103,7 +118,7 @@ header('Content-Type: application/json');
 // Output the JSON
 echo $jsonResult;
 
-*/
+
 
 
 ?>
