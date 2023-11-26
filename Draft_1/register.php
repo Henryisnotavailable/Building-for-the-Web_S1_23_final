@@ -5,17 +5,18 @@ require_once "config.php";
 //Query the table for the username
 
 function save_user_profile_pic($extension) {
-
-    $target_path = "assets/users/profile_pictures";
+    $target_path = "./assets/users/profile_pictures";
+    if (is_null($extension)) {
+        return $target_path . "/default_avatar.png";
+    }
+    
     $tempname = tempnam($target_path,"img");
     $target = $tempname . "." . $extension;
     copy($tempname,$target);
     move_uploaded_file($_FILES["profile_pic"]["tmp_name"],$target);
     //tempnam returns a FULL path (e.g. /var/www/html/...) I just want a relative path
-    $relative_path = $target_path."/". basename($target);
-    //REMOVEME
-    unlink($target);
-    unlink($tempname);
+    $relative_path =  $target_path."/". basename($target);
+
     return $relative_path;
 }
 
@@ -55,6 +56,7 @@ $firstname = $lastname = $email = $username = $password = $password_confirm = $p
 $firstname_error = $lastname_error = $email_error = $username_error = $password_error = $password_confirm_error = $pronouns_error = $date_of_birth_error = $phone_num_error = $favourite_bike_error = $bio_error = "";
 $bdate = null;
 $target = null;
+$extension = null;
 
 if($_SERVER["REQUEST_METHOD"] == "POST"){
  
@@ -331,8 +333,9 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     //Profile Picture Validation
     
     //If file is not empty
-    if (!empty($_FILES["profile_pic"])) {
+    if (file_exists($_FILES['profile_pic']['tmp_name']) || is_uploaded_file($_FILES['profile_pic']['tmp_name'])) {
 
+        error_log("File not empty",0);
         //Base path for profile pictures
         
         //Generate a random filename
@@ -476,7 +479,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                     <div class='right-column'>
                         <div class="main_body_container">
                             
-                            <form id="register_form" action="./register.php"
+                            <form id="register_form" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>"
                                 method="post" enctype="multipart/form-data">
                                 <div class="form_main">
                                     <h1><u>Enter your details!</u></h1>

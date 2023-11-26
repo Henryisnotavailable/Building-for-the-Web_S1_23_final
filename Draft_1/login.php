@@ -1,3 +1,115 @@
+<?php
+
+session_start();
+
+
+//If user is logged in, redirect to main page
+if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true) {
+    header("Location: index.php");
+    exit;
+}
+
+
+//Inclue SQL connection
+require_once "config.php";
+
+$username = $password = "";
+$username_error = $password_error = $error = "";
+$valid = true;
+
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+
+    //Validate username
+    
+    if(!isset($_POST["username"])) {
+        $valid = false;
+        $username_error = "!!! Username not set !!!";
+    }
+
+    else if (empty(trim($_POST["username"]))) {
+        $valid = false;
+        $username_error = "!!! Username cannot be empty !!!";
+    }
+
+    else if ($_POST["username"] == "admin") {
+        $valid = false;
+        $username_error = "No";
+        $username = htmlspecialchars($_POST["username"]);
+    }
+
+    else {
+        $username = htmlspecialchars($_POST["username"]);
+    }
+
+    //End of user validation
+
+
+    if(!isset($_POST["password"])) {
+        $valid = false;
+        $password_error = "!!! Password not set !!!";
+    }
+
+    else if (empty(trim($_POST["password"]))) {
+        $valid = false;
+        $password_error = "!!! Password cannot be empty !!!";
+    }
+
+    else if ($_POST["password"] == "admin") {
+        $valid = false;
+        $password_error = "No";
+        $password = htmlspecialchars($_POST["password"]);
+    }
+
+    else {
+        $password = htmlspecialchars($_POST["password"]);
+    }
+
+
+    if ($valid === true) {
+        //Magic SQL to check if user is there
+        $sql = "SELECT user_id,username,password,profile_url FROM users WHERE username = ?";
+
+        if ($q = $mysqli->prepare($sql)) {
+            $param_username = trim($_POST["username"]);
+            $q->bind_param("s", $param_username);
+
+            //Execute query
+            if($q->execute()) {
+                //Store query result
+                $q->store_result();
+
+                if($q->num_rows == 1) {
+                    $q->bind_result($id,$username, $pwd_hash, $profile_pic_url);
+                }
+
+                else {
+                    //Generic error message is more secure
+                    $error = "!!! Invalid credentials, please review !!!";
+                }
+
+            }
+
+        }
+
+        else {
+            $error = "!!! Website Error, Something Went Wrong, please try again later !!!";
+        }
+
+    }
+
+    else {
+        $error = "!!! Error, please review !!!";
+    }
+
+
+}
+
+
+?>
+
+
+
+
 <!DOCTYPE html>
 <html>
 
@@ -48,21 +160,23 @@
                     <div class='right-column'>
                         <div class="main_body_container">
                             
-                            <form id="login_form" action="https://webhook.site/646c3c72-a572-4d14-9ae5-d83fff5b4a7c"
-                                method="post" enctype="multipart/form-data">
+                            <form id="login_form" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>"
+                                method="post">
                                 <div class="form_main">
                                     <h1><u>Login here!</u></h1>
                                     <div class="input_row">
                                         <div class="input_col">
                                             <label for="username">Username</label>
                                             <input type="text" placeholder="Byk3m4n"
-                                                id="username" name="username" autocomplete="on" required></input>
+                                                id="username" name="username" autocomplete="on" required value="<?php echo $username;?>"></input>
+                                                <div id="username_error_div" class="error_div"><p><?php echo $username_error; ?></p></div>
                                         </div>
                                     </div>
                                     <div class="input_row">
                                         <div class="input_col">
                                             <label for="password">Password</label>
-                                            <input type="password" placeholder="passowrd" id="password" name="password" autocomplete="on" required></input>
+                                            <input type="password" placeholder="passowrd" id="password" name="password" autocomplete="on" required value="<?php echo $username;?>"></input>
+                                            <div id="password_error_div" class="error_div"><p><?php echo $password_error; ?></p></div>
                                         </div>
 
 
@@ -70,7 +184,9 @@
 
 
                                     
-
+                                    <div id="error_message_row" class="error_div">
+                                    <p style="font-size: x-large"><?php echo $error; ?></p>
+                                    </div>
 
 
                                     
