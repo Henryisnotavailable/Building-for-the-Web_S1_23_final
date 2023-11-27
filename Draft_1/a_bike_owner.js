@@ -252,10 +252,7 @@ var temp_fetched_data =
 
     }
 
-    function handle_save(e) {
-        
-        alert("SAVING!")
-    }
+
 
     //This is the handler for when the edit/save button is pressed
     //If the edit button is pressed, then it will edit, if save then it will save.
@@ -271,15 +268,20 @@ var temp_fetched_data =
 
     } 
 
-    function delete_bike(e) {
+    async function delete_bike(e) {
         alert("Lol, deleting the bike then...");
+        let bike_id = document.getElementById("bike_id").value;
+        const response = await fetch(`./a_bike_owner.php?bike_id=${bike_id}`, {
+            method: "DELETE"
+        });
+
     }
     //Set all fields to editable
     const url_params = new URLSearchParams(window.location.search)
 
     //Automatically set edit mode if GET param has edit
     if (url_params.has("edit")) {
-        alert("editing");
+        
         setup_edit(null);
     }
     let edit_button = document.getElementById('edit_button')
@@ -291,9 +293,9 @@ var temp_fetched_data =
 
     let delete_button = document.getElementById('delete_bike_button');
 
-    delete_button.addEventListener("click", function (e) {
+    delete_button.addEventListener("click", async function (e) {
         if (confirm("Delete The bike?")) {
-            delete_bike(e);
+            await delete_bike(e);
             return true;
         }
         return false;

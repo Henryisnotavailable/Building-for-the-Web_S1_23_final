@@ -264,9 +264,9 @@ if ($q = $mysqli->prepare($select_sql)) {
     } elseif (!preg_match("/[a-zA-Z0-9_'\-\.]{4,50}/", trim($_POST["advert_title"]))) {
         $ad_title_error = "!!! Invalid advert title, it should be less than 50 alphanumeric characters !!!";
         $valid = false;
-        $ad_title = htmlspecialchars($_POST["advert_title"]);
+        $page_title = htmlspecialchars($_POST["advert_title"]);
     } else {
-        $ad_title = htmlspecialchars($_POST["advert_title"]);
+        $page_title = htmlspecialchars($_POST["advert_title"]);
     }
     //End ad title validation
     //Validate bike model
@@ -453,7 +453,7 @@ if ($q = $mysqli->prepare($select_sql)) {
         $valid = false;
         $page_num_seats = htmlspecialchars($_POST["bike_seats"]);
     } elseif (intval(trim($_POST["bike_seats"])) > 3 || intval(trim($_POST["bike_seats"])) < 1) {
-        $bike_seats_error = "!!! The bike seat must be a ->number<- between 1-3 !!!";
+        $bike_seats_error = "!!! The bike seat must be a number between 1-3 !!!";
         $valid = false;
         $page_num_seats = htmlspecialchars($_POST["bike_seats"]);
     } else {
@@ -534,12 +534,7 @@ if ($q = $mysqli->prepare($select_sql)) {
         }
 
         //Because this is updating the image, if the user DOESN'T want to update, keep the old one
-    } else {
-
-        $bike_photo_error = "!!! DEBUG: not updating bike image !!!";
-
-
-    }
+    } 
     //End of bike_pic validation
 
 
@@ -652,13 +647,59 @@ if ($q = $mysqli->prepare($select_sql)) {
 
     } else {
         $error = "!!! Errors, please review !!!";
-        
+        $page_image_url = $image_url;
+        $page_other_media_url = $other_media_url;
     }
 
 }
 
 }
 
+//Handle when user wants to DELETE a bike (calling code is in the JS)
+else if ($_SERVER["REQUEST_METHOD"] == "DELETE") {
+
+    
+    if(!isset($_GET["bike_id"])) {
+        header("Location: index.php?msg=Sorry, there was no bike specified in the delete request");
+        exit;
+    }
+    $bike_id = $_GET["bike_id"];
+    $user_id = $_SESSION["id"];
+    //Make sure users can only delete their own bikes
+    $sql = "DELETE FROM bike_details WHERE vehicle_id = ? AND user_id = ?";
+    if ($q = $mysqli->prepare($sql)) {
+        
+        $q->bind_param("ii", $bike_id,$user_id);
+
+        //Execute query
+        if($q->execute()) {
+            //Store query result
+            $q->store_result();
+            //JavaScript calls this, so return 200 if OK and exit early (with no body)
+            if($q->num_rows == 1) {
+               http_response_code(200);
+            }
+        
+            //Delete failed (user tried deleting non-existent bike or bike they don't own)
+            else {
+                //Generic error message is more secure
+                $error = "!!! Invalid credentials, please review !!!";
+                http_response_code(403);
+            }
+            $q->close();
+            $mysqli->close();
+            exit;
+        }
+        else {
+            $error = "!!! Website Error, Something Went Wrong, please try again later !!!";
+        }
+    }
+
+    else {
+        $error = "!!! Website Error, Something Went Wrong, please try again later !!!";
+    }
+
+}
 
 $mysqli->close();
 
@@ -723,7 +764,7 @@ $mysqli->close();
 
                             <form id="sell_form" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"])?>"
                                 method="post" enctype="multipart/form-data">
-                                <input id="bike_id" name="bike_id" value="<?php echo $_SERVER["REQUEST_METHOD"] == "GET" ? $_GET["id"]:"" ?>"></input>
+                                <input readonly id="bike_id" name="bike_id" value="<?php echo $_SERVER["REQUEST_METHOD"] == "GET" ? $_GET["id"]:"" ?>"></input>
                                 <div class="form_main">
 
 
