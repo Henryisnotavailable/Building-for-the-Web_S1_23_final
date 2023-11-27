@@ -164,7 +164,8 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         $valid = false;
         $bike_quality_error = "!!! Please set bike quality !!!";
     }
-    else if (empty(trim($_POST["bike_quality"]))) {
+    //This was throwing when the user set bike quality to 0 (Broken) because empty(0) === true
+    else if (empty(trim($_POST["bike_quality"])) && strlen(trim($_POST["bike_quality"])) == 0) {
         $bike_quality_error = "!!! The bike quality cannot be empty !!!";
         $valid = false;
     }
@@ -399,7 +400,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                     $finfo = finfo_open(FILEINFO_MIME_TYPE);
                     $mime_type = finfo_file($finfo,$_FILES["upload_media"]["tmp_name"]);
                     //Allowed Extensions
-                    $allowed_ext = array('gif', 'png', 'jpg',"jpeg","webm","mp4","webm","ogg","ogv");
+                    $allowed_ext = array('gif', 'png', 'jpg',"jpeg","webm","mp4","webp","ogg","ogv");
                     $allowed_mime_type = array("image/gif","image/png","image/jpg","image/jpeg","video/mp4","video/webm","video/webp","video/ogg");
                     $str_extensions = implode(", ",$allowed_ext);
                     
@@ -433,7 +434,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                     //Save image to disk, and return relative path
                     $relative_bike_img_path = save_media($_FILES["bike_pic"]["tmp_name"],$bike_img_extension);
                 }
-                if (isset($other_media_extension)) {
+                if (file_exists($_FILES['upload_media']['tmp_name']) || is_uploaded_file($_FILES['upload_media']['tmp_name'])) {
                     //Save media to disk and return relative path
                     $relative_bike_media_path = save_media($_FILES["upload_media"]["tmp_name"],$other_media_extension);
                 }
@@ -481,9 +482,12 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                 $param_colour = $_POST["favourite_bike_colour"];
                 $param_is_electric = $is_bike_electric ? 1 : 0;
                 
+                
 
                 if($statement->execute()) {
-                    header("Location: a_bike_owner.php?msg=Registered Succesfully, Please Login!");
+                    //Get the last inserted ID, to redirect the user
+                    $lastinserted_id = $mysqli->insert_id;
+                    header("Location: a_bike_owner.php?id={$lastinserted_id}");
                 }
                 else {
                     error_log("ERROR: Executing statement",0);

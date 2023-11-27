@@ -106,9 +106,15 @@ var temp_fetched_data =
     function setup_edit(e) {
         
             
-
+            if (e !== null){
             e.preventDefault();
-            
+            }
+
+            let ad_title_error_div = document.getElementById("ad_title_error_div");
+            let ad_title_error = ad_title_error_div.firstChild.innerText;
+
+
+
             //Make the title editable (but set the value to what it was before)
             let current_title = document.getElementById("current_title").innerText;
             let advert_title = document.getElementById("title_container");
@@ -128,7 +134,7 @@ var temp_fetched_data =
             //bike_image_column.innerHTML += "</img>"
     
             bike_image_column.innerHTML = '<label for="bike_pic">Upload Image of Bike</label>';
-            bike_image_column.innerHTML += `<div id='current_bike_img_container'><img src='${current_bike_img_src}'/ style='max-width:200px'><p>Current Image</p></div>`;
+            bike_image_column.innerHTML += `<div id='current_bike_img_container'><img src='${current_bike_img_src}'/ style='max-width:180px;max-height:180px'><p>Current Image</p></div>`;
     
             bike_image_column.innerHTML += '<input type="file" id="bike_pic" name="bike_pic" autocomplete="off"></input>';
             //bike_image_column.innerHTML += `<img id="current_bike_img" src="${current_bike_img_src}"/>`;
@@ -216,12 +222,13 @@ var temp_fetched_data =
             //Enable other media upload
             let other_media_column = document.getElementById("other_media_column");
             let current_other_media_img = document.getElementById("current_other_media_img");
+            let tagname = current_other_media_img.tagName;
             let current_other_media_img_src = current_other_media_img.getAttribute("src");
             //bike_image_column.innerHTML = `<img id="current_bike_img" src="${current_bike_img}">`;
             //bike_image_column.innerHTML += "</img>"
     
             other_media_column.innerHTML = '<label for="bike_pic">Upload Other Media of Bike</label>';
-            other_media_column.innerHTML += `<div id='other_media_column'><img src='${current_other_media_img_src}'/ style='max-width:200px' alt="No other media!"></div><p>Currently</p>`;
+            other_media_column.innerHTML += `<div id='other_media_column'><${tagname} src='${current_other_media_img_src}'/ style='max-width:180px' alt="No other media!"></div><p>Currently</p>`;
     
             other_media_column.innerHTML += '<input type="file" id="bike_pic" name="upload_media" autocomplete="off"></input>';
 
@@ -232,13 +239,14 @@ var temp_fetched_data =
     }
 
     function handle_save(e) {
-        e.preventDefault();
+        
         alert("SAVING!")
     }
 
     //This is the handler for when the edit/save button is pressed
     //If the edit button is pressed, then it will edit, if save then it will save.
     function edit_handler(e) {
+        
         if (document.getElementById("edit_button").innerText != "Save Changes") {
             setup_edit(e)
         }
@@ -253,7 +261,15 @@ var temp_fetched_data =
         alert("Lol, deleting the bike then...");
     }
     //Set all fields to editable
+    const url_params = new URLSearchParams(window.location.search)
+
+    //Automatically set edit mode if GET param has edit
+    if (url_params.has("edit")) {
+        alert("editing");
+        setup_edit(null);
+    }
     let edit_button = document.getElementById('edit_button')
+    
     //edit_handler either sets the page to edit mode, or saves the changes.
 
     edit_button.addEventListener("click", edit_handler,false);
