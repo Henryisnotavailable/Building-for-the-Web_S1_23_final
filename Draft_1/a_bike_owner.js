@@ -294,6 +294,7 @@ var temp_fetched_data =
     let delete_button = document.getElementById('delete_bike_button');
 
     delete_button.addEventListener("click", async function (e) {
+        e.preventDefault();
         if (confirm("Delete The bike?")) {
             await delete_bike(e);
             return true;

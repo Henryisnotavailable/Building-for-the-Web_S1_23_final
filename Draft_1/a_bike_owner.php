@@ -626,7 +626,7 @@ if ($q = $mysqli->prepare($select_sql)) {
             $param_other_media_url = $relative_bike_media_path;
             $param_image_url = $relative_bike_img_path;
             $param_colour = $_POST["favourite_bike_colour"];
-            $param_is_electric = $is_bike_electric ? 1 : 0;
+            $param_is_electric = $page_is_electric ? 1 : 0;
 
 
 
@@ -663,6 +663,55 @@ else if ($_SERVER["REQUEST_METHOD"] == "DELETE") {
         header("Location: index.php?msg=Sorry, there was no bike specified in the delete request");
         exit;
     }
+
+    $sql_for_media = "SELECT other_media_url, image_url FROM bike_details WHERE vehicle_id = ?";
+    if ($qu = $mysqli->prepare($sql_for_media)) {
+        $qu->bind_param("i", $_GET["bike_id"]);
+        if ($qu->execute()) {
+            $qu->store_result();
+
+            if ($qu->num_rows > 0) {
+                $qu->bind_result($bind_other_media_url,$bind_image_url);
+                //Get the bike
+                if ($qu->fetch()) {
+                    //Load into variables
+                    $other_media_url = $bind_other_media_url;
+                    $image_url = $bind_image_url;
+                    
+                    if(!is_null($image_url)) {
+                        $path = pathinfo($image_url);
+                        unlink($image_url);
+                        error_log("DEBUG: Removing {$image_url}");
+                        unlink($path["dirname"].'/'.$path["filename"]);
+
+                    }
+                    if(!is_null($other_media_url)) {
+                        $path = pathinfo($other_media_url);
+                        unlink($other_media_url);
+                        error_log("DEBUG: Removing {$other_media_url}");
+                        unlink($path["dirname"].'/'.$path["filename"]);
+
+                    }
+    
+    
+    
+                }
+    
+    
+    
+            }
+        }
+
+        else {
+            die("Sorry, the query failed, try again later");
+        }
+    }
+    
+
+    else {
+        die("Sorry, something went wrong");
+    }
+    $qu->close();
     $bike_id = $_GET["bike_id"];
     $user_id = $_SESSION["id"];
     //Make sure users can only delete their own bikes
@@ -673,26 +722,17 @@ else if ($_SERVER["REQUEST_METHOD"] == "DELETE") {
 
         //Execute query
         if($q->execute()) {
-            //Store query result
-            $q->store_result();
-            //JavaScript calls this, so return 200 if OK and exit early (with no body)
-            if($q->num_rows == 1) {
-               http_response_code(200);
-            }
-        
-            //Delete failed (user tried deleting non-existent bike or bike they don't own)
-            else {
-                //Generic error message is more secure
-                $error = "!!! Invalid credentials, please review !!!";
-                http_response_code(403);
-            }
-            $q->close();
-            $mysqli->close();
-            exit;
+               http_response_code(200); 
         }
+        //Delete failed (user tried deleting non-existent bike or bike they don't own)
         else {
             $error = "!!! Website Error, Something Went Wrong, please try again later !!!";
+            http_response_code(403);
         }
+
+        $q->close();
+            $mysqli->close();
+            exit;
     }
 
     else {
