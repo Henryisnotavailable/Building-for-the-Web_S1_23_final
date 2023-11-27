@@ -426,11 +426,14 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
 
             if ($valid == true) {
-                if (isset($_FILES["bike_pic"]["tmp_name"])) {
+
+                $relative_bike_media_path = null;
+
+                if (isset($bike_img_extension)) {
                     //Save image to disk, and return relative path
                     $relative_bike_img_path = save_media($_FILES["bike_pic"]["tmp_name"],$bike_img_extension);
                 }
-                if (isset($_FILES["upload_media"]["tmp_name"])) {
+                if (isset($other_media_extension)) {
                     //Save media to disk and return relative path
                     $relative_bike_media_path = save_media($_FILES["upload_media"]["tmp_name"],$other_media_extension);
                 }

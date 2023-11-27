@@ -35,7 +35,7 @@ async function setup_slideshow() {
     
     if (api_data.length == 0) {
         
-        alert("Sorry, there were no results from that search.")
+        //alert("Sorry, there were no results from that search.")
         document.getElementById("AdvertTitle").innerText = "No results...";
         document.getElementById("BikeModel").innerText = "No results...";
         document.getElementById("PriceRange").innerText = "No results...";
@@ -58,7 +58,7 @@ async function setup_slideshow() {
         for (var i = 0; i < api_data.length; i++) {
 
 
-            slideshow.innerHTML += `<a href="./a_bike_viewer.html?id=${api_data[i].bike_id}"><img class="mySlides" src="${api_data[i].image_url}" id="slideImg"></img></a>`;
+            slideshow.innerHTML += `<a href="./a_bike_owner.php?id=${api_data[i].bike_id}"><img class="mySlides" src="${api_data[i].image_url}" id="slideImg"></img></a>`;
 
 
         }
@@ -75,12 +75,16 @@ async function setup_slideshow() {
     return api_data;
 }
 
-//Placeholder for API data to fetch random bikes
 
 
-async function goToSlide(n) {
+
+function goToSlide(n) {
     //Get all the slides
     let all_slides = document.getElementsByClassName("mySlides");
+    //If there are no slides (if user has no bikes) then return
+    if (all_slides.length == 0) {
+        return 
+    }
     //Set the previously visible slide to hidden
     all_slides[currentSlide].className = 'mySlides';
     //Get the current slide (loops back to 0 if greater than total slides)
@@ -113,12 +117,12 @@ setup_slideshow();
 
 function enable_controls() {
 
-document.getElementById("prev_button").addEventListener("click",function(e) {
-    previous_slide();
-});
+    document.getElementById("prev_button").addEventListener("click",function(e) {
+        previous_slide();
+    });
 
-document.getElementById("next_button").addEventListener("click",function(e) {
-    next_slide();
-});
+    document.getElementById("next_button").addEventListener("click",function(e) {
+        next_slide();
+    });
 
 }

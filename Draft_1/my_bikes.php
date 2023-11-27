@@ -68,7 +68,7 @@ if(!isset($_SESSION["loggedin"])) {
                                     <img src="https://media2.giphy.com/media/Hcw7rjsIsHcmk/giphy.gif?cid=6c09b952cjxdhkrbi9tl7515lu0o6wc4mcfhuskt6sxf363l&ep=v1_gifs_search&rid=giphy.gif&ct=g"
                                         class="user_picture"></img>
                                 </div>
-                                <h1>Hi {{NAME}}!</h1>
+                                <h1>Hi <?php echo htmlspecialchars($_SESSION["username"]);?></h1>
                                 <div class="main_body_text">
                                     <p>Welcome to *<b>Your</b>* bikes</p>
                                 </div>
