@@ -110,8 +110,20 @@ var temp_fetched_data =
             e.preventDefault();
             }
 
-            let ad_title_error_div = document.getElementById("ad_title_error_div");
-            let ad_title_error = ad_title_error_div.firstChild.innerText;
+            //Get any errors, to set in the edit
+            let ad_title_error = document.getElementById("ad_title_error_div").firstChild.innerText;
+            let bike_image_error = document.getElementById("bike_image_error_div").firstChild.innerText;
+            let bike_desc_error = document.getElementById("bike_desc_error").firstChild.innerText;
+            let bike_model_error = document.getElementById("bike_model_error_div").firstChild.innerText;
+            let lower_price_error = document.getElementById("lower_price_error_div").firstChild.innerText;
+            let upper_price_error = document.getElementById("upper_price_error_div").firstChild.innerText;
+            let bike_quality_error = document.getElementById("bike_quality_error_div").firstChild.innerText;
+            let bike_date_of_birth_error = document.getElementById("bike_date_of_birth_error").firstChild.innerText;
+            let bike_mileage_error = document.getElementById("bike_mileage_error_div").firstChild.innerText;
+            let bike_seats_error = document.getElementById("bike_seats_error_div").firstChild.innerText;
+            let favourite_bike_colour_error = document.getElementById("favourite_bike_colour_error").firstChild.innerText;
+            let bike_electric_error = document.getElementById("bike_electric_error_div").firstChild.innerText;
+            let other_media_error = document.getElementById("other_media_error").firstChild.innerText;
 
 
 
@@ -120,7 +132,7 @@ var temp_fetched_data =
             let advert_title = document.getElementById("title_container");
             advert_title.innerHTML = '<label for="advert_title">Title your advert</label>'
             advert_title.innerHTML += `<input type="text" value="${current_title}" id="advert_title" name="advert_title" autocomplete="off" required></input>`
-            
+            advert_title.innerHTML += `<div id="ad_title_error_div" class="error_div"><p>${ad_title_error}</p></div>`;
     
             //The below code overwrites the Bike's original price values, so this has to be done first
             let lower_price = document.getElementById("lower_price").innerText;
@@ -135,8 +147,8 @@ var temp_fetched_data =
     
             bike_image_column.innerHTML = '<label for="bike_pic">Upload Image of Bike</label>';
             bike_image_column.innerHTML += `<div id='current_bike_img_container'><img src='${current_bike_img_src}'/ style='max-width:180px;max-height:180px'><p>Current Image</p></div>`;
-    
             bike_image_column.innerHTML += '<input type="file" id="bike_pic" name="bike_pic" autocomplete="off"></input>';
+            bike_image_column.innerHTML += `<div id="bike_image_error_div" class="error_div"><p>${bike_image_error}</p></div>`;
             //bike_image_column.innerHTML += `<img id="current_bike_img" src="${current_bike_img_src}"/>`;
             
     
@@ -146,8 +158,10 @@ var temp_fetched_data =
             
             bike_desc.innerHTML = '<label for="bike_desc" id="checkboxLabel">Short Description</label>';
             bike_desc.innerHTML += `<textarea id="bike_desc" name="bike_desc" autocomplete="off" required></textarea>`
+            bike_desc.innerHTML += `<div id="bike_desc_error" class="error_div"><p>${bike_desc_error}</p></div>`;
             //Set the value of bike_desc to what it was before.
             document.getElementById("bike_desc").value = current_bike_desc;
+            
     
     
             //Edit Bike Column to make editable, and place current value 
@@ -156,7 +170,7 @@ var temp_fetched_data =
             let current_bike_model = document.getElementById("current_bike_model").innerText;
             bike_model_col.innerHTML = '<label for="bike_model">Enter the bike\'s model</label>';
             bike_model_col.innerHTML += `<input type="text" value="${current_bike_model}" id="bike_model" name="bike_model" autocomplete="off" required></input>`;
-    
+            bike_model_col.innerHTML += `<div id="bike_model_error_div" class="error_div"><p>${bike_model_error}</p></div>`;
             //Make price_row displayable
     
             let price_row = document.getElementById("price_row");
@@ -192,7 +206,7 @@ var temp_fetched_data =
             
             bike_birthday_col.innerHTML = `<label for="bike_date_of_birth">The year the bike was made</label>`
             bike_birthday_col.innerHTML += `<input value=${current_birthyear} type="number" min="1817" max="2099" step="1" placeholder="2023" id="bike_date_of_birth" name="bike_date_of_birth" autocomplete="off" required></input>`
-        
+            bike_birthday_col.innerHTML += `<div id="bike_date_of_birth_error" class="error_div"><p>${bike_date_of_birth_error}</p></div>`
             //Enable the bike mileage slider
 
             mileage_slider.removeAttribute("disabled");
@@ -212,7 +226,7 @@ var temp_fetched_data =
 
             seat_col.innerHTML = '<label for="bike_seats">Number of seats</label>';
             seat_col.innerHTML += `<input value=${seat_value} type="number" min="1" max="3" step="1" placeholder="1" id="bike_seats" name="bike_seats" autocomplete="off" required></input>`
-
+            seat_col.innerHTML += `<div id="bike_seats_error_div" class="error_div"><p>${bike_seats_error}</p></div>`;
             //Enable colour picker
             document.getElementById("favourite_bike_colour").removeAttribute("disabled");
             //Enable Electric option
@@ -231,7 +245,7 @@ var temp_fetched_data =
             other_media_column.innerHTML += `<div id='other_media_column'><${tagname} src='${current_other_media_img_src}'/ style='max-width:180px' alt="No other media!"></div><p>Currently</p>`;
     
             other_media_column.innerHTML += '<input type="file" id="bike_pic" name="upload_media" autocomplete="off"></input>';
-
+            other_media_column.innerHTML += `<div id="other_media_error" class="error_div"><p>${other_media_error}</p></div>`;
             //Finally, change the text of the edit button to save changes
             document.getElementById("edit_button").innerText = "Save Changes";
 

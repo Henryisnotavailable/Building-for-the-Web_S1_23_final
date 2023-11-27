@@ -272,14 +272,18 @@ width: 100%;
 
 }
 
+#bike_id {
+    display: none;
+}
+
 .input_row img {
-   max-width: 100%;
-   max-height: 100%;
+   max-width: 80%;
+   max-height: 80%;
    border: solid 1px;
 }
 
 #input_row_for_bike_image{
-    max-height: 250px;
+    max-height: 300px;
 }
 
 #other_media_row {
@@ -293,6 +297,15 @@ width: 100%;
 .other_media {
     max-width: 200px;
     max-height: 200px;
+}
+
+.error_div p {
+    color: white;
+    background-color: #e62739;
+    border-radius: 7px;
+    margin-top:5px;
+    padding-left: 5px;
+    padding-right: 5px;
 }
 
 .input_row #bike_image_column, .input_row #other_media_column {

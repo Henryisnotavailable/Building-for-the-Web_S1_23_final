@@ -1,5 +1,38 @@
 <?php
 
+
+function update_media($file_tempname,$extension,$old_name) {
+    
+
+    //If there is an old image, remove it
+    if (!is_null($old_name)) {
+        $path = pathinfo($old_name);
+        unlink($old_name);
+        //There are 2 files, the random file and the random file + extension
+        unlink($path["dirname"].'/'.$path["filename"]);
+    }
+
+    $target_path = "./assets/users/bikes";  
+    //Generate a new unique EMPTY file  
+    $tempname = tempnam($target_path,"img");
+
+    //New filename = random + old_extension
+    $target = $tempname . "." . $extension;
+
+    //Copy unique empty file to new filename 
+    copy($tempname,$target);
+
+    //Move temporary file from POST to ./assets/users/bikes/
+    move_uploaded_file($file_tempname,$target);
+    //tempnam returns a FULL path (e.g. /var/www/html/...) I just want a relative path
+    $relative_path =  $target_path."/". basename($target);
+
+    //unlink($target);
+    //unlink($tempname);
+    error_log("DEBUG: Replacing old image {$old_name} with {$relative_path}",0);
+    return $relative_path;
+}
+
 session_start();
 
 
@@ -15,7 +48,7 @@ if (!isset($_GET["id"]) && $_SERVER["REQUEST_METHOD"] == "GET") {
 
     //Validate all receieved data
     //Set all variables to ""
-    $ad_title = $bike_model = $asking_price_lower = $asking_price_upper = $bike_date_of_birth  = $bike_seats = $is_bike_electric = $bike_bio = "";
+    $page_title = $page_bike_lower_price = $page_bike_upper_price = $page_description = $page_bike_model = $page_bike_lower_price = $page_bike_upper_price = $page_bike_quality = $page_bike_manufacture_year = $page_bike_mileage = $page_num_seats = $page_colour = $page_is_electric = $page_other_media_url = $page_profile_url = $page_username = $page_registration_date = $page_telephone = $page_pronouns = $page_email = $page_favourite_bike = $page_user_description = '';
     $ad_title_error = $bike_model_error = $asking_price_lower_error = $asking_price_upper_error = $bike_quality_error = $bike_date_of_birth_error = $bike_mileage_error = $bike_seats_error = $is_bike_electric_error = $bike_colour_error = $bike_bio_error = "";
     
     //$ad_title_error = "Potato";
@@ -40,6 +73,7 @@ description,bike_model,bike_lower_price,bike_upper_price,bike_quality,
 bike_mileage,manufacture_year,num_seats,other_media_url,colour,image_url,is_electric
 FROM bike_details WHERE vehicle_id = ?";
 
+    //Load the page with bike data
     if ($q = $mysqli->prepare($sql)) {
         $param_vehicle_id = $_GET["id"];
         $q->bind_param("s", $param_vehicle_id);
@@ -159,18 +193,474 @@ FROM bike_details WHERE vehicle_id = ?";
         }
     }
 
+    //If user posted data (e.g. if editing) then handle it
+    
 
-    $mysqli->close();
+
+
+} 
+else if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+    //Get current values of vehicle
+    $bike_id = $_POST["bike_id"];
+    $select_sql = "SELECT vehicle_id,user_id,advert_title,
+    description,bike_model,bike_lower_price,bike_upper_price,bike_quality,
+    bike_mileage,manufacture_year,num_seats,other_media_url,colour,image_url,is_electric
+    FROM bike_details WHERE vehicle_id = ?";
+
+if ($q = $mysqli->prepare($select_sql)) {
+    
+    $q->bind_param("s", $bike_id);
+    //Execute query
+    if ($q->execute()) {
+        //Store query result
+        $q->store_result();
+
+        if ($q->num_rows > 0) {
+            $q->bind_result($vehicle_id, $owner_user_id, $title, $description, $bike_model, $bike_lower_price, $bike_upper_price, $bike_quality, $bike_mileage, $manufacture_year, $num_seats, $other_media_url, $colour, $image_url, $is_electric);
+            //Get the bike
+            if ($q->fetch()) {
+                //If user tries editing a bike that's not theirs, then redirect to a viewer page
+                if ($owner_user_id !== $_SESSION["id"]) {
+                    error_log("DEBUG: User doesn't own this bike... Redirecting", 0);
+                    header("Location: a_bike_viewer.php?msg=You are not the owner of this bike");
+                    exit;
+                }
+
+
+
+
+            }
+
+
+
+        }
+
+
+        //Bike doesn't exist
+        else {
+            //Just log it
+            error_log("ERROR: No results for user {$_SESSION['username']}", 0);
+            echo("That bike doesn't exist");
+            exit;
+        }
+        $q->close();
+
+    } else {
+        error_log("ERROR: Could not execute query", 0);
+    }
+
+
+
+    $valid = true;
+
+    //Ad Title validation
+    if (!isset($_POST["advert_title"])) {
+        $valid = false;
+        $ad_title_error = "!!! Please set advert title !!!";
+    } else if (empty(trim($_POST["advert_title"]))) {
+        $ad_title_error = "!!! The advert title cannot be empty !!!";
+        $valid = false;
+    } elseif (!preg_match("/[a-zA-Z0-9_'\-\.]{4,50}/", trim($_POST["advert_title"]))) {
+        $ad_title_error = "!!! Invalid advert title, it should be less than 50 alphanumeric characters !!!";
+        $valid = false;
+        $ad_title = htmlspecialchars($_POST["advert_title"]);
+    } else {
+        $ad_title = htmlspecialchars($_POST["advert_title"]);
+    }
+    //End ad title validation
+    //Validate bike model
+    if (!isset($_POST["bike_model"])) {
+        $valid = false;
+        $bike_model_error = "!!! Please set bike model !!!";
+    } else if (empty(trim($_POST["bike_model"]))) {
+        $bike_model_error = "!!! The bike model cannot be empty !!!";
+        $valid = false;
+    } elseif (!preg_match("/[a-zA-Z0-9_'\-\.]{4,30}/", trim($_POST["bike_model"]))) {
+        $bike_model_error = "!!! Invalid bike model, it should be less than 30 alphanumeric characters !!!";
+        $valid = false;
+        $page_bike_model = htmlspecialchars($_POST["bike_model"]);
+    } else {
+        $page_bike_model = htmlspecialchars($_POST["bike_model"]);
+    }
+    //End of bike model validation
+
+    //Validate lower and upper asking price
+    if (!isset($_POST["asking_price_lower"])) {
+        $valid = false;
+        $asking_price_lower_error = "!!! Please set lower asking price !!!";
+    } else if (empty(trim($_POST["asking_price_lower"]))) {
+        $asking_price_lower_error = "!!! The lower asking price cannot be empty !!!";
+        $valid = false;
+    }
+
+
+
+
+    if (!isset($_POST["asking_price_upper"])) {
+        $valid = false;
+        $asking_price_upper_error = "!!! Please set upper asking price !!!";
+    } else if (empty(trim($_POST["asking_price_upper"]))) {
+        $asking_price_upper_error = "!!! The upper asking price cannot be empty !!!";
+        $valid = false;
+    }
+
+    $both_positive = true;
+    //Check if positive number
+    if (!ctype_digit(trim($_POST["asking_price_lower"]))) {
+        $asking_price_lower_error = "!!! Invalid lower asking price, it must be a positive whole number !!!";
+        $valid = false;
+        $page_bike_lower_price = htmlspecialchars($_POST["asking_price_lower"]);
+        $both_positive = false;
+    }
+
+    if (!ctype_digit(trim($_POST["asking_price_upper"]))) {
+        $asking_price_upper_error = "!!! Invalid upper asking price, it must be a positive whole number !!!";
+        $valid = false;
+        $page_bike_upper_price = htmlspecialchars($_POST["asking_price_upper"]);
+        $both_positive = false;
+    }
+
+    //If both are numbers, cast to ints
+    if ($both_positive === true) {
+        $lower_int = intval(trim($_POST["asking_price_lower"]));
+        $upper_int = intval(trim($_POST["asking_price_upper"]));
+
+        if ($lower_int > $upper_int) {
+            $asking_price_lower_error = $asking_price_upper_error = "!!! The lower price cannot be more than the upper price !!!";
+            $valid = false;
+        } else if ($lower_int > 10000 || $lower_int < 50) {
+            $asking_price_lower_error = "!!! Lower asking price must be between 50 - 10,000!!!";
+            $valid = false;
+        }
+
+        if ($upper_int > 10000 || $upper_int < 50) {
+            $asking_price_upper_error = "!!! Upper asking price must be between 50 - 10,000!!!";
+            $valid = false;
+        }
+
+        $page_bike_upper_price = htmlspecialchars($_POST["asking_price_upper"]);
+        $page_bike_lower_price = htmlspecialchars($_POST["asking_price_lower"]);
+
+    }
+    //End of bike price validation
+
+    //Validate bike quality values
+    if (!isset($_POST["bike_quality"])) {
+        $valid = false;
+        $bike_quality_error = "!!! Please set bike quality !!!";
+    }
+    //This was throwing when the user set bike quality to 0 (Broken) because empty(0) === true
+    else if (empty(trim($_POST["bike_quality"])) && strlen(trim($_POST["bike_quality"])) == 0) {
+        $bike_quality_error = "!!! The bike quality cannot be empty !!!";
+        $valid = false;
+    }
+
+    //If the user submits via HTML this >should< always be a number (because it's a slider)
+    else if (!ctype_digit($_POST["bike_quality"])) {
+        $bike_quality_error = "!!! The bike quality must be a number between 0-5 !!!";
+        $valid = false;
+    } elseif (intval(trim($_POST["bike_quality"])) > 5 || intval(trim($_POST["bike_quality"])) < 0) {
+        $bike_quality_error = "!!! Invalid bike quality, it should be a number between 0-5 !!!";
+        $valid = false;
+    } else {
+        $page_bike_quality = htmlspecialchars($_POST["bike_quality"]);
+    }
+    //End of validation for bike quality values
+
+    //Validate bike manufacture year
+    if (!isset($_POST["bike_date_of_birth"])) {
+        $valid = false;
+        $bike_date_of_birth_error = "!!! Please set bike year of birth !!!";
+    } else if (empty(trim($_POST["bike_date_of_birth"]))) {
+        $bike_date_of_birth_error = "!!! The bike year of birth cannot be empty !!!";
+        $valid = false;
+    }
+
+    //If the user submits via HTML this >should< always be a number (because it's a slider)
+    else if (!ctype_digit($_POST["bike_date_of_birth"])) {
+        $bike_date_of_birth_error = "!!! The bike year of birth must be a number !!!";
+        $valid = false;
+        $page_bike_manufacture_year = htmlspecialchars($_POST["bike_date_of_birth"]);
+
+    }
+
+
+    //If bike was made in the future, error
+    elseif (intval(trim($_POST["bike_date_of_birth"])) > intval((new DateTime)->format("Y"))) {
+        $bike_date_of_birth_error = "!!! The bike cannot be made in the future, sorry... !!!";
+        $page_bike_manufacture_year = htmlspecialchars($_POST["bike_date_of_birth"]);
+        $valid = false;
+    }
+
+    //If bike was made before the first ever bike (Full disclosure, 1817 was the first result from google. It may be wrong)
+    elseif (intval(trim($_POST["bike_date_of_birth"])) < 1817) {
+        $bike_date_of_birth_error = "!!! The first bike was made in 1817, I doubt your bike was made before that !!!";
+        $page_bike_manufacture_year = htmlspecialchars($_POST["bike_date_of_birth"]);
+        $valid = false;
+    } else {
+        $page_bike_manufacture_year = htmlspecialchars($_POST["bike_date_of_birth"]);
+    }
+
+    //End of bike manufacture date validation
+
+    //Validate bike mileage values
+
+    if (!isset($_POST["bike_mileage"])) {
+        $valid = false;
+        $bike_mileage_error = "!!! Please set bike mileage !!!";
+    } else if (empty(trim($_POST["bike_mileage"]))) {
+        $bike_mileage_error = "!!! The bike mileage cannot be empty !!!";
+        $valid = false;
+    }
+
+    //If the user submits via HTML this >should< always be a number (because it's a slider)
+    else if (!ctype_digit($_POST["bike_mileage"])) {
+        $bike_mileage_error = "!!! The bike mileage must be a ->number<- between 0-1100+ !!!";
+        $valid = false;
+        $page_bike_mileage = htmlspecialchars($_POST["bike_mileage"]);
+    } elseif (intval(trim($_POST["bike_mileage"])) > 1100 || intval(trim($_POST["bike_mileage"])) < 0) {
+        $bike_mileage_error = "!!! The bike mileage must be a number between 0-1100+ !!!";
+        $valid = false;
+        $page_bike_mileage = htmlspecialchars($_POST["bike_mileage"]);
+    }
+
+    //Check if divisible by 100, to ensure the value is in steps of 100 (same as the HTML slider)
+    elseif (intval(trim($_POST["bike_mileage"])) % 100 !== 0) {
+        $bike_mileage_error = "!!! The bike mileage must be a number divisible by 100 between 0-1100+ (e.g. 300, 700, 1000) !!!";
+        $valid = false;
+        $page_bike_mileage = htmlspecialchars($_POST["bike_mileage"]);
+    } else {
+        $page_bike_mileage = htmlspecialchars($_POST["bike_mileage"]);
+    }
+    //End of validation for bike mileage values
+
+
+
+    //Start of Bike seats validation
+
+    if (!isset($_POST["bike_seats"])) {
+        $valid = false;
+        $bike_seats_error = "!!! Please set bike seats !!!";
+    } else if (empty(trim($_POST["bike_seats"]))) {
+        $bike_seats_error = "!!! The bike seats cannot be empty !!!";
+        $valid = false;
+    }
+
+    //If the user submits via HTML this >should< always be a number (because it's a slider)
+    else if (!ctype_digit($_POST["bike_seats"])) {
+        $bike_seats_error = "!!! The bike seat must be a ->number<- between 1-3 !!!";
+        $valid = false;
+        $page_num_seats = htmlspecialchars($_POST["bike_seats"]);
+    } elseif (intval(trim($_POST["bike_seats"])) > 3 || intval(trim($_POST["bike_seats"])) < 1) {
+        $bike_seats_error = "!!! The bike seat must be a ->number<- between 1-3 !!!";
+        $valid = false;
+        $page_num_seats = htmlspecialchars($_POST["bike_seats"]);
+    } else {
+        $page_num_seats = htmlspecialchars($_POST["bike_seats"]);
+    }
+    //End of validation for bike seats
+
+    //Start of Bike seats validation
+//If a checkbox is NOT selected, it isn't even sent.
+    if (isset($_POST["is_electric"])) {
+        $page_is_electric = "checked";
+    } else {
+        $page_is_electric = "";
+    }
+    //End of bike seats validation
+
+    //Validate bike colour
+
+    $colour_pattern = "/#[a-fA-F0-9]{6}/";
+    if (!isset($_POST["favourite_bike_colour"])) {
+        $valid = false;
+        $bike_colour_error = "!!! Please set bike colour !!!";
+    } else if (empty(trim($_POST["favourite_bike_colour"]))) {
+        $bike_colour_error = "!!! The bike colour cannot be empty !!!";
+        $valid = false;
+    }
+
+    //If not matches hex pattern like #BEDEAD
+    else if (!preg_match($colour_pattern, trim($_POST["favourite_bike_colour"]))) {
+        $bike_colour_error = "!!! The bike colour must be a valid hex code with # !!!";
+        $valid = false;
+        $page_colour = htmlspecialchars($_POST["favourite_bike_colour"]);
+    } else {
+        $page_colour = htmlspecialchars($_POST["favourite_bike_colour"]);
+    }
+    //End bike colour validation
+
+    //Validate bike description (Not required)
+    if (isset($_POST["bike_desc"])) {
+
+
+
+        //200 Characters is the max length
+        if (strlen($_POST["bike_desc"]) > 200) {
+            $bike_bio_error = "!!! The bike description cannot be more than 200 characters !!!";
+            $valid = false;
+            $page_description = htmlspecialchars($_POST["bike_desc"]);
+        } else {
+            $page_description = htmlspecialchars($_POST["bike_desc"]);
+        }
+    }
+    //End bike description validation
+
+
+    //Validate bike_pic, we will save it later
+    if (file_exists($_FILES['bike_pic']['tmp_name']) || is_uploaded_file($_FILES['bike_pic']['tmp_name'])) {
+
+
+        $original_file_name = strtolower($_FILES["bike_pic"]["name"]);
+        $bike_img_extension = pathinfo($original_file_name, PATHINFO_EXTENSION);
+
+        //Get the filetype of the "image"
+        $mime_type = exif_imagetype($_FILES["bike_pic"]["tmp_name"]);
+        //Allowed Extensions
+        $allowed_ext = array('gif', 'png', 'jpg', "jpeg", "webp");
+        $allowed_mime_type = array(IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_PNG, IMAGETYPE_WEBP);
+        $str_extensions = implode(", ", $allowed_ext);
+        //If extension not allowed, error
+        if (!in_array($bike_img_extension, $allowed_ext)) {
+            $bike_photo_error = "!!! Only {$str_extensions} extensions allowed !!!";
+            $valid = false;
+        }
+
+        //Check if a valid image mime type
+        else if (!in_array($mime_type, $allowed_mime_type)) {
+            $bike_photo_error = "!!! Only {$str_extensions} file types allowed !!!";
+            $valid = false;
+        }
+
+        //Because this is updating the image, if the user DOESN'T want to update, keep the old one
+    } else {
+
+        $bike_photo_error = "!!! DEBUG: not updating bike image !!!";
+
+
+    }
+    //End of bike_pic validation
+
+
+
+    //Validate extra media (not required, so no error if not there)
+
+    if (isset($_FILES["upload_media"])) {
+
+        if (file_exists($_FILES['upload_media']['tmp_name']) || is_uploaded_file($_FILES['upload_media']['tmp_name'])) {
+            error_log("Hit media upload part", 0);
+            $original_file_name = strtolower($_FILES["upload_media"]["name"]);
+            $other_media_extension = pathinfo($original_file_name, PATHINFO_EXTENSION);
+            error_log($other_media_extension, 0);
+            //Get the filetype of the "image"
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $mime_type = finfo_file($finfo, $_FILES["upload_media"]["tmp_name"]);
+            //Allowed Extensions
+            $allowed_ext = array('gif', 'png', 'jpg', "jpeg", "webm", "mp4", "webp", "ogg", "ogv");
+            $allowed_mime_type = array("image/gif", "image/png", "image/jpg", "image/jpeg", "video/mp4", "video/webm", "video/webp", "video/ogg");
+            $str_extensions = implode(", ", $allowed_ext);
+
+            //If extension not allowed, error
+            if (!in_array($other_media_extension, $allowed_ext)) {
+                $bike_other_media_error = "!!! Only {$str_extensions} extensions allowed !!!";
+                $valid = false;
+            }
+
+            //Check if a valid image mime type
+            else if (!in_array($mime_type, $allowed_mime_type)) {
+                $bike_other_media_error = "!!! Only {$str_extensions} file types allowed !!!";
+                $valid = false;
+            }
+        }
+
+        //If file is too big, then handle
+        else if ($_FILES["upload_media"]["error"] === UPLOAD_ERR_INI_SIZE) {
+            $max_upload = (int) (ini_get('upload_max_filesize'));
+            $bike_other_media_error = "!!! Sorry, uploaded file is too big, max size is {$max_upload}MB!!!";
+            $valid = false;
+        }
+
+
+
+
+    }
+
+    if ($valid == true) {
+
+        $relative_bike_media_path = $other_media_url;
+        $relative_bike_img_path = $image_url;
+
+        //If user set a new bike, update it
+        if (isset($bike_img_extension)) {
+            //Save image to disk, and return relative path. This removes the old image with the new
+            $relative_bike_img_path = update_media($_FILES["bike_pic"]["tmp_name"], $bike_img_extension, $image_url);
+        } 
+
+        if (file_exists($_FILES['upload_media']['tmp_name']) || is_uploaded_file($_FILES['upload_media']['tmp_name'])) {
+            //Save media to disk and return relative path
+            $relative_bike_media_path = update_media($_FILES["upload_media"]["tmp_name"], $other_media_extension, $other_media_url);
+        }
+
+
+
+        $page_image_url = htmlspecialchars($relative_bike_img_path);
+
+        $sql_insert_statement = "UPDATE bike_details 
+            SET 
+            advert_title = ?, description = ?, bike_model = ?, bike_lower_price = ?,
+            bike_upper_price = ?, bike_quality = ?, bike_mileage = ?, manufacture_year = ?, 
+            num_seats = ?, other_media_url = ?, image_url = ?, colour = ?, is_electric = ?  
+            WHERE vehicle_id = ?";
+
+
+        if ($statement = $mysqli->prepare($sql_insert_statement)) {
+            error_log("DEBUG: Binding parameters to UPDATE statement", 0);
+            $statement->bind_param("sssiiiisisssii", $param_advert_title, $param_description, $param_bike_model, $param_bike_lower_price, $param_bike_upper_price, $param_bike_quality, $param_bike_mileage, $param_manufacture_year, $param_num_seats, $param_other_media_url, $param_image_url, $param_colour, $param_is_electric, $param_vehicle_id);
+            //$param_user_id = $_SESSION["id"];
+            $param_vehicle_id = $_POST["bike_id"];
+            $param_advert_title = trim($_POST["advert_title"]);
+            $param_description = trim($_POST["bike_desc"]);
+            $param_bike_model = trim($_POST["bike_model"]);
+            $param_bike_lower_price = intval(trim($_POST["asking_price_lower"]));
+            $param_bike_upper_price = intval(trim($_POST["asking_price_upper"]));
+            $param_bike_quality = intval(trim($_POST["bike_quality"]));
+            $param_bike_mileage = intval(trim($_POST["bike_mileage"]));
+            $param_manufacture_year = (trim($_POST["bike_date_of_birth"]));
+            $param_num_seats = intval(trim($_POST["bike_seats"]));
+            $param_other_media_url = $relative_bike_media_path;
+            $param_image_url = $relative_bike_img_path;
+            $param_colour = $_POST["favourite_bike_colour"];
+            $param_is_electric = $is_bike_electric ? 1 : 0;
+
+
+
+            if ($statement->execute()) {
+                //Get the last inserted ID, to redirect the user
+                
+                header("Location: a_bike_owner.php?id={$_POST['bike_id']}");
+            } else {
+                error_log("ERROR: Executing statement", 0);
+            }
+
+            $statement->close();
+
+        } else {
+            error_log("ERROR: Could not prepare statement", 0);
+        }
+
+
+    } else {
+        $error = "!!! Errors, please review !!!";
+        
+    }
+
 }
 
-elseif ($_SERVER["REQUEST_METHOD"] == "POST") {
-
-
-
-
-
 }
 
+
+$mysqli->close();
 
 ?>
 
@@ -231,8 +721,9 @@ elseif ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <div class="main_body_container">
                             <h1><u>Bike Info</u></h1>
 
-                            <form id="sell_form" action="<?php echo htmlspecialchars($_SERVER["SELF"])?>"
+                            <form id="sell_form" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"])?>"
                                 method="post" enctype="multipart/form-data">
+                                <input id="bike_id" name="bike_id" value="<?php echo $_SERVER["REQUEST_METHOD"] == "GET" ? $_GET["id"]:"" ?>"></input>
                                 <div class="form_main">
 
 
@@ -277,7 +768,7 @@ elseif ($_SERVER["REQUEST_METHOD"] == "POST") {
                                             <h2>Bike model</h2>
                                             <div class="bike_model_container">
                                                 <p id="current_bike_model"><?php echo $page_bike_model;?></p>
-                                                <div id="ad_title_error_div" class="error_div"><p><?php echo $bike_model_error; ?></p></div>
+                                                <div id="bike_model_error_div" class="error_div"><p><?php echo $bike_model_error; ?></p></div>
                                             </div>
                                         </div>
 
@@ -469,6 +960,12 @@ elseif ($_SERVER["REQUEST_METHOD"] == "POST") {
         </footer>
     </article>
     <script src="./a_bike_owner.js"></script>
+    <?php
+    //If the user is POSTing data, then they should be put back into edit mode, to avoid repressing the button
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    echo "<script>setup_edit(null)</script>";
+    };
+    ?>
 </body>
 
 </html>
