@@ -8,7 +8,151 @@ if(!isset($_SESSION["loggedin"])) {
     exit;
 }
 
+if(!isset($_GET["id"])) {
+    header("Location: index.php?msg=Please choose a bike and its ID");
+    exit;
+}
 
+require_once "config.php";
+
+$bike_id = $_GET["id"];
+
+$sql = "SELECT vehicle_id,user_id,advert_title,
+description,bike_model,bike_lower_price,bike_upper_price,bike_quality,
+bike_mileage,manufacture_year,num_seats,other_media_url,colour,image_url,is_electric
+FROM bike_details WHERE vehicle_id = ?";
+
+if ($q = $mysqli->prepare($sql)) {
+    $param_vehicle_id = $_GET["id"];
+    $q->bind_param("s", $param_vehicle_id);
+    //Execute query
+    if($q->execute()) {
+        //Store query result
+        $q->store_result();
+
+        if($q->num_rows > 0) {
+            $q->bind_result($vehicle_id,$owner_user_id,$title,$description, $bike_model, $bike_lower_price,$bike_upper_price,$bike_quality,$bike_mileage,$manufacture_year,$num_seats,$other_media_url,$colour,$image_url,$is_electric);
+            //Get the bike
+            if ($q -> fetch()) {
+                //If user tries viewing a bike that's not theirs, then redirect to a viewer page
+                if ($owner_user_id !== $_SESSION["id"]) {
+                    error_log("DEBUG: User doesn't own this bike... Redirecting",0);
+                    header("Location: a_bike_viewer.php?msg=You are not the owner of this bike");
+                    exit;
+                }
+
+
+
+                error_log("DEBUG: HIT {$bike_id}",0);
+                $page_vehicle_id = htmlspecialchars($vehicle_id);
+                $page_title = htmlspecialchars($title);
+                $page_description = htmlspecialchars($description);
+                $page_image_url = htmlspecialchars($image_url);
+                $page_bike_model = htmlspecialchars($bike_model);
+                $page_bike_lower_price = htmlspecialchars($bike_lower_price);
+                $page_bike_upper_price = htmlspecialchars($bike_upper_price);
+                $page_bike_quality = htmlspecialchars($bike_quality);
+                $page_bike_mileage = htmlspecialchars($bike_mileage);
+                $page_bike_manufacture_year = htmlspecialchars($manufacture_year);
+                $page_num_seats = htmlspecialchars($num_seats);
+                $page_other_media_url = htmlspecialchars($other_media_url);
+                $page_colour = htmlspecialchars($colour);
+
+                $page_is_electric = ($is_electric == 1) ? "checked" : "";
+
+                
+            }
+
+
+           
+        }
+        
+
+        //Bike doesn't exist
+        else {
+            //Just log it
+            error_log("ERROR: No results for user {$_SESSION['username']}",0);
+            exit;
+        }
+        $q->close();
+
+    }
+
+    else {
+        error_log("ERROR: Could not execute query",0);
+    }
+
+    
+
+}
+
+
+
+else {
+    error_log("ERROR: Failed preparing statement",0);
+}
+
+//If the bike has been loaded, show the owner's details
+if (isset($owner_user_id)) {
+    $sql = "SELECT profile_url,username,registration_date,telephone,pronouns,email,favourite_bike,description FROM users WHERE user_id = ?";
+
+if ($q = $mysqli->prepare($sql)) {
+    $param_user_id = $owner_user_id;
+    $q->bind_param("s", $param_user_id);
+    //Execute query
+    if($q->execute()) {
+        //Store query result
+        $q->store_result();
+
+        if($q->num_rows > 0) {
+            $q->bind_result($param_profile_url,$param_username,$param_registration_date,$param_telephone,$param_pronouns,$param_email,$param_favourite_bike,$param_description);
+            //Get the bike
+            if ($q -> fetch()) {
+                error_log("DEBUG: HIT {$param_username}",0);
+                $page_profile_url = htmlspecialchars($param_profile_url);
+                $page_username = htmlspecialchars($param_username);
+                $page_registration_date = htmlspecialchars($param_registration_date);
+                $page_telephone = htmlspecialchars($param_telephone);
+                $page_pronouns = htmlspecialchars($param_pronouns);
+                $page_email = htmlspecialchars($param_email);
+                $page_favourite_bike = htmlspecialchars($param_favourite_bike);
+                $page_user_description = htmlspecialchars($param_description);
+
+                
+            }
+
+
+           
+        }
+        
+
+        //Bike doesn't exist
+        else {
+            //Just log it
+            error_log("ERROR: No results for user {$_SESSION['username']}",0);
+            exit;
+        }
+        $q->close();
+
+    }
+
+    else {
+        error_log("ERROR: Could not execute query",0);
+    }
+
+    
+
+}
+
+
+
+else {
+    error_log("ERROR: Failed preparing statement",0);
+}
+}
+
+
+$mysqli->close();
 
 ?>
 
@@ -69,7 +213,7 @@ if(!isset($_SESSION["loggedin"])) {
                         <div class="main_body_container">
                             <h1><u>Bike Info</u></h1>
 
-                            <form id="sell_form" action="a_bike_owner.html"
+                            <form id="sell_form" action="a_bike_owner.php"
                                 method="post" enctype="multipart/form-data">
                                 <div class="form_main">
 
@@ -83,7 +227,7 @@ if(!isset($_SESSION["loggedin"])) {
                                         <div class="input_col" id="title_container">
                                             <h1>Advert Title</h1>
                                             <div id="advert_title_container">
-                                                <h3 id="current_title">Something Witty</h3>
+                                                <h3 id="current_title"><?php echo $page_title;?></h3>
                                             </div>
                                         </div>
                                     </div>
@@ -91,10 +235,10 @@ if(!isset($_SESSION["loggedin"])) {
                                     <div class="input_row" id="input_row_for_bike_image">
                                         <div class="input_col" id="bike_image_column">
                                             
-                                            <img id="current_bike_img" src="./assets/images/bike_2.jpg"></img>
+                                            <img id="current_bike_img" src="<?php echo $page_image_url;?>"></img>
                         
-                                            <p id="price_range">Selling for between <b>£<span id="lower_price">1000</span></b>
-                                                - <b>£<span id="upper_price">2000</span></b></p>
+                                            <p id="price_range">Selling for between <b>£<span id="lower_price"><?php echo $page_bike_lower_price;?></span></b>
+                                                - <b>£<span id="upper_price"><?php echo $page_bike_upper_price;?></span></b></p>
                                         </div>
                                     </div>
 
@@ -103,7 +247,7 @@ if(!isset($_SESSION["loggedin"])) {
                                         <div class="input_col" id="bike_desc_col">
                                             <h2>Short Description</h2>
                                             <div class="bike_desc">
-                                                <p id="current_bike_desc"><i>This is a super nice bicycle, sold for $1000000 at auction, with less than 1 mile</i></p>
+                                                <p id="current_bike_desc"><i><?php echo $page_description;?></i></p>
                                             </div>
                                         </div>
                                     </div>
@@ -112,7 +256,7 @@ if(!isset($_SESSION["loggedin"])) {
                                         <div class="input_col" id="bike_model_col">
                                             <h2>Bike model</h2>
                                             <div class="bike_model_container">
-                                                <p id="current_bike_model">Helicopter</p>
+                                                <p id="current_bike_model"><?php echo $page_bike_model;?></p>
                                             </div>
                                         </div>
 
@@ -125,7 +269,7 @@ if(!isset($_SESSION["loggedin"])) {
                                             <label for="asking_price_lower">Select lower asking price (£)</label>
                                             <input type="number" min="50" max="10000" placeholder="1000" step="10"
                                                 id="asking_price_lower" name="asking_price_lower" autocomplete="off"
-                                                readonly></input>
+                                                readonly value="<?php echo $page_bike_lower_price;?>"></input>
 
                                         </div>
 
@@ -133,7 +277,7 @@ if(!isset($_SESSION["loggedin"])) {
                                             <label for="asking_price_upper">Select upper asking price (£)</label>
                                             <input type="number" min="50" max="10000" placeholder="2000" step="10"
                                                 id="asking_price_upper" name="asking_price_upper" autocomplete="off"
-                                                readonly></input>
+                                                readonly value="<?php echo $page_bike_upper_price;?>"></input>
                                         </div>
                                     </div>
                                     <!--End of hidden row before EDIT is pressed-->
@@ -145,7 +289,7 @@ if(!isset($_SESSION["loggedin"])) {
                                             <label for="bike_quality">Bike quality: <span
                                                     id="bike_slider_value">Ok</span></label>
                                             <input id="bike_quality" autocomplete="off" type="range" min="0" max="5"
-                                                step="1" value=3 class="slider" name="bike_quality" disabled></input>
+                                                step="1" value=<?php echo $page_bike_quality;?> class="slider" name="bike_quality" disabled></input>
 
 
                                         </div>
@@ -153,7 +297,7 @@ if(!isset($_SESSION["loggedin"])) {
                                         <div class="input_col" id="bike_birthday_col">
                                             <h2>The year the bike was made</h2>
                                             <div class="bike_birthday_container">
-                                                <p id="current_birthday">2025</p>
+                                                <p id="current_birthday"><?php echo $page_bike_manufacture_year;?></p>
                                             </div>
                                         </div>
                                     </div>
@@ -162,10 +306,10 @@ if(!isset($_SESSION["loggedin"])) {
 
                                     <div class="input_row">
                                         <div class="input_col">
-                                            <label for="bike_mileage">Select bike mileage: <span id="bike_mileage_span">
+                                            <label for="bike_mileage">Bike mileage: <span id="bike_mileage_span">
                                                     < 500 miles</span></label>
                                             <input id="bike_mileage" autocomplete="off" type="range" min="0" max="1100"
-                                                step="100" value=300 class="slider" name="bike_mileage"
+                                                step="100" value=<?php echo $page_bike_mileage;?> class="slider" name="bike_mileage"
                                                 disabled></input>
 
 
@@ -174,7 +318,7 @@ if(!isset($_SESSION["loggedin"])) {
                                         <div class="input_col" id="seat_col">
                                             <h2>Number of seats</h2>
                                             <div class="seat_container">
-                                                <p id="seat_value">2</p>
+                                                <p id="seat_value"><?php echo $page_num_seats;?></p>
                                             </div>
                                         </div>
                                     </div>
@@ -187,7 +331,7 @@ if(!isset($_SESSION["loggedin"])) {
 
                                         <div class="input_col" id="FaveColourBike">
                                             <h2>The Bike's Colour</h2>
-                                            <input type="color" value="#e62739" id="favourite_bike_colour"
+                                            <input type="color" value="<?php echo $page_colour;?>" id="favourite_bike_colour"
                                                 autocomplete="off" name="favourite_bike_colour" autocomplete="off"
                                                 disabled></input>
                                         </div>
@@ -195,7 +339,7 @@ if(!isset($_SESSION["loggedin"])) {
                                         <div class="input_col" id="electric_row">
                                             <h2>Is the bike electric?</h2>
                                             <input id="is_electric" autocomplete="off" type="checkbox" disabled
-                                                name="is_electric" checked><label for="is_electric"></label></input>
+                                                name="is_electric" <?php echo $page_is_electric;?>><label for="is_electric"></label></input>
 
 
                                         </div>
@@ -206,7 +350,7 @@ if(!isset($_SESSION["loggedin"])) {
                                         <div class="input_col" id="other_media_column">
                                             <h2>Other media of the Bike</h2>
                                             <img
-                                                src="https://gifdb.com/images/high/three-floating-fat-cats-3m2l3a79v6bght5d.gif" id="current_other_media_img"/>
+                                                src="<?php echo $other_media_url;?>" id="current_other_media_img" alt="No other media!"/>
 
                                         </div>
                                     </div>
@@ -246,17 +390,15 @@ if(!isset($_SESSION["loggedin"])) {
                         <h1>Seller Details</h1>
                         <br>
                         <div class="user_picture"><img
-                                src="https://static.vecteezy.com/system/resources/previews/008/530/693/original/white-cat-transparent-png.png" />
+                                src="<?php echo $page_profile_url; ?>" />
                         </div>
-                        <p id="username_line">Username - <b id="username_value">Mr Byk3</b></p>
-                        <p id="registered_line">Registered - <b id="registered_date_value">01/01/1970</b></p>
-                        <p id="mobile_line">Phone Number - <b id="bikes_sold_value">09884204998</b></p>
-                        <p id="pronouns_line">Preferred Pronouns - <b id="pronouns_value">he/him</b></p>
-                        <p id="email_line">Email - <b id="email_value">byk3r_br34k3r@protonmail.com</b></p>
-                        <p id="favourite_bike_line">Favourite Bike - <b id="favourite_bike_value">The 270th Brompton
-                                Mark 1</b></p>
-                        <p id="bio_line">Bio - <br><i id="bio_value">I like taking long walks with my bike, but I need
-                                the money, so I have to pimp it out :(</i></p>
+                        <p id="username_line">Username - <b id="username_value"><?php echo $page_username; ?></b></p>
+                        <p id="registered_line">Registered - <b id="registered_date_value"><?php echo $page_registration_date; ?></b></p>
+                        <p id="mobile_line">Phone Number - <b id="bikes_sold_value"><?php echo $page_telephone; ?></b></p>
+                        <p id="pronouns_line">Preferred Pronouns - <b id="pronouns_value"><?php echo $page_pronouns; ?></b></p>
+                        <p id="email_line">Email - <b id="email_value"><?php echo $page_email; ?></b></p>
+                        <p id="favourite_bike_line">Favourite Bike - <b id="favourite_bike_value"><?php echo $page_favourite_bike; ?></b></p>
+                        <p id="bio_line">Bio - <br><i id="bio_value"><?php echo $page_user_description; ?></i></p>
                     </div>
                 </div>
 

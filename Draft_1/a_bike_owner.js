@@ -221,7 +221,7 @@ var temp_fetched_data =
             //bike_image_column.innerHTML += "</img>"
     
             other_media_column.innerHTML = '<label for="bike_pic">Upload Other Media of Bike</label>';
-            other_media_column.innerHTML += `<div id='other_media_column'><img src='${current_other_media_img_src}'/ style='max-width:200px'></div><p>Currently</p>`;
+            other_media_column.innerHTML += `<div id='other_media_column'><img src='${current_other_media_img_src}'/ style='max-width:200px' alt="No other media!"></div><p>Currently</p>`;
     
             other_media_column.innerHTML += '<input type="file" id="bike_pic" name="upload_media" autocomplete="off"></input>';
 
