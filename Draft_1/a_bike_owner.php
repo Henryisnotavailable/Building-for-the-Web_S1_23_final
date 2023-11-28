@@ -679,6 +679,7 @@ else if ($_SERVER["REQUEST_METHOD"] == "DELETE") {
                     $image_url = $bind_image_url;
                     
                     if(!is_null($image_url)) {
+                        
                         $path = pathinfo($image_url);
                         unlink($image_url);
                         error_log("DEBUG: Removing {$image_url}");

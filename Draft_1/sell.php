@@ -361,6 +361,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
                 //Get the filetype of the "image"
                 $mime_type = exif_imagetype($_FILES["bike_pic"]["tmp_name"]);
+                error_log("DEBUG: Bike media mime type is {$mime_type}",0);
                 //Allowed Extensions
                 $allowed_ext = array('gif', 'png', 'jpg',"jpeg","webp");
                 $allowed_mime_type = array(IMAGETYPE_GIF,IMAGETYPE_JPEG,IMAGETYPE_PNG,IMAGETYPE_WEBP);
@@ -399,9 +400,10 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                     //Get the filetype of the "image"
                     $finfo = finfo_open(FILEINFO_MIME_TYPE);
                     $mime_type = finfo_file($finfo,$_FILES["upload_media"]["tmp_name"]);
+                    error_log("DEBUG: Additional media mime type is {$mime_type}",0);
                     //Allowed Extensions
                     $allowed_ext = array('gif', 'png', 'jpg',"jpeg","webm","mp4","webp","ogg","ogv");
-                    $allowed_mime_type = array("image/gif","image/png","image/jpg","image/jpeg","video/mp4","video/webm","video/webp","video/ogg");
+                    $allowed_mime_type = array("image/gif","image/png","image/jpg","image/jpeg","image/webp","video/mp4","video/webm","video/ogg");
                     $str_extensions = implode(", ",$allowed_ext);
                     
                     //If extension not allowed, error
@@ -427,7 +429,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
 
             if ($valid == true) {
-
+                error_log("DEBUG: Is valid",0);
                 $relative_bike_media_path = null;
 
                 if (isset($bike_img_extension)) {
