@@ -403,7 +403,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                     error_log("DEBUG: Additional media mime type is {$mime_type}",0);
                     //Allowed Extensions
                     $allowed_ext = array('gif', 'png', 'jpg',"jpeg","webm","mp4","webp","ogg","ogv");
-                    $allowed_mime_type = array("image/gif","image/png","image/jpg","image/jpeg","image/webp","video/mp4","video/webm","video/ogg");
+                    $allowed_mime_type = array("image/gif","image/png","image/jpg","image/jpeg","image/webpZ","video/mp4","video/webm","video/ogg");
                     $str_extensions = implode(", ",$allowed_ext);
                     
                     //If extension not allowed, error
@@ -757,6 +757,12 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         </footer>
     </article>
     <script src="./sell.js"></script>
+    <?php 
+    //Focus at bottom of page (the error message) if not valid
+    if ($valid === false) {
+        echo "<script>document.getElementById('error_message_row').scrollIntoView();</script>";
+    }
+    ?>
 </body>
 
 </html>
