@@ -4,7 +4,7 @@
 
 
 //Set API data to blank first
-let api_data = [];
+
 
 
 //Fetch the bikes' details
@@ -29,7 +29,7 @@ function display_bike_info(current_ad_jason) {
 
 async function setup_slideshow() {
     //Wait for the API response
-    api_data = await getOwnedBikes();
+    //api_data = await getOwnedBikes();
     //Once loaded, set listeners on the arrow buttons
     enable_controls();
     
