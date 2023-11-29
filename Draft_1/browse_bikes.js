@@ -57,9 +57,9 @@ function setup_slideshow() {
     //Set the first slide to visible, mySlides has a display:none, but showing has a display:flex.
     all_slides[0].className = "mySlides showing"
     //Get the first bike's information
-    let current_ad_jason = api_data[0];
-    //Display the info to the user.
-    display_bike_info(current_ad_jason)
+    //Go to the first slide, and display its information
+    currentSlide = 0;
+    goToSlide(currentSlide)
 }
 
 //Placeholder for API data to fetch random bikes
@@ -75,6 +75,8 @@ function goToSlide(n) {
     //Set the current slide to visible
     all_slides[currentSlide].className = "mySlides showing";
     console.log(api_data[currentSlide]);
+    //Set the value of current slide of total (e.g. slide 1 of 5)
+    document.getElementById("slide_count").innerText = `${currentSlide+1} of ${all_slides.length}`;
     //Display the current bike's data to the user
     display_bike_info(api_data[currentSlide]);
 }
@@ -131,7 +133,7 @@ document.getElementById("search_button").addEventListener("click",async (e) => {
     //Erorrs on output
     if (api_data.length == 0) {
         //document.getElementById("search_value").value = "No results!";
-        search_error.innerText = "!!! No results !!!";
+        search_error.innerText = "!!! No results, showing previous !!!";
     }
     else {
         //document.getElementById("search_value").value = `${api_data.length} results found!`
@@ -141,8 +143,9 @@ document.getElementById("search_button").addEventListener("click",async (e) => {
         while(slideshow.firstChild) {
             slideshow.removeChild(slideshow.firstChild)
         }
-        //display_bike_info(api_data[0]);
+        
         setup_slideshow(api_data);
+        
     }
     
 

@@ -38,7 +38,9 @@ $bike_results = [];
 //GET if the user browses to the page, POST will be a user searching for a specific bike
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
     //So this gets all bikes with owners that have a visibility of 1 (so Public)
-    $sql = "SELECT vehicle_id,user_id,advert_title,bike_details.description,bike_model,bike_lower_price,bike_upper_price,bike_quality,manufacture_year,colour,image_url from bike_details INNER JOIN users USING (user_id) WHERE visibility = 1";
+    $sql = "SELECT vehicle_id,user_id,advert_title,bike_details.description,bike_model,bike_lower_price,
+    bike_upper_price,bike_quality,manufacture_year,colour,image_url FROM bike_details 
+    INNER JOIN users USING (user_id) WHERE visibility = 1";
     //bike_details.description is needed as both tables have the description field, so just "description" is ambiguous
     
     if ($q = $mysqli->prepare($sql)) {
@@ -153,7 +155,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                                 </div>
 
                                 <form class="search_bar">
-                                    <label for="search_value">Search by title, model or price! </label>
+                                    <label for="search_value">Search by title, model or your desired price! </label>
                                     <input type="search" placeholder="Brompton Mark 1" id="search_value"><button type="submit" class="custom_button" id="search_button">Search!</button>
                                     <div class="error_div" id="search_error"><p id="search_error_msg"></p></div>
                                 </form> 
@@ -176,8 +178,9 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                                             <div class="slides" id="bike_slides">
 
                                             </div>
+                                            
                                         </div>
-
+                                        <p id="slide_count">1 of <?php echo sizeof($bike_results);?></p>
 
 
                                     </div>
