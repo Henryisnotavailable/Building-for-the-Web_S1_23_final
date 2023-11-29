@@ -2,6 +2,7 @@
 //For now, placeholder JSON array of expected values
 
 
+
 async function search_bike(query) {
 
     let response = await fetch(`./api/bike_search.php?query=${encodeURIComponent(query)}`);
@@ -19,7 +20,7 @@ function display_bike_info(current_ad_jason) {
     document.getElementById("BikeDescription").innerText = current_ad_jason.description;
 }
 
-function setup_slideshow(api_data) {
+function setup_slideshow() {
 
     if (api_data.length == 0) {
         
@@ -72,7 +73,8 @@ function goToSlide(n) {
     //Get the current slide (loops back to 0 if greater than total slides)
 	currentSlide = (n+all_slides.length)%all_slides.length;
     //Set the current slide to visible
-    all_slides[currentSlide].className = "mySlides showing"
+    all_slides[currentSlide].className = "mySlides showing";
+    console.log(api_data[currentSlide]);
     //Display the current bike's data to the user
     display_bike_info(api_data[currentSlide]);
 }
@@ -123,18 +125,27 @@ document.getElementById("search_button").addEventListener("click",async (e) => {
     }
 
 
-    let api_data = await search_bike(search_value);
+    api_data = await search_bike(search_value);
 
-    alert(api_data);
+    console.log(api_data);
     //Erorrs on output
     if (api_data.length == 0) {
-        document.getElementById("search_value").value = "No results!";
+        //document.getElementById("search_value").value = "No results!";
         search_error.innerText = "!!! No results !!!";
     }
     else {
-        document.getElementById("search_value").value = `${api_data.length} results found!`
-    setup_slideshow(api_data);
+        //document.getElementById("search_value").value = `${api_data.length} results found!`
+        search_error.innerText = `${api_data.length} results found!`;
+        slideshow = document.getElementById("bike_slides");
+        //This clears the slideshow, to get rid of any old searches
+        while(slideshow.firstChild) {
+            slideshow.removeChild(slideshow.firstChild)
+        }
+        //display_bike_info(api_data[0]);
+        setup_slideshow(api_data);
     }
+    
+
 
 })
 
