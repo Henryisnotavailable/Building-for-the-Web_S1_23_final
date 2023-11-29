@@ -403,7 +403,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                     error_log("DEBUG: Additional media mime type is {$mime_type}",0);
                     //Allowed Extensions
                     $allowed_ext = array('gif', 'png', 'jpg',"jpeg","webm","mp4","webp","ogg","ogv");
-                    $allowed_mime_type = array("image/gif","image/png","image/jpg","image/jpeg","image/webpZ","video/mp4","video/webm","video/ogg");
+                    $allowed_mime_type = array("image/gif","image/png","image/jpg","image/jpeg","image/webp","video/mp4","video/webm","video/ogg");
                     $str_extensions = implode(", ",$allowed_ext);
                     
                     //If extension not allowed, error
@@ -548,7 +548,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                         </li>
                         <li><a href="./my_bikes.php"><img src="./assets/icons/352313_bike_directions_icon.png" />My
                                 Bikes</a></li>
-                                <li><a href="#4"><img src="./assets/icons/4781848_bag_buy_cart_ecommerce_shop_icon.png" />Browse Bikes</a>
+                                <li><a href="./browse_bikes.php"><img src="./assets/icons/4781848_bag_buy_cart_ecommerce_shop_icon.png" />Browse Bikes</a>
                                 </li>
                         <li><a href="./about_auth.php"><img src="./assets/icons/430101_help_question_icon.png" />About Us</a>
                         </li>
@@ -759,7 +759,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     <script src="./sell.js"></script>
     <?php 
     //Focus at bottom of page (the error message) if not valid
-    if ($valid === false) {
+    if (isset($valid) && $valid === false) {
         echo "<script>document.getElementById('error_message_row').scrollIntoView();</script>";
     }
     ?>

@@ -269,7 +269,7 @@ var temp_fetched_data =
     } 
 
     async function delete_bike(e) {
-        alert("Lol, deleting the bike then...");
+
         let bike_id = document.getElementById("bike_id").value;
         const response = await fetch(`./a_bike_owner.php?bike_id=${bike_id}`, {
             method: "DELETE"

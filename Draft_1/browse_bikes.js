@@ -2,6 +2,12 @@
 //For now, placeholder JSON array of expected values
 
 
+async function search_bike(query) {
+
+    let response = await fetch(`./api/bike_search.php?query=${encodeURIComponent(query)}`);
+    return response.json()
+}
+
 
 function display_bike_info(current_ad_jason) {
     document.getElementById("AdvertTitle").innerText = current_ad_jason.bike_ad_name;
@@ -40,7 +46,7 @@ function setup_slideshow(api_data) {
         for (var i = 0; i < api_data.length; i++) {
 
 
-            slideshow.innerHTML += `<a href="./a_bike_viewer.html?id=${api_data[i].bike_id}"><img class="mySlides" src="${api_data[i].image_url}" id="slideImg"></img></a>`;
+            slideshow.innerHTML += `<a href="./a_bike_viewer.php?id=${api_data[i].bike_id}"><img class="mySlides" src="${api_data[i].image_url}" id="slideImg"></img></a>`;
 
 
         }
@@ -56,44 +62,7 @@ function setup_slideshow(api_data) {
 }
 
 //Placeholder for API data to fetch random bikes
-var api_data = [
-    {
-        "bike_id": "0xdeadbeef",
-        "bike_ad_name": "Greg's Bike for sale",
-        "bike_model": "Brompton Mk1",
-        "lower_asking_price": "1000",
-        "upper_asking_price": "2000",
-        "bike_quality": "Poor",
-        "bike_birthday": "2023",
-        "image_url": "./assets/images/bike_1.jpg",
-        "bike_colour_code": "#1F00A2",
-        "description": "This is a stellar bike, that's got 1 mile"
-    },
-    {
-        "bike_id": "0xcoffee",
-        "bike_ad_name": "Greg's 2nd Bike for sale",
-        "bike_model": "Brompton Mk2",
-        "lower_asking_price": "1400",
-        "upper_asking_price": "2500",
-        "bike_quality": "Excellent",
-        "bike_birthday": "2024",
-        "image_url": "./assets/images/bike_2.jpg",
-        "bike_colour_code": "#000000",
-        "description": "LALAL"
-    },
-    {
-        "bike_id": "0xfeedbeef",
-        "bike_ad_name": "Greg's Bike for sale",
-        "bike_model": "Brompton Mk1",
-        "lower_asking_price": "1000",
-        "upper_asking_price": "2000",
-        "bike_quality": "Poor",
-        "bike_birthday": "2023",
-        "image_url": "./assets/images/bike_1.jpg",
-        "bike_colour_code": "#169201",
-        "description": "This is a stellar bike, that's got 1 mile"
-    }
-]
+
 
 function goToSlide(n) {
     //Get all the slides
@@ -122,9 +91,8 @@ function previous_slide() {
 
 //Start the slide at 0
 var currentSlide = 0;
-
 var slideshow = document.getElementById("bike_slides");
-
+//api_data is defined in the PHP file, within the script declaration
 setup_slideshow(api_data);
 
 
@@ -136,52 +104,32 @@ document.getElementById("next_button").addEventListener("click",function(e) {
     next_slide();
 });
 
-//If user searches, fetch new data based on the query, then setup the slideshow again
-document.getElementById("search_button").addEventListener("click",function (e) {
+//If user searches, fetch new data based on the query, then setup the slideshow again, the user doesn't need to reload the entire page
+document.getElementById("search_button").addEventListener("click",async (e) => {
 
     e.preventDefault();
-    api_data = [
-        {
-            "bike_id": "AAAAAAAA",
-            "bike_ad_name": "1",
-            "bike_model": "Brompton Mk1666",
-            "lower_asking_price": "666",
-            "upper_asking_price": "6666",
-            "bike_quality": "Poor",
-            "bike_birthday": "2023",
-            "image_url": "./assets/images/bike_1.jpg",
-            "bike_colour_code": "#1F00A2",
-            "description": "This is a stellar bike, that's got 1 mile"
-        },
-        {
-            "bike_id": "AAAAAAAA",
-            "bike_ad_name": "2",
-            "bike_model": "Brompton Mk1666",
-            "lower_asking_price": "666",
-            "upper_asking_price": "6666",
-            "bike_quality": "Excellent",
-            "bike_birthday": "2024",
-            "image_url": "./assets/images/bike_2.jpg",
-            "bike_colour_code": "#000000",
-            "description": "LALAL"
-        },
-        {
-            "bike_id": "AAAAAAAA",
-            "bike_ad_name": "3",
-            "bike_model": "Brompton Mk1666",
-            "lower_asking_price": "666",
-            "upper_asking_price": "6666",
-            "bike_quality": "Poor",
-            "bike_birthday": "2023",
-            "image_url": "./assets/images/bike_1.jpg",
-            "bike_colour_code": "#169201",
-            "description": "This is a stellar bike, that's got 1 mile"
-        }
-    ];
+
+    let search_value = document.getElementById("search_value").value;
+    let search_error = document.getElementById("search_error_msg");
+    //Validate input
+    if (search_value.length == 0) {
+        search_error.innerText = "!!! Search cannot be empty !!!";
+        return false;
+    }
+
+    else if (search_value.length > 50) {
+        search_error.innerText = "!!! Search cannot be more than 50 characters !!!";
+        return false;
+    }
 
 
+    let api_data = await search_bike(search_value);
+
+    alert(api_data);
+    //Erorrs on output
     if (api_data.length == 0) {
-        document.getElementById("search_value").value = "No results!"
+        document.getElementById("search_value").value = "No results!";
+        search_error.innerText = "!!! No results !!!";
     }
     else {
         document.getElementById("search_value").value = `${api_data.length} results found!`

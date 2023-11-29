@@ -33,6 +33,12 @@ if(!isset($_SESSION["loggedin"])) {
     exit;
 }
 
+//If no query parameter, we can't do anything
+if (!isset($_GET["query"])) {
+    header("HTTP/1.1 400 Bad Request");
+    exit;
+}
+
 
 require_once "../config.php";
 
