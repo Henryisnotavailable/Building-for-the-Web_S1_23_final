@@ -1,5 +1,6 @@
 <?php
 
+
 function get_quality($quality) {
     $quality = (int) $quality;
     switch ($quality) {
@@ -25,91 +26,79 @@ function get_quality($quality) {
 }
 
 session_start();
-
 if(!isset($_SESSION["loggedin"])) {
     header("Location: login.php?msg=Please Login First");
     exit;
 }
-
-
 require_once "config.php";
 
 $bike_results = [];
 
-//Find bikes where the owner is the current user
-$sql = "SELECT 
-vehicle_id,user_id,advert_title,description,
-bike_model,bike_lower_price,bike_upper_price,bike_quality,
-manufacture_year,colour,image_url
-FROM bike_details WHERE user_id = ?";
 
-if ($q = $mysqli->prepare($sql)) {
-    $param_username = $_SESSION["id"];
-    $q->bind_param("s", $param_username);
-    //Execute query
-    if($q->execute()) {
-        //Store query result
-        $q->store_result();
+//GET if the user browses to the page, POST will be a user searching for a specific bike
+if ($_SERVER["REQUEST_METHOD"] == "GET") {
+    //So this gets all bikes with owners that have a visibility of 1 (so Public)
+    $sql = "SELECT vehicle_id,user_id,advert_title,bike_details.description,bike_model,bike_lower_price,
+    bike_upper_price,bike_quality,manufacture_year,colour,image_url FROM bike_details 
+    INNER JOIN users USING (user_id) WHERE visibility = 1";
+    //bike_details.description is needed as both tables have the description field, so just "description" is ambiguous
+    
+    if ($q = $mysqli->prepare($sql)) {
+        //Execute query
+        if ($q->execute()) {
+            //Store query result
+            $q->store_result();
 
-        if($q->num_rows > 0) {
-            $q->bind_result($vehicle_id,$user_id,$title,$description, $bike_model, $bike_lower_price,$bike_upper_price,$bike_quality,$manufacture_year,$colour,$image_url);
-            //Loop over each result (e.g. each bike the user uploaded)
-            while ($q -> fetch()) {
-        
-                error_log("DEBUG: HIT {$user_id}");
-                $test = [
-                    "bike_id" => $vehicle_id,
-                    "bike_ad_name" => $title,
-                    "bike_model" => $bike_model,
-                    "lower_asking_price" => $bike_lower_price,
-                    "upper_asking_price" => $bike_upper_price,
-                    "bike_quality" => get_quality($bike_quality),
-                    "bike_birthday" => $manufacture_year,
-                    "image_url" => $image_url,
-                    "bike_colour_code" =>$colour,
-                    "description" => $description
-                ];
-                array_push($bike_results,$test); 
+            if ($q->num_rows > 0) {
+                $q->bind_result($vehicle_id, $user_id, $title, $description, $bike_model, $bike_lower_price, $bike_upper_price, $bike_quality, $manufacture_year, $colour, $image_url);
+                //Loop over each result (e.g. each bike the user uploaded)
+                while ($q->fetch()) {
+
+                    error_log("DEBUG: HIT {$user_id}");
+                    $test = [
+                        "bike_id" => $vehicle_id,
+                        "bike_ad_name" => $title,
+                        "bike_model" => $bike_model,
+                        "lower_asking_price" => $bike_lower_price,
+                        "upper_asking_price" => $bike_upper_price,
+                        "bike_quality" => get_quality($bike_quality),
+                        "bike_birthday" => $manufacture_year,
+                        "image_url" => $image_url,
+                        "bike_colour_code" => $colour,
+                        "description" => $description
+                    ];
+                    array_push($bike_results, $test);
+                }
+
+
+
             }
 
 
-           
-        }
-        
+            //User owns no bikes :(, the JS will handle
+            else {
+                //Just log it
+                error_log("ERROR: No results for user {$_SESSION['username']}", 0);
+            }
+            $q->close();
 
-        //User owns no bikes :(, the JS will handle
-        else {
-            //Just log it
-            error_log("ERROR: No results for user {$_SESSION['username']}",0);
         }
-        $q->close();
 
+        $mysqli->close();
+
+    } else {
+        error_log("ERROR: Failed preparing statement", 0);
     }
-
-    $mysqli->close();
-
 }
-
-
-
-else {
-    error_log("ERROR: Failed preparing statement",0);
-}
-
-//var_dump($result,0);
-
-// Convert data to JSON
-$jsonResult = json_encode($bike_results);
-
-
 ?>
+
 
 
 <!DOCTYPE html>
 <html>
 
 <head>
-    <link rel="stylesheet" href="./my_bikes.css">
+    <link rel="stylesheet" href="./browse_bikes.css">
     </link>
 </head>
 
@@ -120,7 +109,7 @@ $jsonResult = json_encode($bike_results);
                 <div id="PageHeader">
                     <h1>The Bike House</h1>
                     <br></br>
-                    <p>My Bikes</p>
+                    <p>Browse Bikes</p>
                 </div>
             </div>
             <div id="navbarWrapper">
@@ -157,17 +146,23 @@ $jsonResult = json_encode($bike_results);
                     <div class='right-column'>
                         <div class="main_body_container">
                             <div class="left-internal-col">
-                                <div class="image_container">
-                                    <img src="<?php echo htmlspecialchars($_SESSION["profile_picture"])?>"
-                                        class="user_picture"></img>
-                                </div>
-                                <h1>Hi <?php echo htmlspecialchars($_SESSION["username"]);?></h1>
+                                
+                                <h1>Click on a bike to see more details!</h1>
                                 <div class="main_body_text">
-                                    <p>Welcome to *<b>Your</b>* bikes</p>
+                                    <br>
+                                    
+                                    
                                 </div>
 
+                                <form class="search_bar">
+                                    <label for="search_value">Search by title, model or your desired price! </label>
+                                    <input type="search" placeholder="Brompton Mark 1" id="search_value"><button type="submit" class="custom_button" id="search_button">Search!</button>
+                                    <div class="error_div" id="search_error"><p id="search_error_msg"></p></div>
+                                </form> 
+                                <br>
                                 <p>Some of the bike's details can be seen on the right!</p>
-                                <p>Click on the bike to see more details</p>
+                                <br>
+                                <p>Click on the bike to see more details and rent it!</p>
 
                                 <div class="bike_slideshow" id="bike_slideshow_container">
 
@@ -183,14 +178,13 @@ $jsonResult = json_encode($bike_results);
                                             <div class="slides" id="bike_slides">
 
                                             </div>
+                                            
                                         </div>
-                                        
-                                        
-
+                                        <p id="slide_count"><?php echo sizeof($bike_results) == 0 ? "No bikes!": "1 of ".sizeof($bike_results);?></p>
 
                                     </div>
-                                    
-                                    <p id="slide_count"><?php echo sizeof($bike_results) == 0 ? "No bikes!": "1 of ".sizeof($bike_results);?></p>
+
+
 
 
 
@@ -258,9 +252,9 @@ $jsonResult = json_encode($bike_results);
             </div>
         </footer>
     </article>
-    <script type="text/javascript">var api_data = <?php echo $jsonResult;?></script>
-    <script src="./my_bikes.js"></script>
     
+    <script type="text/javascript">var api_data = <?php echo json_encode($bike_results); ?>;</script>
+    <script src="./browse_bikes.js"></script>
 </body>
 
 </html>

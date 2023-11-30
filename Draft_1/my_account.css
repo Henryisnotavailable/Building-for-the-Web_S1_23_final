@@ -223,6 +223,14 @@ figure {
 
 #change_profile_pic {
     align-self: center;
+    height: 40%;
+    width: 60%;
+}
+
+
+#change_profile_pic img {
+    height: 200px;
+    width: 200px;
 }
 
 .right-column {

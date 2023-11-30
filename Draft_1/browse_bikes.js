@@ -3,6 +3,13 @@
 
 
 
+async function search_bike(query) {
+
+    let response = await fetch(`./api/bike_search.php?query=${encodeURIComponent(query)}`);
+    return response.json()
+}
+
+
 function display_bike_info(current_ad_jason) {
     document.getElementById("AdvertTitle").innerText = current_ad_jason.bike_ad_name;
     document.getElementById("BikeModel").innerText = current_ad_jason.bike_model;
@@ -13,7 +20,7 @@ function display_bike_info(current_ad_jason) {
     document.getElementById("BikeDescription").innerText = current_ad_jason.description;
 }
 
-function setup_slideshow(api_data) {
+function setup_slideshow() {
 
     if (api_data.length == 0) {
         
@@ -40,7 +47,7 @@ function setup_slideshow(api_data) {
         for (var i = 0; i < api_data.length; i++) {
 
 
-            slideshow.innerHTML += `<a href="./a_bike_viewer.html?id=${api_data[i].bike_id}"><img class="mySlides" src="${api_data[i].image_url}" id="slideImg"></img></a>`;
+            slideshow.innerHTML += `<a href="./a_bike_viewer.php?id=${api_data[i].bike_id}"><img class="mySlides" src="${api_data[i].image_url}" id="slideImg"></img></a>`;
 
 
         }
@@ -50,50 +57,13 @@ function setup_slideshow(api_data) {
     //Set the first slide to visible, mySlides has a display:none, but showing has a display:flex.
     all_slides[0].className = "mySlides showing"
     //Get the first bike's information
-    let current_ad_jason = api_data[0];
-    //Display the info to the user.
-    display_bike_info(current_ad_jason)
+    //Go to the first slide, and display its information
+    currentSlide = 0;
+    goToSlide(currentSlide)
 }
 
 //Placeholder for API data to fetch random bikes
-var api_data = [
-    {
-        "bike_id": "0xdeadbeef",
-        "bike_ad_name": "Greg's Bike for sale",
-        "bike_model": "Brompton Mk1",
-        "lower_asking_price": "1000",
-        "upper_asking_price": "2000",
-        "bike_quality": "Poor",
-        "bike_birthday": "2023",
-        "image_url": "./assets/images/bike_1.jpg",
-        "bike_colour_code": "#1F00A2",
-        "description": "This is a stellar bike, that's got 1 mile"
-    },
-    {
-        "bike_id": "0xcoffee",
-        "bike_ad_name": "Greg's 2nd Bike for sale",
-        "bike_model": "Brompton Mk2",
-        "lower_asking_price": "1400",
-        "upper_asking_price": "2500",
-        "bike_quality": "Excellent",
-        "bike_birthday": "2024",
-        "image_url": "./assets/images/bike_2.jpg",
-        "bike_colour_code": "#000000",
-        "description": "LALAL"
-    },
-    {
-        "bike_id": "0xfeedbeef",
-        "bike_ad_name": "Greg's Bike for sale",
-        "bike_model": "Brompton Mk1",
-        "lower_asking_price": "1000",
-        "upper_asking_price": "2000",
-        "bike_quality": "Poor",
-        "bike_birthday": "2023",
-        "image_url": "./assets/images/bike_1.jpg",
-        "bike_colour_code": "#169201",
-        "description": "This is a stellar bike, that's got 1 mile"
-    }
-]
+
 
 function goToSlide(n) {
     //Get all the slides
@@ -103,7 +73,10 @@ function goToSlide(n) {
     //Get the current slide (loops back to 0 if greater than total slides)
 	currentSlide = (n+all_slides.length)%all_slides.length;
     //Set the current slide to visible
-    all_slides[currentSlide].className = "mySlides showing"
+    all_slides[currentSlide].className = "mySlides showing";
+    console.log(api_data[currentSlide]);
+    //Set the value of current slide of total (e.g. slide 1 of 5)
+    document.getElementById("slide_count").innerText = `${currentSlide+1} of ${all_slides.length}`;
     //Display the current bike's data to the user
     display_bike_info(api_data[currentSlide]);
 }
@@ -122,9 +95,8 @@ function previous_slide() {
 
 //Start the slide at 0
 var currentSlide = 0;
-
 var slideshow = document.getElementById("bike_slides");
-
+//api_data is defined in the PHP file, within the script declaration
 setup_slideshow(api_data);
 
 
@@ -136,57 +108,53 @@ document.getElementById("next_button").addEventListener("click",function(e) {
     next_slide();
 });
 
-//If user searches, fetch new data based on the query, then setup the slideshow again
-document.getElementById("search_button").addEventListener("click",function (e) {
+//If user searches, fetch new data based on the query, then setup the slideshow again, the user doesn't need to reload the entire page
+document.getElementById("search_button").addEventListener("click",async (e) => {
 
     e.preventDefault();
-    api_data = [
-        {
-            "bike_id": "AAAAAAAA",
-            "bike_ad_name": "1",
-            "bike_model": "Brompton Mk1666",
-            "lower_asking_price": "666",
-            "upper_asking_price": "6666",
-            "bike_quality": "Poor",
-            "bike_birthday": "2023",
-            "image_url": "./assets/images/bike_1.jpg",
-            "bike_colour_code": "#1F00A2",
-            "description": "This is a stellar bike, that's got 1 mile"
-        },
-        {
-            "bike_id": "AAAAAAAA",
-            "bike_ad_name": "2",
-            "bike_model": "Brompton Mk1666",
-            "lower_asking_price": "666",
-            "upper_asking_price": "6666",
-            "bike_quality": "Excellent",
-            "bike_birthday": "2024",
-            "image_url": "./assets/images/bike_2.jpg",
-            "bike_colour_code": "#000000",
-            "description": "LALAL"
-        },
-        {
-            "bike_id": "AAAAAAAA",
-            "bike_ad_name": "3",
-            "bike_model": "Brompton Mk1666",
-            "lower_asking_price": "666",
-            "upper_asking_price": "6666",
-            "bike_quality": "Poor",
-            "bike_birthday": "2023",
-            "image_url": "./assets/images/bike_1.jpg",
-            "bike_colour_code": "#169201",
-            "description": "This is a stellar bike, that's got 1 mile"
-        }
-    ];
+
+    let search_value = document.getElementById("search_value").value;
+    let search_error = document.getElementById("search_error_msg");
+    //Validate input
+    if (search_value.length == 0) {
+        search_error.innerText = "!!! Search cannot be empty !!!";
+        return false;
+    }
+
+    else if (search_value.length > 50) {
+        search_error.innerText = "!!! Search cannot be more than 50 characters !!!";
+        return false;
+    }
 
 
+    api_data = await search_bike(search_value);
+
+    console.log(api_data);
+    //Erorrs on output
     if (api_data.length == 0) {
-        document.getElementById("search_value").value = "No results!"
+        //document.getElementById("search_value").value = "No results!";
+        search_error.innerText = "!!! No results, showing previous !!!";
     }
     else {
-        document.getElementById("search_value").value = `${api_data.length} results found!`
-    setup_slideshow(api_data);
+        //document.getElementById("search_value").value = `${api_data.length} results found!`
+        if (api_data.length == 1) {
+            search_error.innerText = `1 result found!`;
+        }
+        else {
+            search_error.innerText = `${api_data.length} results found!`;
+        }
+        
+        slideshow = document.getElementById("bike_slides");
+        //This clears the slideshow, to get rid of any old searches
+        while(slideshow.firstChild) {
+            slideshow.removeChild(slideshow.firstChild)
+        }
+        
+        setup_slideshow(api_data);
+        
     }
+    
+
 
 })
 

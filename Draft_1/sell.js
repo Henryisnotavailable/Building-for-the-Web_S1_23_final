@@ -180,6 +180,11 @@ function decide_slider_colour(value) {
     }
 }
 
+
+//Start of setup
+
+
+
 var slider = document.getElementById("bike_quality");
 var output = document.getElementById("bike_slider_value");
 

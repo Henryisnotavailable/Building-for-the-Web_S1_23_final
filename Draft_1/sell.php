@@ -361,6 +361,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
                 //Get the filetype of the "image"
                 $mime_type = exif_imagetype($_FILES["bike_pic"]["tmp_name"]);
+                error_log("DEBUG: Bike media mime type is {$mime_type}",0);
                 //Allowed Extensions
                 $allowed_ext = array('gif', 'png', 'jpg',"jpeg","webp");
                 $allowed_mime_type = array(IMAGETYPE_GIF,IMAGETYPE_JPEG,IMAGETYPE_PNG,IMAGETYPE_WEBP);
@@ -399,9 +400,10 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                     //Get the filetype of the "image"
                     $finfo = finfo_open(FILEINFO_MIME_TYPE);
                     $mime_type = finfo_file($finfo,$_FILES["upload_media"]["tmp_name"]);
+                    error_log("DEBUG: Additional media mime type is {$mime_type}",0);
                     //Allowed Extensions
                     $allowed_ext = array('gif', 'png', 'jpg',"jpeg","webm","mp4","webp","ogg","ogv");
-                    $allowed_mime_type = array("image/gif","image/png","image/jpg","image/jpeg","video/mp4","video/webm","video/webp","video/ogg");
+                    $allowed_mime_type = array("image/gif","image/png","image/jpg","image/jpeg","image/webp","video/mp4","video/webm","video/ogg");
                     $str_extensions = implode(", ",$allowed_ext);
                     
                     //If extension not allowed, error
@@ -427,7 +429,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
 
             if ($valid == true) {
-
+                error_log("DEBUG: Is valid",0);
                 $relative_bike_media_path = null;
 
                 if (isset($bike_img_extension)) {
@@ -546,7 +548,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                         </li>
                         <li><a href="./my_bikes.php"><img src="./assets/icons/352313_bike_directions_icon.png" />My
                                 Bikes</a></li>
-                                <li><a href="#4"><img src="./assets/icons/4781848_bag_buy_cart_ecommerce_shop_icon.png" />Browse Bikes</a>
+                                <li><a href="./browse_bikes.php"><img src="./assets/icons/4781848_bag_buy_cart_ecommerce_shop_icon.png" />Browse Bikes</a>
                                 </li>
                         <li><a href="./about_auth.php"><img src="./assets/icons/430101_help_question_icon.png" />About Us</a>
                         </li>
@@ -755,6 +757,12 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         </footer>
     </article>
     <script src="./sell.js"></script>
+    <?php 
+    //Focus at bottom of page (the error message) if not valid
+    if (isset($valid) && $valid === false) {
+        echo "<script>document.getElementById('error_message_row').scrollIntoView();</script>";
+    }
+    ?>
 </body>
 
 </html>

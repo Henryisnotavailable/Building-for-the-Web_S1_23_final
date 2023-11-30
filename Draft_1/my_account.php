@@ -7,6 +7,64 @@ if(!isset($_SESSION["loggedin"])) {
     exit;
 }
 
+require_once "config.php";
+
+//Get users details
+
+if (isset($_SESSION["id"])) {
+    $sql = "SELECT profile_url,username,registration_date,telephone,pronouns,email,favourite_bike,description,visibility FROM users WHERE user_id = ?";
+
+    if ($q = $mysqli->prepare($sql)) {
+        $param_user_id = $_SESSION["id"];
+        $q->bind_param("s", $param_user_id);
+        //Execute query
+        if ($q->execute()) {
+            //Store query result
+            $q->store_result();
+
+            if ($q->num_rows > 0) {
+                $q->bind_result($param_profile_url, $param_username, $param_registration_date, $param_telephone, $param_pronouns, $param_email, $param_favourite_bike, $param_description,$param_visibility);
+                //Get the bike
+                if ($q->fetch()) {
+                    error_log("DEBUG: HIT USER {$param_username}", 0);
+                    $page_profile_url = htmlspecialchars($param_profile_url);
+                    $page_username = htmlspecialchars($param_username);
+                    $page_registration_date = htmlspecialchars($param_registration_date);
+                    $page_telephone = htmlspecialchars($param_telephone);
+                    $page_pronouns = htmlspecialchars($param_pronouns);
+                    $page_email = htmlspecialchars($param_email);
+                    $page_favourite_bike = htmlspecialchars($param_favourite_bike);
+                    $page_user_description = htmlspecialchars($param_description);
+                    $page_visibility = htmlspecialchars($param_visibility);
+
+
+                }
+
+
+
+            }
+
+
+            //User doesn't exist
+            else {
+                //Just log it
+                error_log("ERROR: No results for user {$_SESSION['username']}", 0);
+                exit;
+            }
+            $q->close();
+
+        } else {
+            error_log("ERROR: Could not execute query", 0);
+        }
+
+
+
+    } else {
+        error_log("ERROR: Failed preparing statement", 0);
+    }
+}
+
+$mysqli->close();
 
 ?>
 
@@ -72,7 +130,7 @@ if(!isset($_SESSION["loggedin"])) {
                                         <img src="./assets/icons/4213408_address_book_contact_contacts_human_icon.png" />
 
 
-                                        <p>Currently: I like bikes</p>
+                                        <p>Currently: <?php echo $page_user_description;?></p>
                                     </figure>
                                 </a>
                                 <a href="#2" id="change_username" aria-label="change username button">
@@ -82,7 +140,7 @@ if(!isset($_SESSION["loggedin"])) {
                                         <img src="./assets/icons/372902_user_name_round_username_linecon_icon.png" />
 
 
-                                        <p>Currently: bik3man</p>
+                                        <p>Currently: <?php echo $page_username;?></p>
                                     </figure>
                                 </a>
                                 <a href="#4" id="change_favourite_bike" aria-label="change favourite bike button">
@@ -92,7 +150,7 @@ if(!isset($_SESSION["loggedin"])) {
                                         <img src="./assets/icons/2316017_activity_bike_bikes_outdoors_sports_icon.png" />
 
 
-                                        <p>Currently: 159 Razer Byke</p>
+                                        <p>Currently: <?php echo $page_favourite_bike;?></p>
                                     </figure>
                                 </a>
                             </div>
@@ -103,7 +161,7 @@ if(!isset($_SESSION["loggedin"])) {
 
                                         <figcaption>Change Profile Picture</figcaption>
                                         <img alt="Current Profile Picture"
-                                            src="https://parspng.com/wp-content/uploads/2023/01/catpng.parspng.com-11.png" />
+                                            src="<?php echo $page_profile_url;?>" />
 
 
                                         <p>Currently: Shown Above</p>
@@ -117,7 +175,7 @@ if(!isset($_SESSION["loggedin"])) {
                                         <img src="./assets/icons/759440_bisexual_equality_female_gender_male_icon.png" />
 
 
-                                        <p>Currently: he/him</p>
+                                        <p>Currently: <?php echo $page_pronouns;?></p>
                                     </figure>
                                 </a>
                             </div>
@@ -162,7 +220,7 @@ if(!isset($_SESSION["loggedin"])) {
                                         <img src="./assets/icons/8665352_eye_slash_icon.png" />
 
 
-                                        <p>Currently: Public</p>
+                                        <p>Currently: <?php echo $page_visibility;?></p>
                                     </figure>
                                 </a>
                             </div>
@@ -229,6 +287,7 @@ if(!isset($_SESSION["loggedin"])) {
             </div>
         </footer>
     </article>
+    <script src="./my_account.js"></script>
 </body>
 
 </html>

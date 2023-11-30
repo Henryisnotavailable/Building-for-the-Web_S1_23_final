@@ -55,7 +55,7 @@ if (!isset($_GET["id"]) && $_SERVER["REQUEST_METHOD"] == "GET") {
     $bike_photo_error = $bike_other_media_error = "";
     
     $error = "";
-    
+    $vehicle_retreived = false;
     //This must be -1 for the slider to work properly.
     $bike_mileage = $bike_quality  = -1;
     
@@ -112,7 +112,7 @@ FROM bike_details WHERE vehicle_id = ?";
                     $page_colour = htmlspecialchars($colour);
 
                     $page_is_electric = ($is_electric == 1) ? "checked" : "";
-
+                    $vehicle_retreived = true;
 
 
                 }
@@ -140,65 +140,15 @@ FROM bike_details WHERE vehicle_id = ?";
         error_log("ERROR: Failed preparing statement", 0);
     }
 
-    //If the bike has been loaded, show the owner's details
-    if (isset($owner_user_id)) {
-        $sql = "SELECT profile_url,username,registration_date,telephone,pronouns,email,favourite_bike,description FROM users WHERE user_id = ?";
-
-        if ($q = $mysqli->prepare($sql)) {
-            $param_user_id = $owner_user_id;
-            $q->bind_param("s", $param_user_id);
-            //Execute query
-            if ($q->execute()) {
-                //Store query result
-                $q->store_result();
-
-                if ($q->num_rows > 0) {
-                    $q->bind_result($param_profile_url, $param_username, $param_registration_date, $param_telephone, $param_pronouns, $param_email, $param_favourite_bike, $param_description);
-                    //Get the bike
-                    if ($q->fetch()) {
-                        error_log("DEBUG: HIT {$param_username}", 0);
-                        $page_profile_url = htmlspecialchars($param_profile_url);
-                        $page_username = htmlspecialchars($param_username);
-                        $page_registration_date = htmlspecialchars($param_registration_date);
-                        $page_telephone = htmlspecialchars($param_telephone);
-                        $page_pronouns = htmlspecialchars($param_pronouns);
-                        $page_email = htmlspecialchars($param_email);
-                        $page_favourite_bike = htmlspecialchars($param_favourite_bike);
-                        $page_user_description = htmlspecialchars($param_description);
-
-
-                    }
 
 
 
-                }
-
-
-                //Bike doesn't exist
-                else {
-                    //Just log it
-                    error_log("ERROR: No results for user {$_SESSION['username']}", 0);
-                    exit;
-                }
-                $q->close();
-
-            } else {
-                error_log("ERROR: Could not execute query", 0);
-            }
-
-
-
-        } else {
-            error_log("ERROR: Failed preparing statement", 0);
-        }
-    }
-
-    //If user posted data (e.g. if editing) then handle it
     
 
 
 
-} 
+}
+    //If user posted data (e.g. if editing) then handle it
 else if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     //Get current values of vehicle
@@ -227,7 +177,7 @@ if ($q = $mysqli->prepare($select_sql)) {
                     exit;
                 }
 
-
+                $vehicle_retreived = true;
 
 
             }
@@ -679,6 +629,7 @@ else if ($_SERVER["REQUEST_METHOD"] == "DELETE") {
                     $image_url = $bind_image_url;
                     
                     if(!is_null($image_url)) {
+                        
                         $path = pathinfo($image_url);
                         unlink($image_url);
                         error_log("DEBUG: Removing {$image_url}");
@@ -739,6 +690,62 @@ else if ($_SERVER["REQUEST_METHOD"] == "DELETE") {
         $error = "!!! Website Error, Something Went Wrong, please try again later !!!";
     }
 
+}
+
+
+//This populates the owners details, as long as the bike was loaded properly (e.g. it exists and the current user owns it)
+if ($vehicle_retreived === true) {
+    if (isset($owner_user_id)) {
+        $sql = "SELECT profile_url,username,registration_date,telephone,pronouns,email,favourite_bike,description FROM users WHERE user_id = ?";
+
+        if ($q = $mysqli->prepare($sql)) {
+            $param_user_id = $owner_user_id;
+            $q->bind_param("s", $param_user_id);
+            //Execute query
+            if ($q->execute()) {
+                //Store query result
+                $q->store_result();
+
+                if ($q->num_rows > 0) {
+                    $q->bind_result($param_profile_url, $param_username, $param_registration_date, $param_telephone, $param_pronouns, $param_email, $param_favourite_bike, $param_description);
+                    //Get the bike
+                    if ($q->fetch()) {
+                        error_log("DEBUG: HIT {$param_username}", 0);
+                        $page_profile_url = htmlspecialchars($param_profile_url);
+                        $page_username = htmlspecialchars($param_username);
+                        $page_registration_date = htmlspecialchars($param_registration_date);
+                        $page_telephone = htmlspecialchars($param_telephone);
+                        $page_pronouns = htmlspecialchars($param_pronouns);
+                        $page_email = htmlspecialchars($param_email);
+                        $page_favourite_bike = htmlspecialchars($param_favourite_bike);
+                        $page_user_description = htmlspecialchars($param_description);
+
+
+                    }
+
+
+
+                }
+
+
+                //Bike doesn't exist
+                else {
+                    //Just log it
+                    error_log("ERROR: No results for user {$_SESSION['username']}", 0);
+                    exit;
+                }
+                $q->close();
+
+            } else {
+                error_log("ERROR: Could not execute query", 0);
+            }
+
+
+
+        } else {
+            error_log("ERROR: Failed preparing statement", 0);
+        }
+    }
 }
 
 $mysqli->close();
@@ -804,7 +811,7 @@ $mysqli->close();
 
                             <form id="sell_form" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"])?>"
                                 method="post" enctype="multipart/form-data">
-                                <input readonly id="bike_id" name="bike_id" value="<?php echo $_SERVER["REQUEST_METHOD"] == "GET" ? $_GET["id"]:"" ?>"></input>
+                                <input readonly id="bike_id" name="bike_id" value="<?php if ($_SERVER["REQUEST_METHOD"] == "GET") { echo $_GET["id"];} elseif (isset($_POST["bike_id"])) {echo $_POST["bike_id"];} ?>"></input>
                                 <div class="form_main">
 
 
@@ -973,7 +980,9 @@ $mysqli->close();
                                     </div>
 
 
-
+                                    <div id="error_message_row" class="error_div">
+                                    <p style="font-size: x-large"><?php echo $error; ?></p>
+                                    </div>
 
 
                                     <div class="button_row">
@@ -1042,10 +1051,16 @@ $mysqli->close();
     </article>
     <script src="./a_bike_owner.js"></script>
     <?php
-    //If the user is POSTing data, then they should be put back into edit mode, to avoid repressing the button
+    //If the user is POSTing data, then they should be put back into edit mode, to avoid re-pressing the button
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
     echo "<script>setup_edit(null)</script>";
     };
+    ?>
+    <?php 
+    //Focus at bottom of page (the error message) if not valid
+    if (isset($valid) && $valid === false) {
+        echo "<script>document.getElementById('error_message_row').scrollIntoView();</script>";
+    }
     ?>
 </body>
 

@@ -199,8 +199,9 @@ nav img {
 }
 
 .user_picture {
-    height: 50%;
-    width: 50%;
+    height: 20%;
+    width: 20%;
+    border: solid;
 }
 
 .main_column_text {

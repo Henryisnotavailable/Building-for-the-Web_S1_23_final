@@ -624,6 +624,12 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         </footer>
     </article>
     <script src="./register.js"></script>
+    <?php 
+    //Focus at bottom of page (the error message) if not valid
+    if (isset($valid) && $valid === false) {
+        echo "<script>document.getElementById('error_message_row').scrollIntoView();</script>";
+    }
+    ?>
 </body>
 
 </html>

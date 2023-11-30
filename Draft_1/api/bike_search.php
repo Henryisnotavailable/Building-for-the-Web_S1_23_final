@@ -1,7 +1,5 @@
 <?php
-//THIS IS NO LONGER USED I REFACTORED THE CODE 
 
-//Originally this was used for my_bikes.php
 
 
 function get_quality($quality) {
@@ -35,20 +33,44 @@ if(!isset($_SESSION["loggedin"])) {
     exit;
 }
 
+//If no query parameter, we can't do anything
+if (!isset($_GET["query"])) {
+    header("HTTP/1.1 400 Bad Request");
+    exit;
+}
+
 
 require_once "../config.php";
 
 $result = [];
+$user_query = $_GET["query"]; 
 
-$sql = "SELECT 
-vehicle_id,user_id,advert_title,description,
-bike_model,bike_lower_price,bike_upper_price,bike_quality,
-manufacture_year,colour,image_url
-FROM bike_details WHERE user_id = ?";
+//If the query is a digit, then search for price
+if (ctype_digit($user_query)) {
+    error_log("DEBUG: Querying bike_search for bike_price $user_query");
+    $sql = "SELECT 
+    vehicle_id,user_id,advert_title,bike_details.description,
+    bike_model,bike_lower_price,bike_upper_price,bike_quality,
+    manufacture_year,colour,image_url
+    FROM bike_details INNER JOIN users USING (user_id) WHERE visibility = 1 AND (? >= bike_lower_price AND  ? <= bike_upper_price);";
+    $param = (int)$user_query;
+    $bind = "dd";
+}
+
+//Otherwise check the bike model and advert title
+else {
+    $sql = "SELECT 
+vehicle_id,user_id,advert_title,bike_details.description,
+    bike_model,bike_lower_price,bike_upper_price,bike_quality,
+    manufacture_year,colour,image_url
+    FROM bike_details INNER JOIN users USING (user_id) WHERE visibility = 1 AND (advert_title LIKE ? OR bike_model LIKE ?)";
+        $param = "%$user_query%";
+        $bind = "ss";
+}
 
 if ($q = $mysqli->prepare($sql)) {
     $param_username = $_SESSION["id"];
-    $q->bind_param("s", $param_username);
+    $q->bind_param($bind, $param,$param);
     //Execute query
     if($q->execute()) {
         //Store query result
@@ -60,7 +82,7 @@ if ($q = $mysqli->prepare($sql)) {
             while ($q -> fetch()) {
         
                 error_log("DEBUG: HIT {$user_id}");
-                $test = [
+                $bike_data = [
                     "bike_id" => $vehicle_id,
                     "bike_ad_name" => $title,
                     "bike_model" => $bike_model,
@@ -72,7 +94,7 @@ if ($q = $mysqli->prepare($sql)) {
                     "bike_colour_code" =>$colour,
                     "description" => $description
                 ];
-                array_push($result,$test); 
+                array_push($result,$bike_data); 
             }
 
 
