@@ -180,8 +180,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                                             </div>
                                             
                                         </div>
-                                        <p id="slide_count">1 of <?php echo sizeof($bike_results);?></p>
-
+                                        <p id="slide_count"><?php echo sizeof($bike_results) == 0 ? "No bikes!": "1 of ".sizeof($bike_results);?></p>
 
                                     </div>
 

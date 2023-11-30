@@ -137,7 +137,13 @@ document.getElementById("search_button").addEventListener("click",async (e) => {
     }
     else {
         //document.getElementById("search_value").value = `${api_data.length} results found!`
-        search_error.innerText = `${api_data.length} results found!`;
+        if (api_data.length == 1) {
+            search_error.innerText = `1 result found!`;
+        }
+        else {
+            search_error.innerText = `${api_data.length} results found!`;
+        }
+        
         slideshow = document.getElementById("bike_slides");
         //This clears the slideshow, to get rid of any old searches
         while(slideshow.firstChild) {

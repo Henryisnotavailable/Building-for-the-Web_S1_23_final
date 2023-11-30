@@ -31,12 +31,12 @@ if(!isset($_SESSION["loggedin"])) {
     exit;
 }
 
-//Most of the code is in my_bikes.js and api/bike_owner_info.php
 
 require_once "config.php";
 
-$result = [];
+$bike_results = [];
 
+//Find bikes where the owner is the current user
 $sql = "SELECT 
 vehicle_id,user_id,advert_title,description,
 bike_model,bike_lower_price,bike_upper_price,bike_quality,
@@ -69,7 +69,7 @@ if ($q = $mysqli->prepare($sql)) {
                     "bike_colour_code" =>$colour,
                     "description" => $description
                 ];
-                array_push($result,$test); 
+                array_push($bike_results,$test); 
             }
 
 
@@ -98,12 +98,8 @@ else {
 
 //var_dump($result,0);
 
-
-
-$jason = $result;
-
 // Convert data to JSON
-$jsonResult = json_encode($jason);
+$jsonResult = json_encode($bike_results);
 
 
 ?>
@@ -188,12 +184,13 @@ $jsonResult = json_encode($jason);
 
                                             </div>
                                         </div>
-
+                                        
+                                        
 
 
                                     </div>
-
-
+                                    
+                                    <p id="slide_count"><?php echo sizeof($bike_results) == 0 ? "No bikes!": "1 of ".sizeof($bike_results);?></p>
 
 
 
@@ -261,7 +258,7 @@ $jsonResult = json_encode($jason);
             </div>
         </footer>
     </article>
-    <script type="text/javascript">var apiData = <?php echo $jsonResult;?></script>
+    <script type="text/javascript">var api_data = <?php echo $jsonResult;?></script>
     <script src="./my_bikes.js"></script>
     
 </body>

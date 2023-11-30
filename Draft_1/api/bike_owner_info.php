@@ -1,5 +1,7 @@
 <?php
+//THIS IS NO LONGER USED I REFACTORED THE CODE 
 
+//Originally this was used for my_bikes.php
 
 
 function get_quality($quality) {

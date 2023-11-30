@@ -3,21 +3,14 @@
 
 
 
-//Set API data to blank first
+async function search_bike(query) {
 
-
-
-//Fetch the bikes' details
-async function getOwnedBikes() {
-    const response = await fetch("./api/bike_owner_info.php");
-
+    let response = await fetch(`./api/bike_search.php?query=${encodeURIComponent(query)}`);
     return response.json()
 }
 
 
-
 function display_bike_info(current_ad_jason) {
-    console.log(current_ad_jason);
     document.getElementById("AdvertTitle").innerText = current_ad_jason.bike_ad_name;
     document.getElementById("BikeModel").innerText = current_ad_jason.bike_model;
     document.getElementById("PriceRange").innerText = `£${current_ad_jason.lower_asking_price} - ${current_ad_jason.upper_asking_price}`;
@@ -27,12 +20,8 @@ function display_bike_info(current_ad_jason) {
     document.getElementById("BikeDescription").innerText = current_ad_jason.description;
 }
 
-async function setup_slideshow() {
-    //Wait for the API response
-    //api_data = await getOwnedBikes();
-    //Once loaded, set listeners on the arrow buttons
-    enable_controls();
-    
+function setup_slideshow() {
+
     if (api_data.length == 0) {
         
         //alert("Sorry, there were no results from that search.")
@@ -68,29 +57,26 @@ async function setup_slideshow() {
     //Set the first slide to visible, mySlides has a display:none, but showing has a display:flex.
     all_slides[0].className = "mySlides showing"
     //Get the first bike's information
-    let current_ad_jason = api_data[0];
-    //Display the info to the user.
-    display_bike_info(current_ad_jason);
-
-    return api_data;
+    //Go to the first slide, and display its information
+    currentSlide = 0;
+    goToSlide(currentSlide)
 }
 
-
+//Placeholder for API data to fetch random bikes
 
 
 function goToSlide(n) {
     //Get all the slides
     let all_slides = document.getElementsByClassName("mySlides");
-    //If there are no slides (if user has no bikes) then return
-    if (all_slides.length == 0) {
-        return 
-    }
     //Set the previously visible slide to hidden
     all_slides[currentSlide].className = 'mySlides';
     //Get the current slide (loops back to 0 if greater than total slides)
 	currentSlide = (n+all_slides.length)%all_slides.length;
     //Set the current slide to visible
-    all_slides[currentSlide].className = "mySlides showing"
+    all_slides[currentSlide].className = "mySlides showing";
+    console.log(api_data[currentSlide]);
+    //Set the value of current slide of total (e.g. slide 1 of 5)
+    document.getElementById("slide_count").innerText = `${currentSlide+1} of ${all_slides.length}`;
     //Display the current bike's data to the user
     display_bike_info(api_data[currentSlide]);
 }
@@ -109,20 +95,18 @@ function previous_slide() {
 
 //Start the slide at 0
 var currentSlide = 0;
-
 var slideshow = document.getElementById("bike_slides");
+//api_data is defined in the PHP file, within the script declaration
+setup_slideshow(api_data);
 
 
-setup_slideshow();
+document.getElementById("prev_button").addEventListener("click",function(e) {
+    previous_slide();
+});
 
-function enable_controls() {
+document.getElementById("next_button").addEventListener("click",function(e) {
+    next_slide();
+});
 
-    document.getElementById("prev_button").addEventListener("click",function(e) {
-        previous_slide();
-    });
 
-    document.getElementById("next_button").addEventListener("click",function(e) {
-        next_slide();
-    });
 
-}
