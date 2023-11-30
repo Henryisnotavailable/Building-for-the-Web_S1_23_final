@@ -216,11 +216,11 @@ $mysqli->close();
                                 <a href="#8" id="profile_visibility" aria-label="change profile visibility button">
                                     <figure>
 
-                                        <figcaption>Change Profile Picture</figcaption>
-                                        <img src="./assets/icons/8665352_eye_slash_icon.png" />
+                                        <figcaption>Change Profile Visbility</figcaption>
+                                        <img src="<?php echo $page_visibility == 0 ? "./assets/icons/8664880_eye_view_icon.png": "./assets/icons/8665352_eye_slash_icon.png"?>" />
 
 
-                                        <p>Currently: <?php echo $page_visibility;?></p>
+                                        <p>Currently: <?php echo $page_visibility == 0 ? "Private": "Public";?></p>
                                     </figure>
                                 </a>
                             </div>
