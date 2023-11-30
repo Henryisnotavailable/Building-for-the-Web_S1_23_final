@@ -557,7 +557,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
                                         <div class="input_col">
                                             <label for="favourite_bike">Favourite Bike *</label>
-                                            <input type="text" placeholder="Road Bike" id="favourite_bike" name="favourite_bike" autocomplete="off" maxlength="100" required value="<?php echo $favourite_bike; ?>"></input>
+                                            <input type="text" placeholder="Road Bike" id="favourite_bike" name="favourite_bike" autocomplete="off" maxlength="50" required value="<?php echo $favourite_bike; ?>"></input>
                                             <div id="fave_bike_error_div" class="error_div"><p><?php echo $favourite_bike_error; ?></p></div>
                                         </div>
                                     </div>
@@ -565,7 +565,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                                     <div class="input_row">
                                         <div class="input_col">
                                             <label for="profile_pic">Upload Profile Picture</label>
-                                            <input type="file" id="profile_pic" name="profile_pic" autocomplete="off" maxlength="250" accept="image/gif, image/jpg, image/jpeg, image/png"></input>
+                                            <input type="file" id="profile_pic" name="profile_pic" autocomplete="off" accept="image/gif, image/jpg, image/jpeg, image/png"></input>
                                             <div id="profile_pic_error_div" class="error_div"><p><?php echo $profile_pic_error; ?></p></div>
                                         </div>
                                     </div>

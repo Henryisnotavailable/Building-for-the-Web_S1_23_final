@@ -35,7 +35,7 @@ if (isset($_SESSION["id"])) {
                     $page_email = htmlspecialchars($param_email);
                     $page_favourite_bike = htmlspecialchars($param_favourite_bike);
                     $page_user_description = htmlspecialchars($param_description);
-                    $page_visibility = htmlspecialchars($param_visibility);
+                    $page_visibility = (int)($param_visibility);
 
 
                 }
@@ -122,17 +122,24 @@ $mysqli->close();
                             <br></br>
                             <h1>Public</h1>
                             <br></br>
+
                             <div class="top_icon_row">
+                            
+                                <div id="bio_change_div" class="change_div">
                                 <a href="#1" id="bio_change" aria-label="change bio button">
                                     <figure>
 
                                         <figcaption>Change Bio</figcaption>
                                         <img src="./assets/icons/4213408_address_book_contact_contacts_human_icon.png" />
+                                        
 
+                                        <p id="test">Currently: <?php echo $page_user_description;?></p>
 
-                                        <p>Currently: <?php echo $page_user_description;?></p>
                                     </figure>
                                 </a>
+                                </div>
+                             
+                                <div id="username_change_div" class="change_div">
                                 <a href="#2" id="change_username" aria-label="change username button">
                                     <figure>
 
@@ -143,6 +150,8 @@ $mysqli->close();
                                         <p>Currently: <?php echo $page_username;?></p>
                                     </figure>
                                 </a>
+</div>
+<div id="fave_bike_change_div" class="change_div">
                                 <a href="#4" id="change_favourite_bike" aria-label="change favourite bike button">
                                     <figure>
 
@@ -153,9 +162,11 @@ $mysqli->close();
                                         <p>Currently: <?php echo $page_favourite_bike;?></p>
                                     </figure>
                                 </a>
+</div>
                             </div>
 
                             <div class="bottom_icon_row">
+                            <div id="profile_pic_change_div" class="change_div">
                                 <a href="#3" id="change_profile_pic" aria-label="change profile picture button">
                                     <figure>
 
@@ -167,7 +178,8 @@ $mysqli->close();
                                         <p>Currently: Shown Above</p>
                                     </figure>
                                 </a>
-                                
+</div>
+<div id="pronouns_change_div" class="change_div">
                                 <a href="#5" id="change_pronouns" aria-label="change pronouns button">
                                     <figure>
 
@@ -178,6 +190,7 @@ $mysqli->close();
                                         <p>Currently: <?php echo $page_pronouns;?></p>
                                     </figure>
                                 </a>
+</div>
                             </div>
                             <br></br>
 
@@ -185,12 +198,14 @@ $mysqli->close();
 
                         </div>
                     </div>
+
                     <div class='right-column'>
                         <div class="main_body_container">
                             <br></br>
                             <h1>Private</h1>
                             <br></br>
                             <div class="top_icon_row">
+                                
                                 <a href="#6" id="enable_mfa" aria-label="enable Multi Factor Authentication button">
                                     <figure>
 
@@ -201,6 +216,7 @@ $mysqli->close();
                                         <p>Currently: Not available yet!</p>
                                     </figure>
                                 </a>
+                                <div id="change_password_div" class="change_div">
                                 <a href="#7" id="change_password" aria-label="change password button">
                                     <figure>
 
@@ -208,25 +224,27 @@ $mysqli->close();
                                         <img src="./assets/icons/2931164_clef_key_lock_unlock_password_icon.png" />
 
 
-                                        <p>Currently: *********</p>
+                                        <p>Currently: Not shown for security reasons!</p>
                                     </figure>
                                 </a>
-
-                                <!--Want to add a conditional eye here-->
+</div>
+                                <div id="change_profile_visibility_div" class="change_div">
                                 <a href="#8" id="profile_visibility" aria-label="change profile visibility button">
                                     <figure>
 
                                         <figcaption>Change Profile Visbility</figcaption>
-                                        <img src="<?php echo $page_visibility == 0 ? "./assets/icons/8664880_eye_view_icon.png": "./assets/icons/8665352_eye_slash_icon.png"?>" />
+                                        <img src="<?php echo ($page_visibility === 0 ? './assets/icons/8665352_eye_slash_icon.png' : './assets/icons/8664880_eye_view_icon.png')?>" />
 
 
-                                        <p>Currently: <?php echo $page_visibility == 0 ? "Private": "Public";?></p>
+                                        <p>Currently: <?php echo ($page_visibility === 0 ? "Private": "Public");?></p>
                                     </figure>
                                 </a>
+</div>
                             </div>
 
 
                             <div class="bottom_icon_row">
+                            <div id="change_email_div" class="change_div">
                                 <a href="#9" id="change_email" aria-label="change email button">
                                     <figure>
 
@@ -234,10 +252,12 @@ $mysqli->close();
                                         <img src="./assets/icons/134146_mail_email_icon.png" />
 
 
-                                        <p>Currently: byk3dud3@protonmail.com</p>
+                                        <p>Currently: <?php echo $page_email;?></p>
                                     </figure>
                                 </a>
+                            </div>
 
+                            <div id="delete_account_div" class="change_div">
                                 <a href="#10" id="delete_account" aria-label="delete account button">
                                     <figure id="DeleteAcountFigure">
 
@@ -251,6 +271,7 @@ $mysqli->close();
                                         <p>Are you sure?</p>
                                     </figure>
                                 </a>
+</div>
                             </div>
                             <br></br>
 
