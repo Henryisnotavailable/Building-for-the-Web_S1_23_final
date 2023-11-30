@@ -21,9 +21,9 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     ///Got to change this to make sure the bike is public
     //TODO
     $sql = "SELECT vehicle_id,user_id,advert_title,
-description,bike_model,bike_lower_price,bike_upper_price,bike_quality,
+bike_details.description,bike_model,bike_lower_price,bike_upper_price,bike_quality,
 bike_mileage,manufacture_year,num_seats,other_media_url,colour,image_url,is_electric
-FROM bike_details WHERE vehicle_id = ?";
+FROM bike_details INNER JOIN users USING (user_id) WHERE visibility = 1 AND vehicle_id = ?";
 
     //Load the page with bike data
     if ($q = $mysqli->prepare($sql)) {
@@ -368,7 +368,7 @@ $mysqli->close();
 
                                     <div class="button_row">
                                         
-                                        <button class="custom_button" id="edit_button" onclick="rent(this)">Rent!</button>
+                                        <button class="custom_button" id="edit_button" onclick="rent(this)" disabled>Rent!</button>
 
 
                                     </div>
