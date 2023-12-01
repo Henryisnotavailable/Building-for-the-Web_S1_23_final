@@ -1,13 +1,35 @@
 <?php
 
-function insert_into_db($mysqli,$field,$new_value) {
-    return true;
+function insert_into_db($mysqli,$column,$new_value) {
+    //This isn't vulnerable to SQL injection because $column is not user supplied
+    $sql_insert_statement = "UPDATE users SET $column = ? WHERE user_id = ?";
+    if ($statement = $mysqli->prepare($sql_insert_statement)) {
+        error_log("DEBUG: Binding parameters to UPDATE statement", 0);
+        $param_new_value = $new_value;
+        $param_user_id = $_SESSION["id"];
+        $statement->bind_param("si",$param_new_value,$param_user_id);
+        
+        if ($statement->execute()) {
+            error_log("UPDATE WORKED!!!",0);
+            $statement->close();
+            header("Location: my_account.php?updated=$column");
+            
+        } else {
+            error_log("ERROR: Executing statement", 0);
+            $statement->close();
+        }
+
+        
+
+    } else {
+        error_log("ERROR: Could not prepare statement", 0);
+    }
 }
 
 function username_taken($username,$mysqli) {
     $sql = "SELECT user_id FROM users WHERE username = ?";
     if($stmt = $mysqli->prepare($sql)) {
-        $param_username = trim($_POST["username"]);
+        $param_username = trim($username);
         $stmt->bind_param("s", $param_username);
         
 
@@ -97,155 +119,149 @@ if (isset($_SESSION["id"])) {
 
 $bio_error = $username_error = $favourite_bike_error = $profile_pic_error = $pronouns_error = $password_error = $visibilty_error = $email_error = "";
 $bio_value = $username_value = $favourite_bike_value = $profile_pic_value = $pronouns_value = $password_value = $visibilty_value = $email_value = "";
+
+$js_to_setup_edit = "";
+
 $valid = true;
+
+
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST["new_bio"])) {
-        if(strlen($_POST["new_bio"])) {
+        if (strlen($_POST["new_bio"]) == 0) {
             $bio_error = "!!! New bio cannot be empty !!!";
             $valid = false;
 
-        }
-
-        elseif (strlen($_POST["new_bio"]) > 200) {
+        } elseif (strlen($_POST["new_bio"]) > 200) {
             $bio_error = "!!! New bio cannot exceed 200 characters !!!";
             $valid = false;
+        } else {
+            $bio_value = htmlspecialchars($_POST["new_bio"]);
+            insert_into_db($mysqli, "description", $_POST["new_bio"]);
         }
 
-        else {
-            insert_into_db($mysqli,$field,$new_value);
+        //On POST, this sets up the edit field for the user (so they don't have to reclick it)
+        if (!$valid) {
+            $js_to_setup_edit = "<script>setup_bio_change()</script>";
         }
-    }
-
-    else if (isset($_POST["new_username"])) {
-        if(empty(trim($_POST["new_username"]))){
+    } else if (isset($_POST["new_username"])) {
+        if (empty(trim($_POST["new_username"]))) {
             $username_error = "!!! Please enter a username !!!";
             $valid = false;
-    
-        } elseif(!preg_match('/[a-zA-Z0-9_]{1,20}/', trim($_POST["new_username"]))){
+
+        } elseif (!preg_match('/[a-zA-Z0-9_]{1,20}/', trim($_POST["new_username"]))) {
             $username_error = "!!! Username can only contain letters, numbers, and underscores. !!!";
             $valid = false;
             $username_value = htmlspecialchars($_POST["new_username"]);
-        }
-        
-        elseif (username_taken($_POST["new_username"],$mysqli)) {
+        } elseif (username_taken($_POST["new_username"], $mysqli)) {
             $username_error = "!!! Sorry, username taken, try something else !!!";
             $valid = false;
             $username_value = htmlspecialchars($_POST["new_username"]);
-        }
-    
-        else {
+        } else {
             $username_value = htmlspecialchars($_POST["new_username"]);
-            insert_into_db($mysqli,$field,$new_value);
+            insert_into_db($mysqli, "username", $_POST["new_username"]);
+        }
+
+        if (!$valid) {
+            $js_to_setup_edit = "<script>setup_username_change()</script>";
         }
 
 
-    }
-    
-    else if (isset($_POST["new_fave_bike"])) {
-        if(empty(trim($_POST["new_fave_bike"]))){
+    } else if (isset($_POST["new_fave_bike"])) {
+        if (empty(trim($_POST["new_fave_bike"]))) {
             $favourite_bike_error = "!!! Sorry, favourite bike is empty !!!";
             $valid = false;
-        }
-    
-        elseif (strlen($_POST["new_fave_bike"]) > 50) {
+        } elseif (strlen($_POST["new_fave_bike"]) > 50) {
             $favourite_bike_error = "!!! Sorry, favourite bike must be less than 50 characters !!!";
             $valid = false;
             $favourite_bike_value = htmlentities($_POST["new_fave_bike"]);
-        }
-    
-        else {
+        } else {
             $favourite_bike_value = htmlentities($_POST["new_fave_bike"]);
-            insert_into_db($mysqli,$field,$new_value);
+            insert_into_db($mysqli, "favourite_bike", $_POST["new_fave_bike"]);
+
+            if (!$valid) {
+                $js_to_setup_edit = "<script>setup_fave_bike_change()</script>";
+            }
         }
-    }
-    else if (isset($_POST["new_profile_pic"])) {
+    } else if (isset($_POST["new_profile_pic"])) {
         //TODO
-    }
-    else if (isset($_POST["new_pronouns"])) {
-        if(empty(trim($_POST["new_pronouns"]))){
+    } else if (isset($_POST["new_pronouns"])) {
+        if (empty(trim($_POST["new_pronouns"]))) {
             $pronouns_error = "!!! Sorry, pronouns were empty !!!";
             $valid = false;
-    
-        }
-        elseif($_POST["new_pronouns"] !== "he/him" && $_POST["new_pronouns"] !== "she/her" && $_POST["new_pronouns"] !== "they/them"){
+
+        } elseif ($_POST["new_pronouns"] !== "he/him" && $_POST["new_pronouns"] !== "she/her" && $_POST["new_pronouns"] !== "they/them") {
             $pronouns_error = "!!! Sorry, pronouns must be he/him, she/her or they/them !!!";
             $valid = false;
+        } else {
+            insert_into_db($mysqli, "pronouns", $_POST["new_pronouns"]);
         }
 
-        else {
-            insert_into_db($mysqli,$field,$new_value);
+        if (!$valid) {
+            $js_to_setup_edit = "<script>setup_pronouns_change()</script>";
         }
-    }
-
-    else if (isset($_POST["new_password"])) {
-        if(!isset($_POST["new_password_confirm"])) {
+    } else if (isset($_POST["new_password"])) {
+        if (!isset($_POST["new_password_confirm"])) {
             $password_error = "!!! You must input a new password and a password confirmation !!!";
             $valid = false;
-        }
-
-        else if (empty($_POST["new_password"]) || empty($_POST["new_password_confirm"])) {
+        } else if (empty($_POST["new_password"]) || empty($_POST["new_password_confirm"])) {
             $password_error = "!!! The password cannot be empty !!!";
-        }
-
-        else if ($_POST["new_password"] !== $_POST["new_password_confirm"]) {
+        } else if ($_POST["new_password"] !== $_POST["new_password_confirm"]) {
             $password_error = "!!! Passwords must match !!!";
             $valid = false;
-        }
-
-        else if (strlen($_POST["new_password"]) < 10) {
+        } else if (strlen($_POST["new_password"]) < 10) {
             $password_error = "!!! Please enter a longer password, think of 4 random words !!!";
             $valid = false;
             $password_value = htmlspecialchars($_POST["new_password"]);
-        }
-    
-        elseif (strlen($_POST["new_password"]) > 72) {
+        } elseif (strlen($_POST["new_password"]) > 72) {
             $password_error = "!!! Please enter a shorter password, 72 characters is the max !!!";
             $valid = false;
             $password_value = htmlspecialchars($_POST["new_password"]);
+        } else {
+            insert_into_db($mysqli, "password", password_hash($_POST["new_password"],PASSWORD_BCRYPT));
         }
 
-        else {
-            insert_into_db($mysqli, $field,$new_value);
+        if (!$valid) {
+            $js_to_setup_edit = "<script>setup_password_change()</script>";
         }
 
 
-        
-    }
+    } else if (isset($_POST["new_profile_visibility"])) {
 
-    else if (isset($_POST["new_profile_visibility"])) {
-        
         if ($_POST["new_profile_visibility"] === "change") {
-            insert_into_db($mysqli, $field,$new_value);
-        }
-
-        else {
+            // 1 turns to 0, 0 turns to 1
+            $new_visibility = $page_visibility === 1 ? 0 : 1;
+            insert_into_db($mysqli, "visibility", $new_visibility);
+        } else {
             //This should never actually be hit
             $visibilty_error = "!!! Visibility must have a value of change!!!";
         }
-        
 
-    }
 
-    else if (isset($_POST["new_email"])) {
+    } else if (isset($_POST["new_email"])) {
         if (empty(trim($_POST["new_email"]))) {
             $email_error = "!!! Please set email !!!";
             $valid = false;
-        }
-    
-        else if (!(filter_var($_POST["new_email"],FILTER_VALIDATE_EMAIL))) {
+        } else if (!(filter_var($_POST["new_email"], FILTER_VALIDATE_EMAIL))) {
             $email_error = "!!! Invalid email, please check your input !!!";
             $valid = false;
             $email_value = htmlspecialchars($_POST["new_email"]);
+        } else if (strlen($_POST["new_email"] > 100)) {
+            $email_error = "!!! Invalid email, must be less than 100 characters !!!";
+            $valid = false;
+            $email_value = htmlspecialchars($_POST["new_email"]);
         }
-
+        
+        
         else {
             $email_value = htmlspecialchars($_POST["new_email"]);
-            insert_into_db($mysqli, $field,$new_value);
+            insert_into_db($mysqli, "email", $_POST["new_email"]);
         }
-    }
 
-    else {
+        if (!$valid) {
+            $js_to_setup_edit = "<script>setup_email_change()</script>";
+        }
+    } else {
         error_log("Received a POST but got no valid POST parameters!", 0);
     }
 }
@@ -323,6 +339,8 @@ $mysqli->close();
 
                                     </figure>
                                 </a>
+                                <div id="change_bio_input_div"></div>
+                                <div id="bio_error_div" class="error_div"><p><?php echo $bio_error; ?></p></div>
                                 </div>
                              
                                 <div id="username_change_div" class="change_div">
@@ -336,6 +354,8 @@ $mysqli->close();
                                         <p>Currently: <?php echo $page_username;?></p>
                                     </figure>
                                 </a>
+                                <div id="change_username_input_div"></div>
+                                <div id="username_error_div" class="error_div"><p><?php echo $username_error; ?></p></div>
 </div>
 <div id="fave_bike_change_div" class="change_div">
                                 <a href="#4" id="change_favourite_bike" aria-label="change favourite bike button">
@@ -348,6 +368,8 @@ $mysqli->close();
                                         <p>Currently: <?php echo $page_favourite_bike;?></p>
                                     </figure>
                                 </a>
+                                <div id="change_fave_bike_input_div"></div>
+                                <div id="fave_bike_error_div" class="error_div"><p><?php echo $favourite_bike_error; ?></p></div>
 </div>
                             </div>
 
@@ -364,6 +386,8 @@ $mysqli->close();
                                         <p>Currently: Shown Above</p>
                                     </figure>
                                 </a>
+                                <div id="change_profile_pic_input_div"></div>
+                                <div id="profile_pic_error_div" class="error_div"><p><?php echo $profile_pic_error; ?></p></div>
 </div>
 <div id="pronouns_change_div" class="change_div">
                                 <a href="#5" id="change_pronouns" aria-label="change pronouns button">
@@ -376,6 +400,8 @@ $mysqli->close();
                                         <p>Currently: <?php echo $page_pronouns;?></p>
                                     </figure>
                                 </a>
+                                <div id="change_pronouns_input_div"></div>
+                                <div id="pronuns_error_div" class="error_div"><p><?php echo $pronouns_error; ?></p></div>
 </div>
                             </div>
                             <br></br>
@@ -402,6 +428,8 @@ $mysqli->close();
                                         <p>Currently: Not available yet!</p>
                                     </figure>
                                 </a>
+
+
                                 <div id="change_password_div" class="change_div">
                                 <a href="#7" id="change_password" aria-label="change password button">
                                     <figure>
@@ -413,6 +441,8 @@ $mysqli->close();
                                         <p>Currently: Not shown for security reasons!</p>
                                     </figure>
                                 </a>
+                                <div id="change_password_input_div"></div>
+                                <div id="password_error_div" class="error_div"><p><?php echo $password_error; ?></p></div>
 </div>
                                 <div id="change_profile_visibility_div" class="change_div">
                                 <a href="#8" id="profile_visibility" aria-label="change profile visibility button">
@@ -425,7 +455,9 @@ $mysqli->close();
                                         <p>Currently: <?php echo ($page_visibility === 0 ? "Private": "Public");?></p>
                                     </figure>
                                 </a>
-</div>
+                                <div id="change_visibility_input_div"></div>
+                                <div id="visibility_error_div" class="error_div"><p><?php echo $visibilty_error; ?></p></div>
+                                </div>
                             </div>
 
 
@@ -441,7 +473,10 @@ $mysqli->close();
                                         <p>Currently: <?php echo $page_email;?></p>
                                     </figure>
                                 </a>
+                                <div id="change_email_input_div"></div>
+                                <div id="email_error_div" class="error_div"><p><?php echo $email_error; ?></p></div>
                             </div>
+                            
 
                             <div id="delete_account_div" class="change_div">
                                 <a href="#10" id="delete_account" aria-label="delete account button">
@@ -495,6 +530,8 @@ $mysqli->close();
         </footer>
     </article>
     <script src="./my_account.js"></script>
+    <!--This is here to call JS to setup the edit if the user's input was bad-->
+    <?php echo $js_to_setup_edit;?>
 </body>
 
 </html>

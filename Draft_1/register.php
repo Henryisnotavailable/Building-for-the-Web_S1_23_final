@@ -126,6 +126,12 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             $email = htmlspecialchars($_POST["email"]);
         }
 
+        else if (strlen($_POST["email"] > 100)) {
+            $email_error = "!!! Invalid email, must be less than 100 characters !!!";
+            $valid = false;
+            $email = htmlspecialchars($_POST["email"]);
+        }
+
         else {
             $email = htmlspecialchars($_POST["email"]);
         }

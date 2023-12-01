@@ -10,7 +10,7 @@ function remove_all_forms() {
 
 
 function setup_bio_change() {
-    const bio_change_div = document.getElementById("bio_change_div");
+    const bio_change_div = document.getElementById("change_bio_input_div");
     //Don't duplicate the form if it exists
     if (!document.getElementById("bio_form")) {
 
@@ -64,7 +64,7 @@ document.getElementById("bio_change").addEventListener("click",(e) => {
 });
 
 function setup_username_change() {
-    const username_change_div = document.getElementById("username_change_div");
+    const username_change_div = document.getElementById("change_username_input_div");
 
     //Don't duplicate the form if it exists
     if (!document.getElementById("username_form")) {
@@ -119,7 +119,7 @@ document.getElementById("change_username").addEventListener("click",(e) => {
 });
 
 function setup_fave_bike_change() {
-    const fave_bike_change_div = document.getElementById("fave_bike_change_div");
+    const fave_bike_change_div = document.getElementById("change_fave_bike_input_div");
     //Don't duplicate the form if it exists
     if (!document.getElementById("fave_bike_form")) {
         let break_element = document.createElement("br");
@@ -172,7 +172,7 @@ document.getElementById("change_favourite_bike").addEventListener("click",(e) =>
 });
 
 function setup_profile_pic_change() {
-    const profile_pic_change_div = document.getElementById("profile_pic_change_div");
+    const profile_pic_change_div = document.getElementById("change_profile_pic_input_div");
     //Don't duplicate the form if it exists
     if (!document.getElementById("profile_pic_form")) {
         let break_element = document.createElement("br");
@@ -227,7 +227,7 @@ document.getElementById("change_profile_pic").addEventListener("click",(e) => {
 });
 
 function setup_pronouns_change() {
-    const pronouns_change_div = document.getElementById("pronouns_change_div");
+    const pronouns_change_div = document.getElementById("change_pronouns_input_div");
     //Don't duplicate the form if it exists
     if (!document.getElementById("pronouns_form")) {
         let break_element = document.createElement("br");
@@ -284,7 +284,7 @@ document.getElementById("change_pronouns").addEventListener("click",(e) => {
 });
 
 function setup_password_change() {
-    const password_change_div = document.getElementById("change_password_div");
+    const password_change_div = document.getElementById("change_password_input_div");
     //Don't duplicate the form if it exists
     if (!document.getElementById("password_form")) {
         let break_element = document.createElement("br");
@@ -364,7 +364,7 @@ document.getElementById("change_password").addEventListener("click",(e) => {
 });
 
 function setup_visibility_change() {
-    const profile_visibility_change_div = document.getElementById("change_profile_visibility_div");
+    const profile_visibility_change_div = document.getElementById("change_visibility_input_div");
     //Don't duplicate the form if it exists
     if (!document.getElementById("profile_visibility_form")) {
         let break_element = document.createElement("br");
@@ -427,7 +427,7 @@ document.getElementById("profile_visibility").addEventListener("click",(e) => {
 });
 
 function setup_email_change() {
-    const email_change_div = document.getElementById("change_email_div");
+    const email_change_div = document.getElementById("change_email_input_div");
     //Don't duplicate the form if it exists
     if (!document.getElementById("email_form")) {
         let break_element = document.createElement("br");
@@ -495,4 +495,31 @@ document.getElementById("delete_account").addEventListener("click",(e) => {
     }
 
 });
+
+
+function inform_user_of_change(message,error_div_id) {
+
+    const error_div_p = document.getElementById(error_div_id).firstChild;
+    error_div_p.innerText = message;
+
+}
+
+const url_query_string = window.location.search;
+const url_params = new URLSearchParams(url_query_string);
+
+
+//If we're coming from a sucessfull update, let the user know
+if (url_params.has("updated")) {
+    //Stop user reloading and displaying new update message (this sets the history to the page WITHOUT URL params)
+    window.history.pushState({}, document.title, window.location.pathname);
+    switch(url_params.get("updated")) {
+        case "description":
+            inform_user_of_change("Description updated!","bio_error_div");
+            break;
+        case "username":
+            inform_user_of_change("Username updated!","username_error_div");
+            break;
+    }
+
+}
 

@@ -304,6 +304,12 @@ figure {
     color:black;
 }
 
+.error_div p {
+    color: white;
+    background-color: #9068be;
+    border-radius: 7px;
+    margin-top:5px
+}
 
 /*End of main styling*/
 
