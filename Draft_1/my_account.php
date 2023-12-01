@@ -1,5 +1,13 @@
 <?php
 
+function insert_into_db($mysqli,$field,$new_value) {
+    return true;
+}
+
+function username_taken($mysqli,$username) {
+    return false;
+}
+
 session_start();
 
 if(!isset($_SESSION["loggedin"])) {
@@ -61,6 +69,161 @@ if (isset($_SESSION["id"])) {
 
     } else {
         error_log("ERROR: Failed preparing statement", 0);
+    }
+}
+
+$bio_error = $username_error = $favourite_bike_error = $profile_pic_error = $pronouns_error = $password_error = $visibilty_error = $email_error = "";
+$bio_value = $username_value = $favourite_bike_value = $profile_pic_value = $pronouns_value = $password_value = $visibilty_value = $email_value = "";
+$valid = true;
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (isset($_POST["new_bio"])) {
+        if(strlen($_POST["new_bio"])) {
+            $bio_error = "!!! New bio cannot be empty !!!";
+            $valid = false;
+
+        }
+
+        elseif (strlen($_POST["new_bio"]) > 200) {
+            $bio_error = "!!! New bio cannot exceed 200 characters !!!";
+            $valid = false;
+        }
+
+        else {
+            insert_into_db($mysqli,$field,$new_value);
+        }
+    }
+
+    else if (isset($_POST["new_username"])) {
+        if(empty(trim($_POST["new_username"]))){
+            $username_error = "!!! Please enter a username !!!";
+            $valid = false;
+    
+        } elseif(!preg_match('/[a-zA-Z0-9_]{1,20}/', trim($_POST["new_username"]))){
+            $username_error = "!!! Username can only contain letters, numbers, and underscores. !!!";
+            $valid = false;
+            $username_value = htmlspecialchars($_POST["new_username"]);
+        }
+        
+        elseif (username_taken($_POST["new_username"],$mysqli)) {
+            $username_error = "!!! Sorry, username taken, try something else !!!";
+            $valid = false;
+            $username_value = htmlspecialchars($_POST["new_username"]);
+        }
+    
+        else {
+            $username_value = htmlspecialchars($_POST["new_username"]);
+            insert_into_db($mysqli,$field,$new_value);
+        }
+
+
+    }
+    
+    else if (isset($_POST["new_fave_bike"])) {
+        if(empty(trim($_POST["new_fave_bike"]))){
+            $favourite_bike_error = "!!! Sorry, favourite bike is empty !!!";
+            $valid = false;
+        }
+    
+        elseif (strlen($_POST["new_fave_bike"]) > 50) {
+            $favourite_bike_error = "!!! Sorry, favourite bike must be less than 50 characters !!!";
+            $valid = false;
+            $favourite_bike_value = htmlentities($_POST["new_fave_bike"]);
+        }
+    
+        else {
+            $favourite_bike_value = htmlentities($_POST["new_fave_bike"]);
+            insert_into_db($mysqli,$field,$new_value);
+        }
+    }
+    else if (isset($_POST["new_profile_pic"])) {
+        //TODO
+    }
+    else if (isset($_POST["new_pronouns"])) {
+        if(empty(trim($_POST["new_pronouns"]))){
+            $pronouns_error = "!!! Sorry, pronouns were empty !!!";
+            $valid = false;
+    
+        }
+        elseif($_POST["new_pronouns"] !== "he/him" && $_POST["new_pronouns"] !== "she/her" && $_POST["new_pronouns"] !== "they/them"){
+            $pronouns_error = "!!! Sorry, pronouns must be he/him, she/her or they/them !!!";
+            $valid = false;
+        }
+
+        else {
+            insert_into_db($mysqli,$field,$new_value);
+        }
+    }
+
+    else if (isset($_POST["new_password"])) {
+        if(!isset($_POST["new_password_confirm"])) {
+            $password_error = "!!! You must input a new password and a password confirmation !!!";
+            $valid = false;
+        }
+
+        else if (empty($_POST["new_password"]) || empty($_POST["new_password_confirm"])) {
+            $password_error = "!!! The password cannot be empty !!!";
+        }
+
+        else if ($_POST["new_password"] !== $_POST["new_password_confirm"]) {
+            $password_error = "!!! Passwords must match !!!";
+            $valid = false;
+        }
+
+        else if (strlen($_POST["new_password"]) < 10) {
+            $password_error = "!!! Please enter a longer password, think of 4 random words !!!";
+            $valid = false;
+            $password_value = htmlspecialchars($_POST["new_password"]);
+        }
+    
+        elseif (strlen($_POST["new_password"]) > 72) {
+            $password_error = "!!! Please enter a shorter password, 72 characters is the max !!!";
+            $valid = false;
+            $password_value = htmlspecialchars($_POST["new_password"]);
+        }
+
+        else {
+            insert_into_db($mysqli, $field,$new_value);
+        }
+
+
+        
+    }
+
+    else if (isset($_POST["new_profile_visibility"])) {
+        
+        if ($_POST["new_profile_visibility"] === "change") {
+            insert_into_db($mysqli, $field,$new_value);
+        }
+
+        else {
+            //This should never actually be hit
+            $visibilty_error = "!!! Visibility must have a value of change!!!";
+        }
+        
+
+    }
+
+    else if (isset($_POST["new_email"])) {
+        if (empty(trim($_POST["new_email"]))) {
+            $email_error = "!!! Please set email !!!";
+            $valid = false;
+        }
+    
+        else if (!(filter_var($_POST["new_email"],FILTER_VALIDATE_EMAIL))) {
+            $email_error = "!!! Invalid email, please check your input !!!";
+            $valid = false;
+            $email_value = htmlspecialchars($_POST["new_email"]);
+        }
+
+        else {
+            $email_value = htmlspecialchars($_POST["new_email"]);
+            insert_into_db($mysqli, $field,$new_value);
+        }
+    }
+
+    else {
+        error_log("Received a POST but got no valid POST parameters!", 0);
     }
 }
 

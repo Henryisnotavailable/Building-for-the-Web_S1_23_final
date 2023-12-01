@@ -1,10 +1,9 @@
 function remove_all_forms() {
-    let change_divs = document.getElementsByClassName("change_div");
+    let change_divs = document.getElementsByClassName("added_form");
+    console.log(change_divs);
     Array.from(change_divs).forEach(
         function(element,index,array) {
-            for (const child of element.childNodes) {
-                console.log(child);
-            }
+            element.remove();
         }
     )
 }
@@ -13,6 +12,7 @@ function remove_all_forms() {
 
 document.getElementById("bio_change").addEventListener("click",(e) => {
 
+    //Remove all forms to make sure only one exists at once
     remove_all_forms();
     const bio_change_div = document.getElementById("bio_change_div");
     //Don't duplicate the form if it exists
@@ -22,6 +22,7 @@ document.getElementById("bio_change").addEventListener("click",(e) => {
 
     bio_form.action = "./my_account.php";
     bio_form.id = "bio_form";
+    bio_form.className="added_form";
 
     let bio_label = document.createElement("label");
     bio_label.for = "bio_change_input";
@@ -58,7 +59,8 @@ document.getElementById("bio_change").addEventListener("click",(e) => {
 });
 
 document.getElementById("change_username").addEventListener("click",(e) => {
-
+    //Remove all forms to make sure only one exists at once
+    remove_all_forms();
     const username_change_div = document.getElementById("username_change_div");
 
     //Don't duplicate the form if it exists
@@ -70,6 +72,7 @@ document.getElementById("change_username").addEventListener("click",(e) => {
     username_form.action = "./my_account.php";
     username_form.id = "username_form";
     username_form.method = "POST";
+    username_form.className="added_form";
 
     let username_label = document.createElement("label");
     username_label.for = "username_change_input";
@@ -106,7 +109,8 @@ document.getElementById("change_username").addEventListener("click",(e) => {
 });
 
 document.getElementById("change_favourite_bike").addEventListener("click",(e) => {
-
+    //Remove all forms to make sure only one exists at once
+    remove_all_forms();
     const fave_bike_change_div = document.getElementById("fave_bike_change_div");
     //Don't duplicate the form if it exists
     if (!document.getElementById("fave_bike_form")) {
@@ -117,6 +121,7 @@ document.getElementById("change_favourite_bike").addEventListener("click",(e) =>
     fave_bike_form.action = "./my_account.php";
     fave_bike_form.id = "fave_bike_form";
     fave_bike_form.method = "POST";
+    fave_bike_form.className="added_form";
 
     let fave_bike_label = document.createElement("label");
     fave_bike_label.for = "fave_bike_change_input";
@@ -153,7 +158,8 @@ document.getElementById("change_favourite_bike").addEventListener("click",(e) =>
 });
 
 document.getElementById("change_profile_pic").addEventListener("click",(e) => {
-
+    //Remove all forms to make sure only one exists at once
+    remove_all_forms();
     const profile_pic_change_div = document.getElementById("profile_pic_change_div");
     //Don't duplicate the form if it exists
     if (!document.getElementById("profile_pic_form")) {
@@ -165,6 +171,8 @@ document.getElementById("change_profile_pic").addEventListener("click",(e) => {
     profile_pic_form.id = "profile_pic_form";
     profile_pic_form.method = "POST";
     profile_pic_form.enctype = "multipart/form-data"
+
+    profile_pic_form.className="added_form";
 
     let profile_pic_label = document.createElement("label");
     profile_pic_label.for = "profile_pic_change_input";
@@ -202,7 +210,8 @@ document.getElementById("change_profile_pic").addEventListener("click",(e) => {
 
 
 document.getElementById("change_pronouns").addEventListener("click",(e) => {
-
+    //Remove all forms to make sure only one exists at once
+    remove_all_forms();
     const pronouns_change_div = document.getElementById("pronouns_change_div");
     //Don't duplicate the form if it exists
     if (!document.getElementById("pronouns_form")) {
@@ -213,6 +222,7 @@ document.getElementById("change_pronouns").addEventListener("click",(e) => {
     pronouns_form.action = "./my_account.php";
     pronouns_form.id = "pronouns_form";
     pronouns_form.method = "POST";
+    pronouns_form.className="added_form";
 
     let pronouns_label = document.createElement("label");
     pronouns_label.for = "pronouns_change_input";
@@ -253,7 +263,8 @@ document.getElementById("change_pronouns").addEventListener("click",(e) => {
 });
 
 document.getElementById("change_password").addEventListener("click",(e) => {
-
+    //Remove all forms to make sure only one exists at once
+    remove_all_forms();
     const password_change_div = document.getElementById("change_password_div");
     //Don't duplicate the form if it exists
     if (!document.getElementById("password_form")) {
@@ -264,7 +275,8 @@ document.getElementById("change_password").addEventListener("click",(e) => {
     password_form.action = "./my_account.php";
     password_form.id = "password_form";
     password_form.method = "POST";
-
+    password_form.className="added_form";
+    
     let password_label = document.createElement("label");
     password_label.for = "password_change_input";
     password_label.innerText = "Change your password!";
@@ -327,7 +339,8 @@ document.getElementById("change_password").addEventListener("click",(e) => {
 });
 
 document.getElementById("profile_visibility").addEventListener("click",(e) => {
-
+    //Remove all forms to make sure only one exists at once
+    remove_all_forms();
     const profile_visibility_change_div = document.getElementById("change_profile_visibility_div");
     //Don't duplicate the form if it exists
     if (!document.getElementById("profile_visibility_form")) {
@@ -338,6 +351,9 @@ document.getElementById("profile_visibility").addEventListener("click",(e) => {
     profile_visibility_form.action = "./my_account.php";
     profile_visibility_form.id = "profile_visibility_form";
     profile_visibility_form.method = "POST";
+    profile_visibility_form.className="added_form";
+
+
 
     let profile_visibility_label = document.createElement("label");
     profile_visibility_label.for = "profile_visibility_change_input";
@@ -357,6 +373,7 @@ document.getElementById("profile_visibility").addEventListener("click",(e) => {
     profile_visibility_input.style.maxWidth = profile_visibility_change_div.width+"px";
     profile_visibility_input.style.maxHeight = "100px";
     profile_visibility_input.style.width = profile_visibility_change_div.width + "px";
+    //Hide it, I just need something to submit, this is a bool field (e.g. private vs public)
     profile_visibility_input.style.display = "none";
 
 
@@ -382,7 +399,8 @@ document.getElementById("profile_visibility").addEventListener("click",(e) => {
 
 
 document.getElementById("change_email").addEventListener("click",(e) => {
-
+    //Remove all forms to make sure only one exists at once
+    remove_all_forms();
     const email_change_div = document.getElementById("change_email_div");
     //Don't duplicate the form if it exists
     if (!document.getElementById("email_form")) {
@@ -393,6 +411,7 @@ document.getElementById("change_email").addEventListener("click",(e) => {
         email_form.action = "./my_account.php";
         email_form.id = "email_form";
         email_form.method = "POST";
+        email_form.className="added_form";
 
         let email_label = document.createElement("label");
         email_label.for = "email_change_input";

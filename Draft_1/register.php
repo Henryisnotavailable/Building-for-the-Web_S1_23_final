@@ -149,7 +149,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         $valid = false;
         $username = htmlspecialchars($_POST["username"]);
     }
-    //TODO!!!
+    
     elseif (username_taken($_POST["username"],$mysqli)) {
         $username_error = "!!! Sorry, username taken, try something else !!!";
         $valid = false;
@@ -302,8 +302,8 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         $valid = false;
     }
 
-    elseif (strlen($_POST["favourite_bike"]) > 100) {
-        $favourite_bike_error = "!!! Sorry, favourite bike must be less than 100 characters !!!";
+    elseif (strlen($_POST["favourite_bike"]) > 50) {
+        $favourite_bike_error = "!!! Sorry, favourite bike must be less than 50 characters !!!";
         $valid = false;
         $favourite_bike = htmlentities($_POST["favourite_bike"]);
     }
