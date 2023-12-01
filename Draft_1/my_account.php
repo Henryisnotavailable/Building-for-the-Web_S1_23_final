@@ -4,8 +4,31 @@ function insert_into_db($mysqli,$field,$new_value) {
     return true;
 }
 
-function username_taken($mysqli,$username) {
-    return false;
+function username_taken($username,$mysqli) {
+    $sql = "SELECT user_id FROM users WHERE username = ?";
+    if($stmt = $mysqli->prepare($sql)) {
+        $param_username = trim($_POST["username"]);
+        $stmt->bind_param("s", $param_username);
+        
+
+        if($stmt->execute()) {
+            $stmt->store_result();
+
+            if($stmt->num_rows === 1) {
+                $taken = true;
+            }
+
+            else {
+                $taken = false;
+            }
+
+        }
+
+        $stmt->close();
+
+    }
+
+    return $taken;
 }
 
 session_start();

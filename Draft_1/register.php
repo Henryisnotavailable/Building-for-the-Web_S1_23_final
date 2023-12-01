@@ -32,7 +32,7 @@ function username_taken($username,$mysqli) {
         if($stmt->execute()) {
             $stmt->store_result();
 
-            if($stmt->num_rows == 1) {
+            if($stmt->num_rows === 1) {
                 $taken = true;
             }
 
