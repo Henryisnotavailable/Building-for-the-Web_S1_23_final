@@ -246,7 +246,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $email_error = "!!! Invalid email, please check your input !!!";
             $valid = false;
             $email_value = htmlspecialchars($_POST["new_email"]);
-        } else if (strlen($_POST["new_email"] > 100)) {
+        } else if (strlen($_POST["new_email"]) > 100) {
             $email_error = "!!! Invalid email, must be less than 100 characters !!!";
             $valid = false;
             $email_value = htmlspecialchars($_POST["new_email"]);
@@ -401,7 +401,7 @@ $mysqli->close();
                                     </figure>
                                 </a>
                                 <div id="change_pronouns_input_div"></div>
-                                <div id="pronuns_error_div" class="error_div"><p><?php echo $pronouns_error; ?></p></div>
+                                <div id="pronouns_error_div" class="error_div"><p><?php echo $pronouns_error; ?></p></div>
 </div>
                             </div>
                             <br></br>

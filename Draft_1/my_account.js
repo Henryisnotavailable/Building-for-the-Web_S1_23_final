@@ -510,7 +510,8 @@ const url_params = new URLSearchParams(url_query_string);
 
 //If we're coming from a sucessfull update, let the user know
 if (url_params.has("updated")) {
-    //Stop user reloading and displaying new update message (this sets the history to the page WITHOUT URL params)
+    //Stop user reloading and displaying new update message (if they didn't actually update anything)
+    //(this sets the history to the page WITHOUT URL params)
     window.history.pushState({}, document.title, window.location.pathname);
     switch(url_params.get("updated")) {
         case "description":
@@ -518,6 +519,21 @@ if (url_params.has("updated")) {
             break;
         case "username":
             inform_user_of_change("Username updated!","username_error_div");
+            break;
+        case "favourite_bike":
+            inform_user_of_change("Favourite bike updated!","fave_bike_error_div");
+            break;
+        case "pronouns":
+            inform_user_of_change("Pronouns updated!","pronouns_error_div");
+            break;
+        case "password":
+            inform_user_of_change("Password updated!","password_error_div");
+            break;
+        case "visibility":
+            inform_user_of_change("Visibility updated!","visibility_error_div");
+            break;
+        case "email":
+            inform_user_of_change("Email updated!","email_error_div");
             break;
     }
 
