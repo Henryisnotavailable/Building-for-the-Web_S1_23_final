@@ -61,7 +61,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         $valid = false;
     }
 
-    elseif (!preg_match("/[a-zA-Z0-9_'\-\.]{4,50}/", trim($_POST["advert_title"]))) {
+    elseif (!preg_match("/[a-zA-Z0-9_'\-\.\s]{4,50}/", trim($_POST["advert_title"]))) {
         $ad_title_error = "!!! Invalid advert title, it should be less than 50 alphanumeric characters !!!";
         $valid = false;
         $ad_title = htmlspecialchars($_POST["advert_title"]);

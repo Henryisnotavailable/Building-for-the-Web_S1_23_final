@@ -673,7 +673,7 @@ else if ($_SERVER["REQUEST_METHOD"] == "DELETE") {
 
         //Execute query
         if($q->execute()) {
-               http_response_code(200); 
+               $error = "Deleted bike account!";
         }
         //Delete failed (user tried deleting non-existent bike or bike they don't own)
         else {
