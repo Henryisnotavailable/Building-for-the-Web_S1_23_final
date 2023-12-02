@@ -67,7 +67,7 @@ if ($q = $mysqli->prepare($sql)) {
                     "bike_birthday" => $manufacture_year,
                     "image_url" => $image_url,
                     "bike_colour_code" =>$colour,
-                    "description" => $description
+                    "description" => $description == null ? "No description" : $description
                 ];
                 array_push($bike_results,$test); 
             }

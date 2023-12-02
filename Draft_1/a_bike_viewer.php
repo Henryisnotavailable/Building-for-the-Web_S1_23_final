@@ -42,7 +42,7 @@ FROM bike_details INNER JOIN users USING (user_id) WHERE visibility = 1 AND vehi
                     //HTML encode all values before putting in the page
                     $page_vehicle_id = htmlspecialchars($vehicle_id);
                     $page_title = htmlspecialchars($title);
-                    $page_description = htmlspecialchars($description);
+                    $page_description = $description == null ? "No description" : htmlspecialchars($description);
                     $page_image_url = htmlspecialchars($image_url);
                     $page_bike_model = htmlspecialchars($bike_model);
                     $page_bike_lower_price = htmlspecialchars($bike_lower_price);
