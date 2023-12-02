@@ -1,6 +1,151 @@
 <?php
 
-function insert_into_db($mysqli,$column,$new_value) {
+function delete_accounts_bikes($mysqli) {
+    error_log("DEBUG: Trying to delete user's bikes",0);
+    $sql_for_media = "SELECT other_media_url, image_url FROM bike_details WHERE vehicle_id = ?";
+    if ($qu = $mysqli->prepare($sql_for_media)) {
+        $qu->bind_param("i", $_GET["bike_id"]);
+        if ($qu->execute()) {
+            $qu->store_result();
+
+            if ($qu->num_rows > 0) {
+                $qu->bind_result($bind_other_media_url,$bind_image_url);
+                //Get the bike
+                if ($qu->fetch()) {
+                    //Load into variables
+                    $other_media_url = $bind_other_media_url;
+                    $image_url = $bind_image_url;
+                    
+                    if(!is_null($image_url)) {
+                        
+                        $path = pathinfo($image_url);
+                        unlink($image_url);
+                        error_log("DEBUG: Removing {$image_url}");
+                        unlink($path["dirname"].'/'.$path["filename"]);
+
+                    }
+                    if(!is_null($other_media_url)) {
+                        $path = pathinfo($other_media_url);
+                        unlink($other_media_url);
+                        error_log("DEBUG: Removing {$other_media_url}");
+                        unlink($path["dirname"].'/'.$path["filename"]);
+
+                    }
+    
+    
+    
+                }
+    
+    
+    
+            }
+        }
+
+        else {
+            die("Sorry, the query failed, try again later");
+        }
+    }
+    
+
+    else {
+        die("Sorry, something went wrong");
+    }
+    $qu->close();
+    $user_id = $_SESSION["id"];
+    //Make sure users can only delete their own bikes
+    $sql = "DELETE FROM bike_details WHERE user_id = ?";
+    if ($q = $mysqli->prepare($sql)) {
+        
+        $q->bind_param("i",$user_id);
+
+        //Execute query
+        if($q->execute()) {
+            $status_code = 0;
+        }
+        //Delete failed?
+        else {
+            $status_code = 1;
+            //"!!! Website Error, Something Went Wrong, please try again later !!!";
+        }
+
+        $q->close();
+    }
+
+    else {
+        $status_code = 1;
+    }
+
+    return $status_code;
+}
+
+function delete_account($mysqli)
+{
+    error_log("DEBUG: Trying to delete user's account",0);
+    $user_id = $_SESSION["id"];
+    $profile_pic_url = $_SESSION["profile_picture"];
+    //Remove the original file (old user profile picture)
+    
+    if (delete_accounts_bikes($mysqli) === 0) {
+        $sql = "DELETE FROM users WHERE user_id = ?";
+        if ($q = $mysqli->prepare($sql)) {
+            $q->bind_param("i", $user_id);
+            if ($q->execute()) {
+                $status = 0;
+                if (!is_null($profile_pic_url)) {
+                    error_log("DEBUG: Removing old image {$profile_pic_url}", 0);
+                    $path = pathinfo($profile_pic_url);
+                    unlink($profile_pic_url);
+                    //There are 2 files, the random file and the random file + extension
+                    unlink($path["dirname"] . '/' . $path["filename"]);
+                }
+            } else {
+                $status = 1;
+                error_log("ERROR: Could not execute DELETE statement for user", 0);
+            }
+        } else {
+            $status = 1;
+            error_log("ERROR: Could not prepare DELETE statement for user", 0);
+        }
+    }
+    else {
+        $status = 1;
+    }
+    return $status;
+}
+
+function replace_profile_pic($posted_filepath,$extension,$old_filepath) {
+    
+    //Remove the original file (old user profile picture)
+    if (!is_null($old_filepath)) {
+        error_log("DEBUG: Removing old image {$old_filepath}",0);
+        $path = pathinfo($old_filepath);
+        unlink($old_filepath);
+        //There are 2 files, the random file and the random file + extension
+        unlink($path["dirname"].'/'.$path["filename"]);
+    }
+
+    $target_path = "./assets/users/bikes";  
+    //Generate a new unique EMPTY file  
+    $tempname = tempnam($target_path,"img");
+
+    //New filename = random + old_extension
+    $target = $tempname . "." . $extension;
+
+    //Copy unique empty file to new filename 
+    copy($tempname,$target);
+
+    //Move temporary file from POST to ./assets/users/bikes/
+    move_uploaded_file($posted_filepath,$target);
+    //tempnam returns a FULL path (e.g. /var/www/html/...) I just want a relative path
+    $relative_path =  $target_path."/". basename($target);
+
+    //unlink($target);
+    //unlink($tempname);
+    error_log("DEBUG: Replacing old image {$old_filepath} with {$relative_path}",0);
+    return $relative_path;
+}
+
+function update_user_account($mysqli,$column,$new_value) {
     //This isn't vulnerable to SQL injection because $column is not user supplied
     $sql_insert_statement = "UPDATE users SET $column = ? WHERE user_id = ?";
     if ($statement = $mysqli->prepare($sql_insert_statement)) {
@@ -120,6 +265,7 @@ if (isset($_SESSION["id"])) {
 $bio_error = $username_error = $favourite_bike_error = $profile_pic_error = $pronouns_error = $password_error = $visibilty_error = $email_error = "";
 $bio_value = $username_value = $favourite_bike_value = $profile_pic_value = $pronouns_value = $password_value = $visibilty_value = $email_value = "";
 
+$delete_error = "";
 $js_to_setup_edit = "";
 
 $valid = true;
@@ -137,12 +283,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $valid = false;
         } else {
             $bio_value = htmlspecialchars($_POST["new_bio"]);
-            insert_into_db($mysqli, "description", $_POST["new_bio"]);
+            update_user_account($mysqli, "description", $_POST["new_bio"]);
         }
 
         //On POST, this sets up the edit field for the user (so they don't have to reclick it)
         if (!$valid) {
-            $js_to_setup_edit = "<script>setup_bio_change()</script>";
+            //This sets the value of the input, so user doesn't have to retype if there are errors
+            $sanitized_value = htmlspecialchars($_POST["new_bio"]);
+            $js_to_setup_edit = "<script>setup_bio_change('{$sanitized_value}')</script>";
         }
     } else if (isset($_POST["new_username"])) {
         if (empty(trim($_POST["new_username"]))) {
@@ -159,7 +307,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $username_value = htmlspecialchars($_POST["new_username"]);
         } else {
             $username_value = htmlspecialchars($_POST["new_username"]);
-            insert_into_db($mysqli, "username", $_POST["new_username"]);
+            update_user_account($mysqli, "username", $_POST["new_username"]);
         }
 
         if (!$valid) {
@@ -177,14 +325,50 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $favourite_bike_value = htmlentities($_POST["new_fave_bike"]);
         } else {
             $favourite_bike_value = htmlentities($_POST["new_fave_bike"]);
-            insert_into_db($mysqli, "favourite_bike", $_POST["new_fave_bike"]);
+            update_user_account($mysqli, "favourite_bike", $_POST["new_fave_bike"]);
 
             if (!$valid) {
                 $js_to_setup_edit = "<script>setup_fave_bike_change()</script>";
             }
         }
-    } else if (isset($_POST["new_profile_pic"])) {
-        //TODO
+    } else if (isset($_FILES["new_profile_pic"])) {
+        if (file_exists($_FILES['new_profile_pic']['tmp_name']) || is_uploaded_file($_FILES['new_profile_pic']['tmp_name'])) {
+
+
+            $original_file_name = strtolower($_FILES["new_profile_pic"]["name"]);
+            $profile_pic_extension = pathinfo($original_file_name, PATHINFO_EXTENSION);
+
+            //Get the filetype of the "image"
+            $mime_type = exif_imagetype($_FILES["new_profile_pic"]["tmp_name"]);
+            //Allowed Extensions
+            $allowed_ext = array('gif', 'png', 'jpg', "jpeg", "webp");
+            $allowed_mime_type = array(IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_PNG, IMAGETYPE_WEBP);
+            $str_extensions = implode(", ", $allowed_ext);
+            //If extension not allowed, error
+            if (!in_array($profile_pic_extension, $allowed_ext)) {
+                $profile_pic_error = "!!! Only {$str_extensions} extensions allowed !!!";
+                $valid = false;
+            }
+
+            //Check if a valid image mime type
+            else if (!in_array($mime_type, $allowed_mime_type)) {
+                $profile_pic_error = "!!! Only {$str_extensions} file types allowed !!!";
+                $valid = false;
+            } else {
+                $relative_bike_img_path = replace_profile_pic($_FILES["new_profile_pic"]["tmp_name"], $profile_pic_extension, $page_profile_url);
+                update_user_account($mysqli, "profile_url", $relative_bike_img_path);
+            }
+
+
+
+        } else if ($_FILES["new_profile_pic"]["error"] === UPLOAD_ERR_INI_SIZE) {
+            $max_upload = (int) (ini_get('upload_max_filesize'));
+            $profile_pic_error = "!!! Sorry, uploaded file is too big, max size is {$max_upload}MB!!!";
+            $valid = false;
+        }
+        if (!$valid) {
+            $js_to_setup_edit = "<script>setup_profile_pic_change()</script>";
+        }
     } else if (isset($_POST["new_pronouns"])) {
         if (empty(trim($_POST["new_pronouns"]))) {
             $pronouns_error = "!!! Sorry, pronouns were empty !!!";
@@ -194,7 +378,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $pronouns_error = "!!! Sorry, pronouns must be he/him, she/her or they/them !!!";
             $valid = false;
         } else {
-            insert_into_db($mysqli, "pronouns", $_POST["new_pronouns"]);
+            update_user_account($mysqli, "pronouns", $_POST["new_pronouns"]);
         }
 
         if (!$valid) {
@@ -218,7 +402,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $valid = false;
             $password_value = htmlspecialchars($_POST["new_password"]);
         } else {
-            insert_into_db($mysqli, "password", password_hash($_POST["new_password"],PASSWORD_BCRYPT));
+            update_user_account($mysqli, "password", password_hash($_POST["new_password"],PASSWORD_BCRYPT));
         }
 
         if (!$valid) {
@@ -231,7 +415,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($_POST["new_profile_visibility"] === "change") {
             // 1 turns to 0, 0 turns to 1
             $new_visibility = $page_visibility === 1 ? 0 : 1;
-            insert_into_db($mysqli, "visibility", $new_visibility);
+            update_user_account($mysqli, "visibility", $new_visibility);
         } else {
             //This should never actually be hit
             $visibilty_error = "!!! Visibility must have a value of change!!!";
@@ -255,13 +439,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
         else {
             $email_value = htmlspecialchars($_POST["new_email"]);
-            insert_into_db($mysqli, "email", $_POST["new_email"]);
+            update_user_account($mysqli, "email", $_POST["new_email"]);
         }
 
         if (!$valid) {
             $js_to_setup_edit = "<script>setup_email_change()</script>";
         }
-    } else {
+    } else if (isset($_POST["delete_account"])) {
+        if ($_POST["delete_account"] === "yes") {
+            if (delete_account($mysqli) === 0) {
+                header("Location: logout.php");
+            }
+
+            else {
+                $delete_error = "!!! There was a website error when deleting your account, try again later !!!";
+                $valid=false;
+            }
+        }
+
+        else {
+            $valid=false;
+            //This should always be yes, it's set to yes in the HTML, and set to readonly
+            $delete_error = "!!! You must send 'yes' when deleting an account !!!";
+        }
+
+        if(!$valid) {
+            $js_to_setup_edit = "<script>setup_delete_account()</script>";
+        }
+    }
+    else {
         error_log("Received a POST but got no valid POST parameters!", 0);
     }
 }
@@ -492,6 +698,8 @@ $mysqli->close();
                                         <p>Are you sure?</p>
                                     </figure>
                                 </a>
+                                <div id="delete_account_div"></div>
+                                <div id="delete_account_error_div" class="error_div"><p><?php echo $delete_error; ?></p></div>
 </div>
                             </div>
                             <br></br>

@@ -571,7 +571,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                                     <div class="input_row">
                                         <div class="input_col">
                                             <label for="profile_pic">Upload Profile Picture</label>
-                                            <input type="file" id="profile_pic" name="profile_pic" autocomplete="off" accept="image/gif, image/jpg, image/jpeg, image/png"></input>
+                                            <input type="file" id="profile_pic" name="profile_pic" autocomplete="off" accept="image/gif, image/jpg, image/jpeg, image/png,image/webp"></input>
                                             <div id="profile_pic_error_div" class="error_div"><p><?php echo $profile_pic_error; ?></p></div>
                                         </div>
                                     </div>

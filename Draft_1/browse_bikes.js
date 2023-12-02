@@ -24,7 +24,8 @@ function setup_slideshow() {
 
     if (api_data.length == 0) {
         
-        alert("Sorry, there were no results from that search.")
+        //alert("Sorry, there were no results from that search.")
+        search_error.innerText = "!!! Sorry, there were are no results !!!";
         document.getElementById("AdvertTitle").innerText = "No results...";
         document.getElementById("BikeModel").innerText = "No results...";
         document.getElementById("PriceRange").innerText = "No results...";

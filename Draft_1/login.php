@@ -19,7 +19,7 @@ else {
 
 
 //Inclue SQL connection
-require_once "config.php";
+require_once "./config.php";
 
 $username = $password = "";
 $username_error = $password_error = "";

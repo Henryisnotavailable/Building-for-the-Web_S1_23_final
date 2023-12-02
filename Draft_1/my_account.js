@@ -9,7 +9,7 @@ function remove_all_forms() {
 }
 
 
-function setup_bio_change() {
+function setup_bio_change(value) {
     const bio_change_div = document.getElementById("change_bio_input_div");
     //Don't duplicate the form if it exists
     if (!document.getElementById("bio_form")) {
@@ -31,7 +31,9 @@ function setup_bio_change() {
         bio_input.maxLength = "200";
         bio_input.name = "new_bio";
         bio_input.required = true;
-
+        if (value != null) {
+        bio_input.value = value;
+        }
 
         //Don't allow horizontal expansion (everything breaks, remove at your own peril)
         bio_input.style.resize = "vertical";
@@ -60,10 +62,10 @@ document.getElementById("bio_change").addEventListener("click",(e) => {
 
     //Remove all forms to make sure only one exists at once
     remove_all_forms();
-    setup_bio_change();
+    setup_bio_change(null);
 });
 
-function setup_username_change() {
+function setup_username_change(value) {
     const username_change_div = document.getElementById("change_username_input_div");
 
     //Don't duplicate the form if it exists
@@ -88,6 +90,10 @@ function setup_username_change() {
         username_input.name = "new_username";
         username_input.required = true;
         username_input.type = "text";
+
+        if (value != null) {
+            username_input.value = value;
+        }
 
 
         //Set position of the inputs
@@ -114,11 +120,11 @@ function setup_username_change() {
 document.getElementById("change_username").addEventListener("click",(e) => {
     //Remove all forms to make sure only one exists at once
     remove_all_forms();
-    setup_username_change();
+    setup_username_change(null);
 
 });
 
-function setup_fave_bike_change() {
+function setup_fave_bike_change(value) {
     const fave_bike_change_div = document.getElementById("change_fave_bike_input_div");
     //Don't duplicate the form if it exists
     if (!document.getElementById("fave_bike_form")) {
@@ -142,6 +148,10 @@ function setup_fave_bike_change() {
         fave_bike_input.name = "new_fave_bike";
         fave_bike_input.required = true;
         fave_bike_input.type = "text";
+
+        if (value != null) {
+            fave_bike_input.value = value;
+        }
 
 
         //Set position of the inputs
@@ -167,7 +177,7 @@ function setup_fave_bike_change() {
 document.getElementById("change_favourite_bike").addEventListener("click",(e) => {
     //Remove all forms to make sure only one exists at once
     remove_all_forms();
-    setup_fave_bike_change();
+    setup_fave_bike_change(null);
 
 });
 
@@ -196,7 +206,7 @@ function setup_profile_pic_change() {
         profile_pic_input.name = "new_profile_pic";
         profile_pic_input.required = true;
         profile_pic_input.type = "file";
-        profile_pic_input.accept = "image/gif, image/jpg, image/jpeg, image/png";
+        profile_pic_input.accept = "image/gif, image/jpg, image/jpeg, image/png, image/webp";
 
 
         //Set position of the inputs
@@ -226,7 +236,7 @@ document.getElementById("change_profile_pic").addEventListener("click",(e) => {
 
 });
 
-function setup_pronouns_change() {
+function setup_pronouns_change(value) {
     const pronouns_change_div = document.getElementById("change_pronouns_input_div");
     //Don't duplicate the form if it exists
     if (!document.getElementById("pronouns_form")) {
@@ -254,6 +264,10 @@ function setup_pronouns_change() {
             pronouns_select.add(new Option(options[i]));
         }
 
+        if (value != null) {
+            pronouns_select.value = value;
+        }
+
         //Set position of the inputs
         pronouns_select.style.maxWidth = pronouns_change_div.width + "px";
         pronouns_select.style.maxHeight = "100px";
@@ -279,7 +293,7 @@ function setup_pronouns_change() {
 document.getElementById("change_pronouns").addEventListener("click",(e) => {
     //Remove all forms to make sure only one exists at once
     remove_all_forms();
-    setup_pronouns_change();
+    setup_pronouns_change(null);
 
 });
 
@@ -309,6 +323,7 @@ function setup_password_change() {
         password_input.required = true;
         password_input.type = "password";
         password_input.required = true;
+
 
 
         //Set position of the inputs
@@ -426,7 +441,7 @@ document.getElementById("profile_visibility").addEventListener("click",(e) => {
 
 });
 
-function setup_email_change() {
+function setup_email_change(value) {
     const email_change_div = document.getElementById("change_email_input_div");
     //Don't duplicate the form if it exists
     if (!document.getElementById("email_form")) {
@@ -450,6 +465,10 @@ function setup_email_change() {
         email_input.name = "new_email";
         email_input.type = "email";
         email_input.required = true;
+
+        if (value != null) {
+            email_input.value = value;
+        }
 
 
         //Set position of the inputs
@@ -480,19 +499,69 @@ function setup_email_change() {
 document.getElementById("change_email").addEventListener("click",(e) => {
     //Remove all forms to make sure only one exists at once
     remove_all_forms();
-    setup_email_change();
+    setup_email_change(null);
 
 });
 
+function setup_delete_account() {
+    const delete_account_change_div = document.getElementById("delete_account_div");
+    //Don't duplicate the form if it exists
+    if (!document.getElementById("delete_account_form")) {
+        let break_element = document.createElement("br");
+        let delete_account_form = document.createElement("form");
+
+
+        delete_account_form.action = "./my_account.php";
+        delete_account_form.id = "delete_account_form";
+        delete_account_form.method = "POST";
+        delete_account_form.classList.add("added_form");;
+
+
+
+        let delete_account_label = document.createElement("label");
+        delete_account_label.for = "delete_account_placeholder";
+        delete_account_label.innerText = "Are you sure?";
+
+        //Just so we can actually send something to the server (keep it hidden though)
+        let delete_account_input = document.createElement("input");
+        //Set html tag attributes for validation
+        delete_account_input.id = "delete_account_placeholder";
+        delete_account_input.name = "delete_account";
+        delete_account_input.value = "yes";
+        delete_account_input.required = true;
+        delete_account_input.readOnly = true;
+
+
+        //Set position of the inputs
+        delete_account_input.style.maxWidth = delete_account_change_div.width + "px";
+        delete_account_input.style.maxHeight = "100px";
+        delete_account_input.style.width = delete_account_change_div.width + "px";
+        //Hide it, I just need something to submit, this is a bool field (e.g. private vs public)
+        delete_account_input.style.display = "none";
+
+
+
+
+
+        let delete_account_button = document.createElement("button");
+        delete_account_button.innerText = "Yes, I am sure.";
+
+        let line_divider = document.createElement("hr");
+        line_divider.style.marginTop = "5px";
+
+        delete_account_change_div.appendChild(delete_account_form);
+        delete_account_form.appendChild(line_divider);
+        delete_account_form.appendChild(delete_account_label);
+
+        delete_account_form.appendChild(delete_account_input);
+        delete_account_form.appendChild(break_element);
+        delete_account_form.appendChild(delete_account_button);
+    }
+}
+
 document.getElementById("delete_account").addEventListener("click",(e) => {
     
-    if(confirm("Are you sure?")) {
-        alert("Ok deleting...");
-    }
-
-    else {
-        e.preventDefault();
-    }
+    setup_delete_account();
 
 });
 
@@ -534,6 +603,9 @@ if (url_params.has("updated")) {
             break;
         case "email":
             inform_user_of_change("Email updated!","email_error_div");
+            break;
+        case "profile_url":
+            inform_user_of_change("Profile picture updated!","profile_pic_error_div");
             break;
     }
 

@@ -12,10 +12,10 @@ require_once "config.php";
 
 //ORDER BY RAND() isn't the most efficient, but the database table shouldn't get too big, so it's ok for this use case (I hope...)
 $sql = "SELECT vehicle_id,advert_title,image_url FROM bike_details INNER JOIN users USING (user_id) WHERE visibility = 1 ORDER BY RAND() LIMIT 3";
+$results = null;
 
 if ($q = $mysqli->query($sql)) {
-    $row_1 = $q->fetch_assoc();
-    var_dump($row_1[0]);
+    $results = $q;
     
     
 }
@@ -83,6 +83,14 @@ error_log("ERROR: Couldn't prepare query");
                             <p>Login to see more information</p>
                             <br></br>
                             <div class="image_container_wrapper">
+                                <?php
+                                if (isset($results)) {
+                                while($row = $results->fetch_assoc()) {
+                                    var_dump($row["image_url"]);
+                                }
+                            }
+                                
+                                ?>
                             <div class="image_container">
                                 <figure>
                                     <img src="https://media.redlinebicycles.com/catalog/product/1000x1500/REDLINE-4718/redline-4718-random-2021-19190-gloss-black-web-profile.png"
