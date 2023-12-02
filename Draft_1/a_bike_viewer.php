@@ -10,7 +10,7 @@ if (!isset($_SESSION["loggedin"])) {
 }
 
 if (!isset($_GET["id"]) && $_SERVER["REQUEST_METHOD"] == "GET") {
-    header("Location: index.php?msg=Please choose a bike and its ID");
+    header("Location: index.php?msg=!!! Error: Please choose a bike from 'Browse Bikes' !!!");
     exit;
 }
 
@@ -19,7 +19,7 @@ require_once "config.php";
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
     $bike_id = $_GET["id"];
     ///Got to change this to make sure the bike is public
-    //TODO
+
     $sql = "SELECT vehicle_id,user_id,advert_title,
 bike_details.description,bike_model,bike_lower_price,bike_upper_price,bike_quality,
 bike_mileage,manufacture_year,num_seats,other_media_url,colour,image_url,is_electric
@@ -69,7 +69,7 @@ FROM bike_details INNER JOIN users USING (user_id) WHERE visibility = 1 AND vehi
             else {
                 //Just log it
                 error_log("ERROR: No results for user {$_SESSION['username']}", 0);
-                exit;
+                header("Location: index.php?msg=!!! ERROR: Sorry, either that bike is private, or does not exist !!!");
             }
             $q->close();
 

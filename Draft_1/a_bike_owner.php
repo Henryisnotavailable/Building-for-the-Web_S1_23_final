@@ -42,7 +42,7 @@ if (!isset($_SESSION["loggedin"])) {
 }
 
 if (!isset($_GET["id"]) && $_SERVER["REQUEST_METHOD"] == "GET") {
-    header("Location: index.php?msg=Please choose a bike and its ID");
+    header("Location: index.php?msg=!!! Error: Please choose a bike from 'My Bikes' !!!");
     exit;
 }
 
@@ -89,7 +89,7 @@ FROM bike_details WHERE vehicle_id = ?";
                     //If user tries viewing a bike that's not theirs, then redirect to a viewer page
                     if ($owner_user_id !== $_SESSION["id"]) {
                         error_log("DEBUG: User doesn't own this bike... Redirecting", 0);
-                        header("Location: a_bike_viewer.php?msg=You are not the owner of this bike");
+                        header("Location: a_bike_viewer.php?msg=You are not the owner of this bike&id={$_GET['id']}");
                         exit;
                     }
 

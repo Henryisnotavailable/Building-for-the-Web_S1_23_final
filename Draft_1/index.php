@@ -7,6 +7,17 @@ if(!isset($_SESSION["loggedin"])) {
     exit;
 }
 
+
+
+$msg = "";
+
+if (isset($_GET["msg"])) {
+    $msg = htmlspecialchars($_GET["msg"]);
+}
+
+
+
+
 ?>
 
 
@@ -71,6 +82,7 @@ if(!isset($_SESSION["loggedin"])) {
                                 <h1>Hi <?php echo htmlspecialchars($_SESSION["username"]);?></h1>
                                 <div class="main_body_text">
                                     <p>Welcome to the main menu!</p>
+                                    <div id="general_error_div" class="error_div"><p><?php echo $msg;?></p></div>
                                     <br>
                                     <div class="right_column_wrapper">
                                         <div class="left_inside_column">
@@ -176,93 +188,7 @@ if(!isset($_SESSION["loggedin"])) {
                         </div>
                         <br></br>
                         <hr>
-                        <div class="comment_section">
-
-                            <h1><u>Comment Section</u></h1>
-                            <div class="main_body_text">
-                                <p>Check Out Some Of Our Latest Comments</p>
-                            </div>
-                            <br></br>
-                            <div class="comment_container">
-
-                                <div class="comment">
-                                    <div class="comment-heading">
-
-                                        <!-- Comment info (author, time added) start -->
-                                        <div class="comment-info">
-                                            <a href="#" class="comment-author">BykeMan</a>
-                                            <p>
-                                                {{ time_added }}
-                                            </p>
-                                        </div>
-                                        <!-- Comment info (author, time added) end -->
-                                    </div>
-                                    <div class="comment-body">
-                                        <p>
-                                            I am the comment body :) i really like bikes, bikes and bikes
-                                        </p>
-                                        <br>
-
-                                    </div>
-                                </div>
-                                <div class="comment">
-                                    <div class="comment-heading">
-
-                                        <!-- Comment info (author, time added) start -->
-                                        <div class="comment-info">
-                                            <a href="#" class="comment-author">BykeMan</a>
-                                            <p>
-                                                {{ time_added }}
-                                            </p>
-                                        </div>
-                                        <!-- Comment info (author, time added) end -->
-                                    </div>
-                                    <div class="comment-body">
-                                        <p>
-                                            Another one!
-                                        </p>
-                                        <br>
-                                    </div>
-                                </div>
-                                <div class="comment">
-                                    <div class="comment-heading">
-
-                                        <!-- Comment info (author, time added) start -->
-                                        <div class="comment-info">
-                                            <a href="#" class="comment-author">BykeMan</a>
-                                            <p>
-                                                {{ time_added }}
-                                            </p>
-                                        </div>
-                                        <!-- Comment info (author, time added) end -->
-                                    </div>
-                                    <div class="comment-body">
-                                        <p>
-                                            And another!
-                                        </p>
-                                        <br>
-                                    </div>
-                                </div>
-
-
-                                <br></br><br></br><br></br>
-                                <div class="new_comment">
-                                    <br>
-                                    <h2>Add a comment</h2>
-                                    <form>
-                                        <textarea placeholder="I love bikes" cols="80" rows="5" required></textarea>
-                                        <br>
-                                        <button type="submit">Submit</button>
-                                    </form>
-                                </div>
-
-                            </div>
-
-
-
-                            <br></br>
-
-                        </div>
+                        
 
                     </div>
                 </div>
