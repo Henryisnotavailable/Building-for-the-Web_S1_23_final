@@ -105,7 +105,7 @@ colour,is_electric
 VALUES (1,"Road Bike for rent!","This is an old road bike",
 "Road Bike",500,1000,
 1,1100,2001,1,
-NULL,"./assets/users/bikes/bike_3.jpg",
+NULL,"./assets/images/bike_3.jpg",
 "#ff0000",1
 )
 
@@ -119,7 +119,7 @@ colour,is_electric
 VALUES (1,"Tandem bike for rent!","This is a great new tandem bike",
 "Tandem bike",1000,2200,
 4,200,2020,2,
-NULL,"./assets/users/bikes/bike_4_and_5.jpg",
+NULL,"./assets/images/bike_4_and_5.jpg",
 "#ff8040",1
 )
 
@@ -133,6 +133,6 @@ colour,is_electric
 VALUES (1,"Brand NEW bike for rent!","This is a brand new bike!",
 "BMX bike",100,200,
 5,100,2023,1,
-NULL,"./assets/users/bikes/bike_2.jpg",
+NULL,"./assets/images/bike_2.jpg",
 "#0000ff",1
 )
