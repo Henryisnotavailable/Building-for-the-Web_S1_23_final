@@ -51,7 +51,7 @@ FROM bike_details INNER JOIN users USING (user_id) WHERE visibility = 1 AND vehi
                     $page_bike_mileage = htmlspecialchars($bike_mileage);
                     $page_bike_manufacture_year = htmlspecialchars($manufacture_year);
                     $page_num_seats = htmlspecialchars($num_seats);
-                    $page_other_media_url = htmlspecialchars($other_media_url);
+                    $page_other_media_url = isset($other_media_url) ? htmlspecialchars($other_media_url) : null;
                     $page_colour = htmlspecialchars($colour);
 
                     $page_is_electric = ($is_electric == 1) ? "checked" : "";

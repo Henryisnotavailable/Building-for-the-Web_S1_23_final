@@ -92,10 +92,11 @@ function delete_account($mysqli)
             if ($q->execute()) {
                 $status = 0;
                 if (!is_null($profile_pic_url)) {
-                    error_log("DEBUG: Removing old image {$profile_pic_url}", 0);
+                    
                     $path = pathinfo($profile_pic_url);
 
-                    if (!$path["filename"] != "default_avatar.png") {
+                    if (!$path["filename"] === "default_avatar") {
+                        error_log("DEBUG: Removing old image {$profile_pic_url}", 0);
                         if (file_exists($profile_pic_url)) {
                         unlink($profile_pic_url);
                         }
@@ -103,6 +104,10 @@ function delete_account($mysqli)
                         if (file_exists($path["dirname"] . '/' . $path["filename"])) {
                         unlink($path["dirname"] . '/' . $path["filename"]);
                         }
+                    }
+
+                    else {
+                        error_log("DEBUG: Old avatar, not removing", 0);
                     }
                 }
             } else {
@@ -132,7 +137,7 @@ function replace_profile_pic($posted_filepath,$extension,$old_filepath) {
         
         $path = pathinfo($old_filepath);
         //Don't delete if the user has the default avatar
-        if (!$path["filename"] != "default_avatar.png") {
+        if ($path["filename"] !== "default_avatar") {
             if (file_exists($old_filepath)) {
                 unlink($old_filepath);
             }
@@ -142,9 +147,13 @@ function replace_profile_pic($posted_filepath,$extension,$old_filepath) {
         unlink($path["dirname"].'/'.$path["filename"]);
             }
         }
+
+        else {
+            error_log("DEBUG: Old avatar, not removing", 0);
+        }
     }
 
-    $target_path = "./assets/users/bikes";  
+    $target_path = "./assets/users/profile_pictures";  
     //Generate a new unique EMPTY file  
     $tempname = tempnam($target_path,"img");
 
@@ -152,6 +161,7 @@ function replace_profile_pic($posted_filepath,$extension,$old_filepath) {
     $target = $tempname . "." . $extension;
 
     //Copy unique empty file to new filename 
+    error_log("DEBUG: Moving to {$target}", 0);
     copy($tempname,$target);
 
     //Move temporary file from POST to ./assets/users/bikes/
@@ -377,6 +387,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             } else {
                 $relative_bike_img_path = replace_profile_pic($_FILES["new_profile_pic"]["tmp_name"], $profile_pic_extension, $page_profile_url);
                 update_user_account($mysqli, "profile_url", $relative_bike_img_path);
+                //Update user's session to reflect change in profile picture
+                $_SESSION["profile_picture"] = $relative_bike_img_path;
             }
 
 
@@ -468,7 +480,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else if (isset($_POST["delete_account"])) {
         if ($_POST["delete_account"] === "yes") {
             if (delete_account($mysqli) === 0) {
-                header("Location: logout.php");
+                header("Location: logout.php?msg=Account Deleted!");
             }
 
             else {

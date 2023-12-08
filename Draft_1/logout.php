@@ -10,6 +10,12 @@ $_SESSION = array();
 session_destroy();
  
 // Redirect to login page
+if (isset($_GET["msg"])) {
+    $msg = $_GET["msg"];
+    header("location: login.php?msg={$msg}");
+    exit;
+}
+
 header("location: login.php?msg=Logged out!");
 exit;
 

@@ -82,27 +82,6 @@ mileage_slider.style.accentColor =mileage_slider_colour;
 
 
 
-
-
-var temp_fetched_data = 
-    {
-        "bike_id":"0xdeadbeef",
-        "bike_ad_name": "Greg's Bike for sale",
-        "bike_model": "Brompton Mk1",
-        "lower_asking_price": "1000",
-        "upper_asking_price": "2000",
-        "bike_quality": "Poor",
-        "bike_birthday": "2023",
-        "image_url": "./assets/images/bike_1.jpg",
-        "bike_colour_code": "#1F00A2",
-        "description": "This is a stellar bike, that's got 1 mile",
-        "bike_mileage":"Around 600 miles",
-        "bike_seats":"1",
-        "extra_image":"./assets/images/extra_images/0xdeadbeef",
-        "is_electric":"true",
-        "bike_owner_id":"15125125"
-    };
-
     function setup_edit(e) {
         
             
@@ -271,9 +250,18 @@ var temp_fetched_data =
     async function delete_bike(e) {
 
         let bike_id = document.getElementById("bike_id").value;
+        //Delete the bike and wait for a response
         const response = await fetch(`./a_bike_owner.php?bike_id=${bike_id}`, {
             method: "DELETE"
         });
+        //If all good, redirect and tell user bike was deleted
+        if (response.status === 200) {
+            window.location.href = "./index.php?msg=Bike Deleted!"
+        }
+        //Tell user to error out
+        else {
+            document.getElementById("main_error_p").innerText = "Sorry something"
+        }
 
     }
     //Set all fields to editable

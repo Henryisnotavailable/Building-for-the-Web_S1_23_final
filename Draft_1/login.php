@@ -74,7 +74,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 
     if ($valid === true) {
-        //SQL to check if user exists is there
+        //SQL to check if user exists, username is Primary key so this should only return 1 result
         $sql = "SELECT user_id,username,password,profile_url FROM users WHERE username = ?";
 
         if ($q = $mysqli->prepare($sql)) {
@@ -85,10 +85,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             if($q->execute()) {
                 //Store query result
                 $q->store_result();
-
+                //If username exists, retrieve the password HASH (storing passwords in plaintext is never a good idea...)
                 if($q->num_rows == 1) {
                     $q->bind_result($id,$username, $pwd_hash, $profile_pic_url);
                     if ($q -> fetch()) {
+                        //Verify if the entered password matches the hash
                         if(password_verify(trim($_POST["password"]),$pwd_hash)) {
                                 session_destroy();
                                 session_start();

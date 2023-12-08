@@ -44,6 +44,7 @@ function setup_bio_change(value) {
         bio_input.style.width = bio_change_div.width + "px";
 
         let bio_button = document.createElement("button");
+        bio_button.classList.add("custom_button");
         bio_button.innerText = "Submit!";
 
         let line_divider = document.createElement("hr");

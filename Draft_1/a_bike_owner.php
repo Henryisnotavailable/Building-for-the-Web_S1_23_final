@@ -108,7 +108,7 @@ FROM bike_details WHERE vehicle_id = ?";
                     $page_bike_mileage = htmlspecialchars($bike_mileage);
                     $page_bike_manufacture_year = htmlspecialchars($manufacture_year);
                     $page_num_seats = htmlspecialchars($num_seats);
-                    $page_other_media_url = htmlspecialchars($other_media_url);
+                    $page_other_media_url = isset($other_media_url) ? htmlspecialchars($other_media_url) : null;
                     $page_colour = htmlspecialchars($colour);
 
                     $page_is_electric = ($is_electric == 1) ? "checked" : "";
@@ -613,7 +613,8 @@ else if ($_SERVER["REQUEST_METHOD"] == "DELETE") {
         header("Location: index.php?msg=Sorry, there was no bike specified in the delete request");
         exit;
     }
-
+    http_response_code(500);
+    exit;
     $sql_for_media = "SELECT other_media_url, image_url FROM bike_details WHERE vehicle_id = ?";
     if ($qu = $mysqli->prepare($sql_for_media)) {
         $qu->bind_param("i", $_GET["bike_id"]);
@@ -981,7 +982,7 @@ $mysqli->close();
 
 
                                     <div id="error_message_row" class="error_div">
-                                    <p style="font-size: x-large"><?php echo $error; ?></p>
+                                    <p style="font-size: x-large" id="main_error_p"><?php echo $error; ?></p>
                                     </div>
 
 
