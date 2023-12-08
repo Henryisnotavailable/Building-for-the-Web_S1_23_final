@@ -94,9 +94,16 @@ function delete_account($mysqli)
                 if (!is_null($profile_pic_url)) {
                     error_log("DEBUG: Removing old image {$profile_pic_url}", 0);
                     $path = pathinfo($profile_pic_url);
-                    unlink($profile_pic_url);
-                    //There are 2 files, the random file and the random file + extension
-                    unlink($path["dirname"] . '/' . $path["filename"]);
+
+                    if (!$path["filename"] != "default_avatar.png") {
+                        if (file_exists($profile_pic_url)) {
+                        unlink($profile_pic_url);
+                        }
+                        //There are 2 files, the random file and the random file + extension
+                        if (file_exists($path["dirname"] . '/' . $path["filename"])) {
+                        unlink($path["dirname"] . '/' . $path["filename"]);
+                        }
+                    }
                 }
             } else {
                 $status = 1;
@@ -117,11 +124,24 @@ function replace_profile_pic($posted_filepath,$extension,$old_filepath) {
     
     //Remove the original file (old user profile picture)
     if (!is_null($old_filepath)) {
+    
+        
+
         error_log("DEBUG: Removing old image {$old_filepath}",0);
+        
+        
         $path = pathinfo($old_filepath);
-        unlink($old_filepath);
+        //Don't delete if the user has the default avatar
+        if (!$path["filename"] != "default_avatar.png") {
+            if (file_exists($old_filepath)) {
+                unlink($old_filepath);
+            }
+            
+            if (file_exists($path["dirname"].'/'.$path["filename"])) {
         //There are 2 files, the random file and the random file + extension
         unlink($path["dirname"].'/'.$path["filename"]);
+            }
+        }
     }
 
     $target_path = "./assets/users/bikes";  
