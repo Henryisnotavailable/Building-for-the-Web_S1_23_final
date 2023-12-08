@@ -12,10 +12,10 @@ require_once "config.php";
 
 //ORDER BY RAND() isn't the most efficient, but the database table shouldn't get too big, so it's ok for this use case (I hope...)
 $sql = "SELECT vehicle_id,advert_title,image_url FROM bike_details INNER JOIN users USING (user_id) WHERE visibility = 1 ORDER BY RAND() LIMIT 3";
+$results = null;
 
 if ($q = $mysqli->query($sql)) {
-    $row_1 = $q->fetch_assoc();
-    var_dump($row_1[0]);
+    $results = $q;
     
     
 }
@@ -80,35 +80,32 @@ error_log("ERROR: Couldn't prepare query");
                     <div class="column">
                         <div class="left-column">
                             <h1>Some of the latest Bikes</h1>
-                            <p>Login to see more information</p>
+                            <p><b>Login</b> to see more information!</p>
                             <br></br>
                             <div class="image_container_wrapper">
-                            <div class="image_container">
-                                <figure>
-                                    <img src="https://media.redlinebicycles.com/catalog/product/1000x1500/REDLINE-4718/redline-4718-random-2021-19190-gloss-black-web-profile.png"
-                                        alt="A random bike"></img>
-                                    <figcaption>Bike 1 - Name</figcaption>
-                                </figure>
-                            </div>
-                            <br></br>
-                            <br></br>
-                            <div class="image_container">
+                                <?php
+                                if (isset($results)) {
+                                    $i = 0;
+                                    while ($row = $results->fetch_assoc()) {
+                                        $i+=1;
+                                        //HTML for each uploaded bike
+                                        $out = "<div class=\"image_container\">\n";
+                                        $out .= "<a href=\"login.php\" id=\"bike_{$i}\">\n";
+                                        $out .= "<figure>\n";
+                                        $out .= "<img src=\"{$row['image_url']}\" alt=\"A random bike\"></img>";
+                                        $out .= "<figcaption>Bike {$i} - {$row['advert_title']}</figcaption>";
+                                        $out .= "</figure>\n";
+                                        $out .= "</a>";
+                                        $out .= "</div>";
+                                        echo $out;
+                                    }
+                                }
                                 
-                                <figure>
-                                    <img src="https://upload.wikimedia.org/wikipedia/commons/0/04/Bike_icon.png"
-                                        alt="Another random bike"></img>
-                                    <figcaption>Bike 2 - Name</figcaption>
-                                </figure>
-
-                            </div>
-                            <br></br>
-                            <div class="image_container">
-                                <figure>
-                                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/USDOT_highway_sign_bicycle_symbol_-_black.svg/2560px-USDOT_highway_sign_bicycle_symbol_-_black.svg.png"
-                                        alt="Another another random bike"></img>
-                                    <figcaption>Bike 3 - Name</figcaption>
-                                </figure>
-                            </div>
+                                ?>
+                            
+                            
+                            
+                            
                             </div>
                         </div>
                     </div>

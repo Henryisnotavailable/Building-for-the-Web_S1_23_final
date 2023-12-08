@@ -83,14 +83,21 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 
+/*Leaving default credentials is INCREDIBLY incsecure, this creates a new user that has least privileges*/
+/*www-data is used in the config.php file*/
+CREATE USER IF NOT EXISTS 'www-data'@'localhost' IDENTIFIED BY '5tr0ng_P455W0RD!';
+GRANT ALL PRIVILEGES ON rentmybike.* TO 'www-data'@'localhost' WITH GRANT OPTION;
+
+
 /*Password for root is fzfN%E,eS5@"mD!*/
+/*This sets up a user, with 3 bikes (so that the welcome page will always work)*/
 INSERT INTO 
-users (username,password,
+users (user_id,username,password,
 email,first_name,last_name,
 pronouns,dateofbirth,description,
 favourite_bike,telephone,profile_blob,
 profile_url,visibility,registration_date)
-VALUES ("root","$2y$10$A/.4WGR7Ar4GwU1OjySHnO4Q6QxzJw/9TOgGdUXgh6pCHeWLvnBn6",
+VALUES (1,"root","$2y$10$A/.4WGR7Ar4GwU1OjySHnO4Q6QxzJw/9TOgGdUXgh6pCHeWLvnBn6",
 "ad@min.com","admin","root",
 "they/them",DATE("2004-12-02"),"No",
 "None","09888764789",NULL,"./assets/users/profile_pictures/default_avatar.png",1,DATE("2023-12-02"));
@@ -107,7 +114,7 @@ VALUES (1,"Road Bike for rent!","This is an old road bike",
 1,1100,2001,1,
 NULL,"./assets/images/bike_3.jpg",
 "#ff0000",1
-)
+);
 
 INSERT INTO bike_details (
 user_id,advert_title,description,
@@ -121,7 +128,7 @@ VALUES (1,"Tandem bike for rent!","This is a great new tandem bike",
 4,200,2020,2,
 NULL,"./assets/images/bike_4_and_5.jpg",
 "#ff8040",1
-)
+);
 
 INSERT INTO bike_details (
 user_id,advert_title,description,
@@ -135,4 +142,4 @@ VALUES (1,"Brand NEW bike for rent!","This is a brand new bike!",
 5,100,2023,1,
 NULL,"./assets/images/bike_2.jpg",
 "#0000ff",1
-)
+);
