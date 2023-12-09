@@ -456,34 +456,37 @@ else if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
         //Validate bike_pic, we will save it later
-        if (file_exists($_FILES['bike_pic']['tmp_name']) || is_uploaded_file($_FILES['bike_pic']['tmp_name'])) {
+        
+        if (isset($_FILES["bike_pic"])) {
+
+            if (file_exists($_FILES['bike_pic']['tmp_name']) || is_uploaded_file($_FILES['bike_pic']['tmp_name'])) {
             
 
-            $original_file_name = strtolower($_FILES["bike_pic"]["name"]);
-            $bike_img_extension = pathinfo($original_file_name, PATHINFO_EXTENSION);
-
-            //Get the filetype of the "image"
-            $mime_type = exif_imagetype($_FILES["bike_pic"]["tmp_name"]);
-            //Allowed Extensions
-            $allowed_ext = array('gif', 'png', 'jpg', "jpeg", "webp");
-            $allowed_mime_type = array(IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_PNG, IMAGETYPE_WEBP);
-            $str_extensions = implode(", ", $allowed_ext);
-            //If extension not allowed, error
-            if (!in_array($bike_img_extension, $allowed_ext)) {
-                $bike_photo_error = "!!! Only {$str_extensions} extensions allowed !!!";
-                $valid = false;
+                $original_file_name = strtolower($_FILES["bike_pic"]["name"]);
+                $bike_img_extension = pathinfo($original_file_name, PATHINFO_EXTENSION);
+    
+                //Get the filetype of the "image"
+                $mime_type = exif_imagetype($_FILES["bike_pic"]["tmp_name"]);
+                //Allowed Extensions
+                $allowed_ext = array('gif', 'png', 'jpg', "jpeg", "webp");
+                $allowed_mime_type = array(IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_PNG, IMAGETYPE_WEBP);
+                $str_extensions = implode(", ", $allowed_ext);
+                //If extension not allowed, error
+                if (!in_array($bike_img_extension, $allowed_ext)) {
+                    $bike_photo_error = "!!! Only {$str_extensions} extensions allowed !!!";
+                    $valid = false;
+                }
+    
+                //Check if a valid image mime type
+                else if (!in_array($mime_type, $allowed_mime_type)) {
+                    $bike_photo_error = "!!! Only {$str_extensions} file types allowed !!!";
+                    $valid = false;
+                }
+    
+                //Because this is updating the image, if the user DOESN'T want to update, keep the old one
             }
 
-            //Check if a valid image mime type
-            else if (!in_array($mime_type, $allowed_mime_type)) {
-                $bike_photo_error = "!!! Only {$str_extensions} file types allowed !!!";
-                $valid = false;
-            }
-
-            //Because this is updating the image, if the user DOESN'T want to update, keep the old one
-        }
-        if (isset($_FILES["bike_pic"])) {
-        if ($_FILES["bike_pic"]["error"] === UPLOAD_ERR_INI_SIZE) {
+        else if ($_FILES["bike_pic"]["error"] === UPLOAD_ERR_INI_SIZE) {
             $max_upload = (int) (ini_get('upload_max_filesize'));
             $bike_photo_error = "!!! Sorry, uploaded file is too big, max size is {$max_upload}MB!!!";
             $valid = false;
@@ -610,8 +613,7 @@ else if ($_SERVER["REQUEST_METHOD"] == "DELETE") {
         header("Location: index.php?msg=Sorry, there was no bike specified in the delete request");
         exit;
     }
-    http_response_code(500);
-    exit;
+
     $sql_for_media = "SELECT other_media_url, image_url FROM bike_details WHERE vehicle_id = ?";
     if ($qu = $mysqli->prepare($sql_for_media)) {
         $qu->bind_param("i", $_GET["bike_id"]);
@@ -642,10 +644,12 @@ else if ($_SERVER["REQUEST_METHOD"] == "DELETE") {
                 }
             }
         } else {
-            die("Sorry, the query failed, try again later");
+            http_response_code(500);
+            exit;
         }
     } else {
-        die("Sorry, something went wrong");
+        http_response_code(500);
+        exit;
     }
     $qu->close();
     $bike_id = $_GET["bike_id"];
@@ -736,6 +740,10 @@ $mysqli->close();
 <head>
     <link rel="stylesheet" href="./a_bike_owner.css">
     </link>
+    <link rel="icon" type="image/x-icon" href="./assets/icons/favicon.ico.png"></link>
+    <meta charset="utf-8"/>
+    <title>Bike Info (Owner)</title>
+    
 </head>
 
 <body>

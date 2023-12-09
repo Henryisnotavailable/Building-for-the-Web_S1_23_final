@@ -4,6 +4,9 @@
 <head>
     <link rel="stylesheet" href="./about_unauth.css">
     </link>
+    <link rel="icon" type="image/x-icon" href="./assets/icons/favicon.ico.png"></link>
+    <meta charset="utf-8"/>
+    <title>About Us</title>
 </head>
 
 <body>
@@ -65,22 +68,15 @@
                                     <figcaption>The Dev Team</figcaption>
                                 </figure>
                             </div>
+                            <p>I am a one-man development team, situated in Cardiff,Wales</p>
                             <br></br>
                             <p>Our website looks even better when you login!</p>
                             <br>
                             <br>
-                            <p>I am a one-man development team, situated in Ca<span class="redacted">&#9608&#9608&#9608&#9608</span>,W<span class="redacted">&#9608&#9608&#9608&#9608</span></p>
+                            
                             <br>
-                            <p>I've been programming for &#9608&#9608&#9608&#9608&#9608&#9608 years</p>
+                            <p>This website gives you a chance to sell to us, so we can rent to you!</p>
                             <br>
-                            <p>I am proficient in many programming languages like &#9608&#9608&#9608&#9608,&#9608&#9608&#9608, &#9608 and Malbolge </p>
-                            <br>
-                            <p>I've worked in &#9608&#9608&#9608, &#9608&#9608 and even at the CIA</p>
-                            <br>
-
-
-
-                            <br><p>Please note, some information has been redacted for privacy and security reasons</p>
                         
                         
                         </div>

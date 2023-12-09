@@ -468,6 +468,9 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 <head>
     <link rel="stylesheet" href="./register.css">
     </link>
+    <link rel="icon" type="image/x-icon" href="./assets/icons/favicon.ico.png"></link>
+    <meta charset="utf-8"/>
+    <title>Register</title>
 </head>
 
 <body>
@@ -619,9 +622,9 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                                     </div>
 
                                     <div class="input_row" id="button_row">
-                                        
+                                    <button class="custom_button" id="clear_button" type="reset">Clear</button>
                                         <button class="custom_button" id="register_button" type="submit">Register</button>
-                                        <button class="custom_button" id="clear_button" type="reset">Clear</button>
+                                        
                                     
                                 </div>
                                 </div>

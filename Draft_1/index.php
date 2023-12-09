@@ -27,6 +27,9 @@ if (isset($_GET["msg"])) {
 <head>
     <link rel="stylesheet" href="./index.html_.css">
     </link>
+    <link rel="icon" type="image/x-icon" href="./assets/icons/favicon.ico.png"></link>
+    <meta charset="utf-8"/>
+    <title>Main Menu</title>
 </head>
 
 <body>

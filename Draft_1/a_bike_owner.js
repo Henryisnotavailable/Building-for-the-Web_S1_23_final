@@ -258,9 +258,13 @@ mileage_slider.style.accentColor =mileage_slider_colour;
         if (response.status === 200) {
             window.location.href = "./index.php?msg=Bike Deleted!"
         }
+        else if (response.status === 403){
+            document.getElementById("main_error_p").innerText = "Sorry, you can't delete a bike that's not yours."
+        }
+
         //Tell user to error out
         else {
-            document.getElementById("main_error_p").innerText = "Sorry something"
+            document.getElementById("main_error_p").innerText = "Sorry something went very wrong, try again later."
         }
 
     }

@@ -501,6 +501,9 @@ else if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <link rel="stylesheet" href="./sell.css">
     </link>
+    <link rel="icon" type="image/x-icon" href="./assets/icons/favicon.ico.png"></link>
+    <meta charset="utf-8"/>
+    <title>Sell (to us)</title>
 </head>
 
 <body>
@@ -510,7 +513,7 @@ else if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div id="PageHeader">
                     <h1>The Bike House</h1>
                     <br></br>
-                    <p>Sell!</p>
+                    <p>Sell (so we can rent)</p>
                 </div>
             </div>
             <div id="navbarWrapper">
@@ -693,9 +696,9 @@ else if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                         <p><?php echo $error; ?></p>
                                     </div>
                                     <div class="input_row" id="button_row">
-
+                                    <button class="custom_button" id="clear_button" type="reset">Clear</button>
                                         <button class="custom_button" id="sell_button" type="submit">Sell</button>
-                                        <button class="custom_button" id="clear_button" type="reset">Clear</button>
+                                        
 
                                     </div>
                                 </div>

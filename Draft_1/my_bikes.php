@@ -111,6 +111,9 @@ $jsonResult = json_encode($bike_results);
 <head>
     <link rel="stylesheet" href="./my_bikes.css">
     </link>
+    <link rel="icon" type="image/x-icon" href="./assets/icons/favicon.ico.png"></link>
+    <meta charset="utf-8"/>
+    <title>My Bikes</title>
 </head>
 
 <body>

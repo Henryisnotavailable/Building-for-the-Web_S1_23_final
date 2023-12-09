@@ -540,6 +540,9 @@ $mysqli->close();
     <link rel="stylesheet" href="./my_account.css">
     </link>
     <title>My Account</title>
+    <link rel="icon" type="image/x-icon" href="./assets/icons/favicon.ico.png"></link>
+    <meta charset="utf-8"/>
+
 </head>
 
 <body>

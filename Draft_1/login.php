@@ -158,6 +158,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <head>
     <link rel="stylesheet" href="./login.css">
     </link>
+    <link rel="icon" type="image/x-icon" href="./assets/icons/favicon.ico.png"></link>
+    <meta charset="utf-8"/>
+    <title>Login</title>
 </head>
 
 <body>
@@ -243,9 +246,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                                     
 
                                     <div class="input_row" id="button_row">
-
+                                    <button class="custom_button" id="clear_button" type="reset">Clear</button>
                                         <button class="custom_button" id="login_button" type="submit">Login</button>
-                                        <button class="custom_button" id="clear_button" type="reset">Clear</button>
+                                        
 
                                     </div>
                                 </div>

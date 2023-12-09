@@ -154,11 +154,15 @@ $mysqli->close();
 
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
     <link rel="stylesheet" href="./a_bike_owner.css">
     </link>
+    <link rel="icon" type="image/x-icon" href="./assets/icons/favicon.ico.png"></link>
+    <meta charset="utf-8"/>
+    <title>Bike Info (Viewer)</title>
+
 </head>
 
 <body>

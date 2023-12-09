@@ -100,6 +100,9 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 <head>
     <link rel="stylesheet" href="./browse_bikes.css">
     </link>
+    <link rel="icon" type="image/x-icon" href="./assets/icons/favicon.ico.png"></link>
+    <meta charset="utf-8"/>
+    <title>Browse Bikes</title>
 </head>
 
 <body>

@@ -34,6 +34,9 @@ if ($q = $mysqli->query($sql)) {
 <head>
     <link rel="stylesheet" href="./welcome.css">
     </link>
+    <link rel="icon" type="image/x-icon" href="./assets/icons/favicon.ico.png"></link>
+    <meta charset="utf-8"/>
+    <title>Welcome</title>
 </head>
 
 <body>
