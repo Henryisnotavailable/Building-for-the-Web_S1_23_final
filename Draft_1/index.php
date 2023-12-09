@@ -25,7 +25,7 @@ if (isset($_GET["msg"])) {
 <html>
 
 <head>
-    <link rel="stylesheet" href="./index.html_.css">
+    <link rel="stylesheet" href="./index.css">
     </link>
     <link rel="icon" type="image/x-icon" href="./assets/icons/favicon.ico.png"></link>
     <meta charset="utf-8"/>

@@ -503,7 +503,7 @@ else if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </link>
     <link rel="icon" type="image/x-icon" href="./assets/icons/favicon.ico.png"></link>
     <meta charset="utf-8"/>
-    <title>Sell (to us)</title>
+    <title>Sell/Rent out</title>
 </head>
 
 <body>
@@ -513,7 +513,7 @@ else if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div id="PageHeader">
                     <h1>The Bike House</h1>
                     <br></br>
-                    <p>Sell (so we can rent)</p>
+                    <p>Sell/Rent out</p>
                 </div>
             </div>
             <div id="navbarWrapper">
