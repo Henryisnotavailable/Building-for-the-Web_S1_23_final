@@ -456,6 +456,14 @@ input[type="checkbox"]:checked + label::after {
     transition: 0.7s;
 }
 
+#rent_button {
+    cursor: not-allowed;
+    opacity: 0.3;
+}
+#is_electric:disabled {
+    pointer-events: none;
+}
+
 
 #sell_button {
     background-image: url(./assets/icons/1737376_dollar_money_sign_icon.png);

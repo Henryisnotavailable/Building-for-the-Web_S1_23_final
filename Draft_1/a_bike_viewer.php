@@ -330,7 +330,7 @@ $mysqli->close();
 
                                         <div class="input_col" id="electric_row">
                                             <h2>Is the bike electric?</h2>
-                                            <input id="is_electric" autocomplete="off" type="checkbox" disabled
+                                            <input id="is_electric" autocomplete="off" type="checkbox" disabled="disabled"
                                             <?php echo $page_is_electric;?> ><label for="is_electric"></label></input>
 
 
@@ -368,19 +368,12 @@ $mysqli->close();
 
                                     <div class="button_row">
                                         
-                                        <button class="custom_button" id="edit_button" onclick="rent(this)" disabled>Rent!</button>
+                                        <button class="custom_button" id="rent_button" onclick="rent(this)" disabled>Rent!</button>
 
 
                                     </div>
 
-                                    <div class="input_row" id="button_row">
 
-                                        <button class="custom_button" id="sell_button" type="submit">Save
-                                            Changes</button>
-
-                                        <button class="custom_button" id="clear_button" type="reset">Clear</button>
-
-                                    </div>
                                 </div>
                             </form>
 
