@@ -99,7 +99,7 @@ function validate() {
 
     //Strong equality is used here as well, just to avoid any edge cases where it returns true, when it shouldn't
     //e.g. "" == 0 returns TRUE
-    if (bike_quality.innerText === atob("ClNsaWRlIHRoZSBiYXIh")) {
+    if (bike_quality.innerText === "\nSlide the bar!" ) {
         alert_user_error("bike_quality_error_div","!!! Again, please slide the bar !!!");
         is_valid = false;
     }
@@ -140,10 +140,15 @@ document.getElementById('sell_form').addEventListener("submit", function (e) {
 //Handle clear button, make user confirm
 document.getElementById('clear_button').addEventListener("click", function (e) {
     if (confirm("Clear Everything?")) {
+        
         document.getElementById("bike_quality").style.accentColor = "orange";
-        document.getElementById("bike_slider_value").innerHTML = "";
+        document.getElementById("bike_slider_value").innerHTML = "<br>Slide the bar!";
+        document.getElementById("bike_slider_value").style.color = "red";
         document.getElementById("bike_mileage").style.accentColor = "orange";
         document.getElementById("bike_mileage_span").innerHTML = "<br>Slide the bar!";
+        document.getElementById("bike_mileage_span").style.color = "red";
+
+
         return true;
     }
     return false;

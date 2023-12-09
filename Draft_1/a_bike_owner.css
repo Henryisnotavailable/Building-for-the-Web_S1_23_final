@@ -287,11 +287,11 @@ width: 100%;
 }
 
 #other_media_row {
-    max-height: 250px;
+    max-height: 350px;
 }
 
 #other_media_column {
-    max-height: 250px;
+    max-height: 350px;
 }
 
 .other_media {
@@ -513,6 +513,7 @@ article .social_media_row img {
     padding-left: 1%;
 
 }
+
 
 
 

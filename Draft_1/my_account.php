@@ -303,6 +303,24 @@ $valid = true;
 
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+    if (
+        isset($_SERVER['CONTENT_LENGTH']) &&
+        (int) $_SERVER['CONTENT_LENGTH'] > (1024 * 1024 * (int) ini_get('post_max_size'))
+    ) {
+        // Code to be executed if the uploaded file has size > post_max_size
+        // Will issue a PHP warning message 
+
+        if (isset($_SERVER["HTTP_REFERER"])) {
+            $max_upload = (int) (ini_get('post_max_size'));
+            $profile_pic_error = "!!! Sorry, uploaded file is too big, !!!";
+            $_SESSION["upload_err"] = "!!! Error, sorry the uploaded files were too big, no changes were saved, the max size is {$max_upload}MB!!!";
+            header("Location: " . $_SERVER["HTTP_REFERER"]);
+        }
+        exit;
+    }
+
+
     if (isset($_POST["new_bio"])) {
         if (strlen($_POST["new_bio"]) == 0) {
             $bio_error = "!!! New bio cannot be empty !!!";
@@ -501,6 +519,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     else {
         error_log("Received a POST but got no valid POST parameters!", 0);
+    }
+}
+
+elseif ($_SERVER["REQUEST_METHOD"] == "GET") {
+    if (isset($_SESSION["upload_err"])) {
+    $profile_pic_error = $_SESSION["upload_err"];
+    unset($_SESSION["upload_err"]);
     }
 }
 
@@ -727,7 +752,7 @@ $mysqli->close();
 
 
 
-                                        <p>Are you sure?</p>
+                                        <p>Can not be undone!</p>
                                     </figure>
                                 </a>
                                 <div id="delete_account_div"></div>

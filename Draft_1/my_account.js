@@ -25,6 +25,8 @@ function setup_bio_change(value) {
         bio_label.for = "bio_change_input";
         bio_label.innerText = "Enter your new bio!";
 
+        let break_element = document.createElement("br");
+
         let bio_input = document.createElement("textarea");
         //Set html tag attributes for validation
         bio_input.id = "bio_change_input";
@@ -54,6 +56,7 @@ function setup_bio_change(value) {
         bio_form.appendChild(line_divider);
         bio_form.appendChild(bio_label);
         bio_form.appendChild(bio_input);
+        bio_form.appendChild(break_element);
         bio_form.appendChild(bio_button);
     }
 }
@@ -545,6 +548,7 @@ function setup_delete_account() {
 
 
         let delete_account_button = document.createElement("button");
+        delete_account_button.id = "delete_button";
         delete_account_button.innerText = "Yes, I am sure.";
 
         let line_divider = document.createElement("hr");
@@ -561,7 +565,8 @@ function setup_delete_account() {
 }
 
 document.getElementById("delete_account").addEventListener("click",(e) => {
-    
+    //Only one form should be displayed at once.
+    remove_all_forms();
     setup_delete_account();
 
 });

@@ -101,7 +101,7 @@ if (isset($_GET["msg"])) {
                                                 <li>
                                                     <p><a href="./sell.php"> <img
                                                                 src="./assets/icons/4634978_pig_coin_financial_money_icon.png" /><br>Sell!
-                                                            - To sell your bike</p></a>
+                                                            - To sell your bike so we can rent it out!</p></a>
                                                 </li>
                                                 <li>
                                                     <p><a href="./my_bikes.php"> <img
@@ -110,12 +110,7 @@ if (isset($_GET["msg"])) {
                                                             - To
                                                             see all of your listed bikes</p></a>
                                                 </li>
-                                                <li>
-                                                    <p><a href="#4"><img
-                                                                src="./assets/icons/430101_help_question_icon.png" /><br>About Us
-                                                            -
-                                                            To learn more about the developer</p></a>
-                                                </li>
+                                                
 
                                                 <li>
                                                     <p><a href="#5"><img
@@ -123,7 +118,12 @@ if (isset($_GET["msg"])) {
                                                             -
                                                             To rent a bike</p></a>
                                                 </li>
-
+                                                <li>
+                                                    <p><a href="./about_auth.php"><img
+                                                                src="./assets/icons/430101_help_question_icon.png" /><br>About Us
+                                                            -
+                                                            To learn more about the developer</p></a>
+                                                </li>
                                                 <li>
                                                     <p><a href="#5"><img
                                                                 src="./assets/icons/2931185_door_enter_exit_leave_out_icon(1).png" /><br>Logout
@@ -158,9 +158,9 @@ if (isset($_GET["msg"])) {
                                                 </li>
 
                                                 <li>
-                                                    <p><a href="#9"><img
-                                                                src="./assets/icons/352313_bike_directions_icon.png" /><br>Checkout
-                                                            the latest bike</a></p>
+                                                    <p><a href="https://youtube.com"><img
+                                                                src="./assets/icons/2559760_media_social_video_youtube_icon.png" /><br>Checkout
+                                                            out youtube channel!</a></p>
                                                 </li>
 
                                                 <li>

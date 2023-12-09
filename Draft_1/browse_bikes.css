@@ -241,15 +241,15 @@ list-style-type: none;
     cursor: pointer;
   }
 
-  .custom_button:hover {
-    background-color: #e62739;
-    transition-duration: 0.7s;
-  }
+
 
 /*Start of Slideshow stuff */
 
 
-
+#search_button:hover {
+    background-color: green;
+    transition: 1s;
+}
 
 .slider-wrapper {
     display: flex;
@@ -269,6 +269,7 @@ list-style-type: none;
     cursor: pointer;
     background-color: black;
     color: white;
+    
 }
 
 .carousel-buttons {

@@ -13,7 +13,7 @@ async function search_bike(query) {
 function display_bike_info(current_ad_jason) {
     document.getElementById("AdvertTitle").innerText = current_ad_jason.bike_ad_name;
     document.getElementById("BikeModel").innerText = current_ad_jason.bike_model;
-    document.getElementById("PriceRange").innerText = `£${current_ad_jason.lower_asking_price} - ${current_ad_jason.upper_asking_price}`;
+    document.getElementById("PriceRange").innerText = `£${current_ad_jason.lower_asking_price} - £${current_ad_jason.upper_asking_price}`;
     document.getElementById("BikeQuality").innerText = current_ad_jason.bike_quality;
     document.getElementById("BikeYearOfBirth").innerText = current_ad_jason.bike_birthday;
     document.getElementById("BikeColour").style.backgroundColor = current_ad_jason.bike_colour_code;
@@ -134,7 +134,7 @@ document.getElementById("search_button").addEventListener("click",async (e) => {
     //Erorrs on output
     if (api_data.length == 0) {
         //document.getElementById("search_value").value = "No results!";
-        search_error.innerText = "!!! No results, showing previous !!!";
+        search_error.innerText = "!!! No results, showing previous search !!!";
     }
     else {
         //document.getElementById("search_value").value = `${api_data.length} results found!`

@@ -60,9 +60,27 @@ $extension = null;
 
 if($_SERVER["REQUEST_METHOD"] == "POST"){
  
-    $valid = true;
+
+    if (
+        isset($_SERVER['CONTENT_LENGTH']) &&
+        (int) $_SERVER['CONTENT_LENGTH'] > (1024 * 1024 * (int) ini_get('post_max_size'))
+    ) {
+        error_log("ERROR: Sent message too long",0);
+        // Code to be executed if the uploaded file has size > post_max_size
+        // Will issue a PHP warning message 
+
+            $max_upload = (int) (ini_get('post_max_size'));
+            $profile_pic_error = $error = "!!! Error, sorry the uploaded files were too big, no changes were saved, the max size is {$max_upload}MB!!!";
+           $valid = false;
+        
+    }
+
+    
 
     //Validate first name
+    else {
+        $valid = true;
+    
     if (!isset($_POST["firstname"])) {
         $firstname_error = "!!! Sorry, firstname was not set !!!";
         $valid = false;
@@ -369,9 +387,22 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         
 
     }
+
+    else if (isset($_FILES["profile_pic"])) {
+        if ($_FILES["profile_pic"]["error"] === UPLOAD_ERR_INI_SIZE) {
+            $max_upload = (int) (ini_get('upload_max_filesize'));
+            $profile_pic_error = "!!! Sorry, uploaded file is too big, max size is {$max_upload}MB!!!";
+            $valid = false;
+
+        }
+    }
+
     //End profile picture validation
 
-    //Now save the info
+    //Now save the info (if valid)
+    }
+
+    
 
     if ($valid == true) {
         //If valid, THEN save the profile picture
@@ -427,7 +458,6 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 }
 
 
-//If NOT a POST request
 
 
 ?>

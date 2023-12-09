@@ -90,19 +90,19 @@ mileage_slider.style.accentColor =mileage_slider_colour;
             }
 
             //Get any errors, to set in the edit
-            let ad_title_error = document.getElementById("ad_title_error_div").firstChild.innerText;
-            let bike_image_error = document.getElementById("bike_image_error_div").firstChild.innerText;
-            let bike_desc_error = document.getElementById("bike_desc_error").firstChild.innerText;
-            let bike_model_error = document.getElementById("bike_model_error_div").firstChild.innerText;
-            let lower_price_error = document.getElementById("lower_price_error_div").firstChild.innerText;
-            let upper_price_error = document.getElementById("upper_price_error_div").firstChild.innerText;
-            let bike_quality_error = document.getElementById("bike_quality_error_div").firstChild.innerText;
-            let bike_date_of_birth_error = document.getElementById("bike_date_of_birth_error").firstChild.innerText;
-            let bike_mileage_error = document.getElementById("bike_mileage_error_div").firstChild.innerText;
-            let bike_seats_error = document.getElementById("bike_seats_error_div").firstChild.innerText;
-            let favourite_bike_colour_error = document.getElementById("favourite_bike_colour_error").firstChild.innerText;
-            let bike_electric_error = document.getElementById("bike_electric_error_div").firstChild.innerText;
-            let other_media_error = document.getElementById("other_media_error").firstChild.innerText;
+            let ad_title_error = document.getElementById("ad_title_error_div").innerText || "";
+            let bike_image_error = document.getElementById("bike_image_error_div").innerText|| "" ;
+            let bike_desc_error = document.getElementById("bike_desc_error").innerText|| "";
+            let bike_model_error = document.getElementById("bike_model_error_div").innerText|| "";
+            let lower_price_error = document.getElementById("lower_price_error_div").firstChild.innerText|| "";
+            let upper_price_error = document.getElementById("upper_price_error_div").firstChild.innerText|| "";
+            let bike_quality_error = document.getElementById("bike_quality_error_div").firstChild.innerText|| "";
+            let bike_date_of_birth_error = document.getElementById("bike_date_of_birth_error").innerText|| "";
+            let bike_mileage_error = document.getElementById("bike_mileage_error_div").firstChild.innerText|| "";
+            let bike_seats_error = document.getElementById("bike_seats_error_div").innerText|| "";
+            let favourite_bike_colour_error = document.getElementById("favourite_bike_colour_error").firstChild.innerText|| "";
+            let bike_electric_error = document.getElementById("bike_electric_error_div").firstChild.innerText|| "";
+            let other_media_error = document.getElementById("other_media_error").innerText|| "";
 
 
 
@@ -220,10 +220,10 @@ mileage_slider.style.accentColor =mileage_slider_colour;
             //bike_image_column.innerHTML = `<img id="current_bike_img" src="${current_bike_img}">`;
             //bike_image_column.innerHTML += "</img>"
     
-            other_media_column.innerHTML = '<label for="bike_pic">Upload Other Media of Bike</label>';
-            other_media_column.innerHTML += `<div id='other_media_column'><${tagname} src='${current_other_media_img_src}'/ style='max-width:180px' alt="No other media!"></div><p>Currently</p>`;
+            other_media_column.innerHTML = '<label for="other_media">Upload Other Media of Bike</label>';
+            other_media_column.innerHTML += `<div id='other_media_column'><${tagname} src='${current_other_media_img_src}'/ style='max-width:180px' alt="No other media!"></${tagname}></div><p>Currently</p>`;
     
-            other_media_column.innerHTML += '<input type="file" id="bike_pic" name="upload_media" autocomplete="off"></input>';
+            other_media_column.innerHTML += '<input type="file" id="other_media" name="upload_media" autocomplete="off"></input>';
             other_media_column.innerHTML += `<div id="other_media_error" class="error_div"><p>${other_media_error}</p></div>`;
             //Finally, change the text of the edit button to save changes
             document.getElementById("edit_button").innerText = "Save Changes";
