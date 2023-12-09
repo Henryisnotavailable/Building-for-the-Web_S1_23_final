@@ -21,10 +21,7 @@ if ($q = $mysqli->query($sql)) {
 }
 //Couldn't prepare
 //TODO
-else {
-1+1;
-error_log("ERROR: Couldn't prepare query");
-}
+
 
 
 
@@ -90,7 +87,7 @@ error_log("ERROR: Couldn't prepare query");
                                         $i+=1;
                                         //HTML for each uploaded bike
                                         $out = "<div class=\"image_container\">\n";
-                                        $out .= "<a href=\"login.php\" id=\"bike_{$i}\">\n";
+                                        $out .= "<a href=\"login.php?redirect_to={$row['vehicle_id']}\" id=\"bike_{$i}\">\n";
                                         $out .= "<figure>\n";
                                         $out .= "<img src=\"{$row['image_url']}\" alt=\"A random bike\"></img>";
                                         $out .= "<figcaption>Bike {$i} - {$row['advert_title']}</figcaption>";

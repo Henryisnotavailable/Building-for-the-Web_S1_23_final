@@ -126,7 +126,7 @@ mileage_slider.style.accentColor =mileage_slider_colour;
     
             bike_image_column.innerHTML = '<label for="bike_pic">Upload Image of Bike</label>';
             bike_image_column.innerHTML += `<div id='current_bike_img_container'><img src='${current_bike_img_src}'/ style='max-width:180px;max-height:180px'><p>Current Image</p></div>`;
-            bike_image_column.innerHTML += '<input type="file" id="bike_pic" name="bike_pic" autocomplete="off"></input>';
+            bike_image_column.innerHTML += '<input type="file" id="bike_pic" name="bike_pic" autocomplete="off" accept="image/gif, image/jpg, image/jpeg, image/png,image/webp"></input>';
             bike_image_column.innerHTML += `<div id="bike_image_error_div" class="error_div"><p>${bike_image_error}</p></div>`;
             //bike_image_column.innerHTML += `<img id="current_bike_img" src="${current_bike_img_src}"/>`;
             
@@ -223,7 +223,7 @@ mileage_slider.style.accentColor =mileage_slider_colour;
             other_media_column.innerHTML = '<label for="other_media">Upload Other Media of Bike</label>';
             other_media_column.innerHTML += `<div id='other_media_column'><${tagname} src='${current_other_media_img_src}'/ style='max-width:180px' alt="No other media!"></${tagname}></div><p>Currently</p>`;
     
-            other_media_column.innerHTML += '<input type="file" id="other_media" name="upload_media" autocomplete="off"></input>';
+            other_media_column.innerHTML += '<input type="file" id="other_media" name="upload_media" autocomplete="off" accept="image/*, video/*"></input>';
             other_media_column.innerHTML += `<div id="other_media_error" class="error_div"><p>${other_media_error}</p></div>`;
             //Finally, change the text of the edit button to save changes
             document.getElementById("edit_button").innerText = "Save Changes";

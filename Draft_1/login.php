@@ -10,7 +10,7 @@ if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true) {
 }
 
 if (isset($_GET["msg"])) {
-    $error = $_GET["msg"];
+    $error = htmlspecialchars($_GET["msg"]);
 }
 
 else {
@@ -99,12 +99,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                                 $_SESSION["username"] = $username;
                                 $_SESSION["profile_picture"] = $profile_pic_url;
 
-                                header("Location: index.php");
+                                if (isset($_POST["redirect_to"])) {
+                                    $redirect_to = $_POST["redirect_to"];
+                                    header("Location: a_bike_viewer.php?id={$redirect_to}");
 
+                                }
+                                else {
+                                header("Location: index.php");
+                                }
                         }
                         //Invalid PASSWORD
                         else {
-                            //Generic error message SLIGHTLY different message...
+                            //Generic error message
                             $error = "!!! Invalid credentials, Please review !!!";
                         }
                     }
@@ -226,7 +232,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                                     <p style="font-size: x-large"><?php echo $error; ?></p>
                                     </div>
 
-
+                                    <?php
+                                    //If user clicked on a bike to get here, use this to redirect them after logging in
+                                    if (isset($_GET["redirect_to"])) {
+                                        $redirect_to = htmlspecialchars($_GET["redirect_to"]);
+                                        echo "<input name='redirect_to' id='redirect_value' type='number' value={$redirect_to}></input>";
+                                    }
+                                    
+                                    ?>
                                     
 
                                     <div class="input_row" id="button_row">
