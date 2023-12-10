@@ -151,6 +151,7 @@ document.getElementById('clear_button').addEventListener("click", function (e) {
 
         return true;
     }
+    e.preventDefault();
     return false;
 });
 

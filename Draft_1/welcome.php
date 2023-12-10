@@ -8,6 +8,7 @@ if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true) {
     header("Location: index.php");
     exit;
 }
+
 require_once "config.php";
 
 //ORDER BY RAND() isn't the most efficient, but the database table shouldn't get too big, so it's ok for this use case (I hope...)
