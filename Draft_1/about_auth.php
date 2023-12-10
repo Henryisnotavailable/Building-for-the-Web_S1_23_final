@@ -66,7 +66,7 @@
                             <p>Our small team are working hard to bring the website of your dreams to life.</p>
                             <div class="image_container">
                                 <figure>
-                                    <img src="https://media2.giphy.com/media/Hcw7rjsIsHcmk/giphy.gif?cid=6c09b952cjxdhkrbi9tl7515lu0o6wc4mcfhuskt6sxf363l&ep=v1_gifs_search&rid=giphy.gif&ct=g"
+                                    <img src="./assets/images/developer.jpg"
                                         alt="The Dev Team"></img>
                                     <figcaption>The Dev Team</figcaption>
                                 </figure>
