@@ -128,7 +128,7 @@ if ($q = $mysqli->query($sql)) {
                             <p>Our small team are working hard on new features!</p>
                             <div class="image_container">
                                 <figure>
-                                    <img src="/assets/images/developer.jpg"
+                                    <img src="./assets/images/developer.jpg"
                                         alt="The Dev Team"></img>
                                     <figcaption>The Dev Team</figcaption>
                                 </figure>

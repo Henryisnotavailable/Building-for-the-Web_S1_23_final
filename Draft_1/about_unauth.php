@@ -63,7 +63,7 @@
                             <p>Our small team are working hard to bring the website of your dreams to life.</p>
                             <div class="image_container">
                                 <figure>
-                                    <img src="/assets/images/developer.jpg"
+                                    <img src="./assets/images/developer.jpg"
                                         alt="The Dev Team"></img>
                                     <figcaption>The Dev Team</figcaption>
                                 </figure>
