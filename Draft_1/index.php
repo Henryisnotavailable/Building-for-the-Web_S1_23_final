@@ -49,8 +49,8 @@ if (isset($_GET["msg"])) {
                         <li><a href="./my_account.php"><img
                                     src="./assets/icons/3994415_account_avatar_person_profile_user_icon.png" />My
                                 Account</a></li>
-                        <li><a href="./sell.php"><img
-                                    src="./assets/icons/4634978_pig_coin_financial_money_icon.png" />Sell!</a>
+                        <li><a href="./rent_out.php"><img
+                                    src="./assets/icons/4634978_pig_coin_financial_money_icon.png" />Rent out!</a>
                         </li>
                         <li><a href="./my_bikes.php"><img src="./assets/icons/352313_bike_directions_icon.png" />My
                                 Bikes</a></li>
@@ -102,9 +102,9 @@ if (isset($_GET["msg"])) {
                                                             - Modify your account details</p></a>
                                                 </li>
                                                 <li>
-                                                    <p><a href="./sell.php"> <img
-                                                                src="./assets/icons/4634978_pig_coin_financial_money_icon.png" /><br>Sell!
-                                                            - To sell your bike so we can rent it out!</p></a>
+                                                    <p><a href="./rent_out.php"> <img
+                                                                src="./assets/icons/4634978_pig_coin_financial_money_icon.png" /><br>Rent out!
+                                                            - To rent out your bike to other users!</p></a>
                                                 </li>
                                                 <li>
                                                     <p><a href="./my_bikes.php"> <img

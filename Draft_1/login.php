@@ -291,7 +291,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             </div>
         </footer>
     </article>
-    <script src="./sell.js"></script>
+    <script src="./rent_out.js"></script>
 </body>
 
 </html>

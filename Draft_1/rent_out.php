@@ -499,11 +499,11 @@ else if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <html>
 
 <head>
-    <link rel="stylesheet" href="./sell.css">
+    <link rel="stylesheet" href="./rent_out.css">
     </link>
     <link rel="icon" type="image/x-icon" href="./assets/icons/favicon.ico.png"></link>
     <meta charset="utf-8"/>
-    <title>Sell/Rent out</title>
+    <title>Rent out</title>
 </head>
 
 <body>
@@ -513,7 +513,7 @@ else if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div id="PageHeader">
                     <h1>The Bike House</h1>
                     <br></br>
-                    <p>Sell/Rent out</p>
+                    <p>Rent out</p>
                 </div>
             </div>
             <div id="navbarWrapper">
@@ -523,8 +523,8 @@ else if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <li><a href="./my_account.php"><img
                                     src="./assets/icons/3994415_account_avatar_person_profile_user_icon.png" />My
                                 Account</a></li>
-                        <li><a href="./sell.php"><img
-                                    src="./assets/icons/4634978_pig_coin_financial_money_icon.png" />Sell!</a>
+                        <li><a href="./rent_out.php"><img
+                                    src="./assets/icons/4634978_pig_coin_financial_money_icon.png" />Rent out!</a>
                         </li>
                         <li><a href="./my_bikes.php"><img src="./assets/icons/352313_bike_directions_icon.png" />My
                                 Bikes</a></li>
@@ -548,7 +548,7 @@ else if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div class="row">
                     <div class="column">
                         <div class="left-column">
-                            <h1>Seller Guidelines</h1>
+                            <h1>Renter Guidelines</h1>
                             <br></br>
                             <p>Rule 1 - <b>No</b> offensive content</p>
                             <br></br>
@@ -562,7 +562,7 @@ else if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 <a href="https://en.wikipedia.org/wiki/Non-fungible_token">NFTs</a>
                             </p>
                             <br></br>
-                            <p>Rule 6 - Don't upload PHP webshells ;)</p>
+                            <p>Rule 6 - <b>Don't</b> upload files larger than <?php echo (int)(ini_get('upload_max_filesize'));?>MB!</p>
 
                         </div>
                     </div>
@@ -572,7 +572,7 @@ else if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <form id="sell_form" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>"
                                 method="post" enctype="multipart/form-data">
                                 <div class="form_main">
-                                    <h1><u>Sell here!</u></h1>
+                                    <h1><u>Rent out your bike here!</u></h1>
                                     <p>* Denotes Required Fields</p>
                                     <div class="input_row">
                                         <div class="input_col">
@@ -736,7 +736,7 @@ else if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
         </footer>
     </article>
-    <script src="./sell.js"></script>
+    <script src="./rent_out.js"></script>
     <?php 
     //Focus at bottom of page (the error message) if not valid
     if (isset($valid) && $valid === false) {
