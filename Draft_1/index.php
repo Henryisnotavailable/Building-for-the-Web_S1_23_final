@@ -116,7 +116,7 @@ if (isset($_GET["msg"])) {
                                                 
 
                                                 <li>
-                                                    <p><a href="#5"><img
+                                                    <p><a href="./browse_bikes.php"><img
                                                                 src="./assets/icons/4781848_bag_buy_cart_ecommerce_shop_icon.png" /><br>Browse Bikes
                                                             -
                                                             To rent a bike</p></a>
@@ -128,7 +128,7 @@ if (isset($_GET["msg"])) {
                                                             To learn more about the developer</p></a>
                                                 </li>
                                                 <li>
-                                                    <p><a href="#5"><img
+                                                    <p><a href="./logout.php"><img
                                                                 src="./assets/icons/2931185_door_enter_exit_leave_out_icon(1).png" /><br>Logout
                                                             - To logout of your account</p></a>
                                                 </li>

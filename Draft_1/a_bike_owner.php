@@ -26,7 +26,7 @@ function update_media($file_tempname, $extension, $old_name)
     //Move temporary file from POST to ./assets/users/bikes/
     move_uploaded_file($file_tempname, $target);
     //tempnam returns a FULL path (e.g. /var/www/html/...) I just want a relative path
-    $relative_path =  $target_path . "/" . basename($target);
+    $relative_path = $target_path . "/" . basename($target);
 
     //unlink($target);
     //unlink($tempname);
@@ -58,7 +58,7 @@ $bike_photo_error = $bike_other_media_error = "";
 $error = "";
 $vehicle_retreived = false;
 //This must be -1 for the slider to work properly.
-$bike_mileage = $bike_quality  = -1;
+$bike_mileage = $bike_quality = -1;
 
 //This is the default
 $bike_colour = "#e62739";
@@ -71,8 +71,8 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 
 
     if (isset($_SESSION["upload_err"])) {
-       $error = htmlspecialchars($_SESSION["upload_err"]);
-        
+        $error = htmlspecialchars($_SESSION["upload_err"]);
+
         unset($_SESSION["upload_err"]);
     }
 
@@ -128,7 +128,8 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
             else {
                 //Just log it
                 error_log("ERROR: No results for user {$_SESSION['username']}", 0);
-                exit;
+                header("Location: index.php?msg=!!! ERROR: Sorry, either that bike is private, or does not exist !!!");
+
             }
             $q->close();
         } else {
@@ -152,7 +153,7 @@ else if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $max_upload = (int) (ini_get('post_max_size'));
             $bike_photo_error = "!!! Sorry, uploaded file is too big, !!!";
             $_SESSION["upload_err"] = "!!! Error, sorry the uploaded files were too big, no changes were saved, the max size is {$max_upload}MB!!!";
-            header("Location: " . $_SERVER["HTTP_REFERER"]. "&edit=true");
+            header("Location: " . $_SERVER["HTTP_REFERER"] . "&edit=true");
         }
         exit;
     }
@@ -197,6 +198,8 @@ else if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $q->close();
         } else {
             error_log("ERROR: Could not execute query", 0);
+            header("Location: index.php?msg=!!! Sorry, something went wrong, please try again later !!!");
+            exit;
         }
 
 
@@ -456,15 +459,15 @@ else if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
         //Validate bike_pic, we will save it later
-        
+
         if (isset($_FILES["bike_pic"])) {
 
             if (file_exists($_FILES['bike_pic']['tmp_name']) || is_uploaded_file($_FILES['bike_pic']['tmp_name'])) {
-            
+
 
                 $original_file_name = strtolower($_FILES["bike_pic"]["name"]);
                 $bike_img_extension = pathinfo($original_file_name, PATHINFO_EXTENSION);
-    
+
                 //Get the filetype of the "image"
                 $mime_type = exif_imagetype($_FILES["bike_pic"]["tmp_name"]);
                 //Allowed Extensions
@@ -476,23 +479,21 @@ else if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $bike_photo_error = "!!! Only {$str_extensions} extensions allowed !!!";
                     $valid = false;
                 }
-    
+
                 //Check if a valid image mime type
                 else if (!in_array($mime_type, $allowed_mime_type)) {
                     $bike_photo_error = "!!! Only {$str_extensions} file types allowed !!!";
                     $valid = false;
                 }
-    
+
                 //Because this is updating the image, if the user DOESN'T want to update, keep the old one
+            } else if ($_FILES["bike_pic"]["error"] === UPLOAD_ERR_INI_SIZE) {
+                $max_upload = (int) (ini_get('upload_max_filesize'));
+                $bike_photo_error = "!!! Sorry, uploaded file is too big, max size is {$max_upload}MB!!!";
+                $valid = false;
+
             }
-
-        else if ($_FILES["bike_pic"]["error"] === UPLOAD_ERR_INI_SIZE) {
-            $max_upload = (int) (ini_get('upload_max_filesize'));
-            $bike_photo_error = "!!! Sorry, uploaded file is too big, max size is {$max_upload}MB!!!";
-            $valid = false;
-
         }
-    }
 
         //End of bike_pic validation
 
@@ -603,6 +604,12 @@ else if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $page_other_media_url = $other_media_url;
         }
     }
+
+else {
+    header("Location: index.php?msg=!!! Sorry, something went wrong, please try again later !!!");
+    exit;
+}
+
 }
 
 //Handle when user wants to DELETE a bike (calling code is in the JS)

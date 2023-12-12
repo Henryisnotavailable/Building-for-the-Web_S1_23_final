@@ -1,6 +1,6 @@
 <?php
 
-
+//Calculate quality string based on integer value
 function get_quality($quality) {
     $quality = (int) $quality;
     switch ($quality) {
@@ -35,7 +35,7 @@ require_once "config.php";
 $bike_results = [];
 
 
-//GET if the user browses to the page, POST will be a user searching for a specific bike
+//GET if the user browses to the page, searching will be handled by JS and api/bike_search.php
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
     //So this gets all bikes with owners that have a visibility of 1 (so Public)
     $sql = "SELECT vehicle_id,user_id,advert_title,bike_details.description,bike_model,bike_lower_price,
@@ -146,26 +146,21 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
             <div class="page-wrapper">
                 <div class="row">
 
-                    <div class='right-column'>
+                    <div class='left-column'>
                         <div class="main_body_container">
                             <div class="left-internal-col">
-                                
-                                <h1>Click on a bike to see more details!</h1>
-                                <div class="main_body_text">
-                                    <br>
-                                    
-                                    
-                                </div>
+                                <br>
+                                <h1>Search below!</h1>
+
 
                                 <form class="search_bar">
                                     <label for="search_value">Search by title, model or your desired price! </label>
                                     <input type="search" placeholder="Brompton Mark 1" id="search_value"><button type="submit" class="custom_button" id="search_button">Search!</button>
                                     <div class="error_div" id="search_error"><p id="search_error_msg"></p></div>
                                 </form> 
-                                <br>
                                 <p>Some of the bike's details can be seen on the right!</p>
                                 <br>
-                                <p>Click on the bike to see more details and rent it!</p>
+                                <h1>Click on the bike to see more details and rent it!</h1>
 
                                 <div class="bike_slideshow" id="bike_slideshow_container">
 
@@ -199,7 +194,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 
 
                     </div>
-                    <div class='left-column'>
+                    <div class='right-column'>
                         <div class="bike_information" id="bike_info_container">
                             <p>
                             <h1>Bike Info</h1>

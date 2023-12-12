@@ -157,7 +157,7 @@ $jsonResult = json_encode($bike_results);
             <div class="page-wrapper">
                 <div class="row">
 
-                    <div class='right-column'>
+                    <div class='left-column'>
                         <div class="main_body_container">
                             <div class="left-internal-col">
                                 <div class="image_container">
@@ -170,8 +170,8 @@ $jsonResult = json_encode($bike_results);
                                 </div>
 
                                 <p>Some of the bike's details can be seen on the right!</p>
-                                <p>Click on the bike to see more details</p>
-
+                                <h1>Click on the bike's image to see more details</h1>
+                                <br>
                                 <div class="bike_slideshow" id="bike_slideshow_container">
 
                                     <div class="slider-wrapper">
@@ -205,7 +205,7 @@ $jsonResult = json_encode($bike_results);
 
 
                     </div>
-                    <div class='left-column'>
+                    <div class='right-column'>
                         <div class="bike_information" id="bike_info_container">
                             <p>
                             <h1>Bike Info</h1>

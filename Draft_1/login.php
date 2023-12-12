@@ -220,7 +220,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                                     <div class="input_row">
                                         <div class="input_col">
                                             <label for="password">Password</label>
-                                            <input type="password" placeholder="passowrd" id="password" name="password" autocomplete="on" required value="<?php echo $username;?>"></input>
+                                            <input type="password" placeholder="1234" id="password" name="password" autocomplete="on" required value="<?php echo $username;?>"></input>
                                             <div id="password_error_div" class="error_div"><p><?php echo $password_error; ?></p></div>
                                         </div>
 

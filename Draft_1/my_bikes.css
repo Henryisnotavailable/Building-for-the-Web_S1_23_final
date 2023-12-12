@@ -170,7 +170,7 @@ nav img {
 
 
 
-.right-column {
+.left-column {
     background-color: #9068be;
     height: 100%;
     box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.75);
@@ -184,7 +184,7 @@ nav img {
 
 
 
-.left-column {
+.right-column {
     flex: 1;
     
     background-color: #e62739;
@@ -285,7 +285,7 @@ display: flex;
 /*End of Slideshow stuff */
 
 
-.left-column {
+.right-column {
     text-align: center;
 }
 
@@ -361,16 +361,16 @@ footer .social_media_row img:hover {
         flex-direction: column;
     }
 
-    .left-column {
+    .right-column {
         margin-right: 0%;
         margin-bottom: 2%;
     }
 
-    .left-column {
+    .right-column {
         flex: 0
     }
 
-    .right-column {
+    .left-column {
         flex:0;
         margin-right: 0%;
         margin-bottom: 1%;

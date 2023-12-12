@@ -39,6 +39,13 @@ FROM bike_details INNER JOIN users USING (user_id) WHERE visibility = 1 AND vehi
                 //Get the bike
                 if ($q->fetch()) {
                     error_log("DEBUG: HIT BIKE with ID {$bike_id}", 0);
+
+                    //If the current user is the owner, then redirect them to the owner page (where they can edit)
+                    if ($owner_user_id === $_SESSION["id"]) {
+                        header("Location: ./a_bike_owner.php?id={$vehicle_id}");
+                        exit;
+                    }
+
                     //HTML encode all values before putting in the page
                     $page_vehicle_id = htmlspecialchars($vehicle_id);
                     $page_title = htmlspecialchars($title);
@@ -57,7 +64,14 @@ FROM bike_details INNER JOIN users USING (user_id) WHERE visibility = 1 AND vehi
                     $page_is_electric = ($is_electric == 1) ? "checked" : "";
                     $vehicle_retreived = true;
 
+                    
 
+                }
+
+                else {
+                error_log("ERROR: Could NOT fetch the bikes results - id => {$vehicle_id}", 0);
+                header("Location: index.php?msg=!!! ERROR: Sorry, something went wrong, try again later !!!");
+                exit;
                 }
 
 
