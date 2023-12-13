@@ -134,7 +134,7 @@ if ($q = $mysqli->query($sql)) {
                                 </figure>
                             </div>
                             <br></br>
-                            <p>Send us bitcon at 12312412451251-25125125</p>
+                            <p>Let us know what you think!</p>
                         </div>
                         <br></br>
                         
