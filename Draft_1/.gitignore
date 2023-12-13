@@ -1,3 +1,4 @@
 **/assets/users/profile_pictures
 !/assets/users/profile_pictures/default_avatar.png
 **/assets/users/bikes/*
+!/assets/users/profile_pictures/bike_3.jpg
