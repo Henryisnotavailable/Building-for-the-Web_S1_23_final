@@ -828,7 +828,7 @@ $mysqli->close();
                                             <div id="bike_image_error_div" class="error_div">
                                                 <p><?php echo $bike_photo_error; ?></p>
                                             </div>
-                                            <p id="price_range">Selling for between <b>£<span id="lower_price"><?php echo $page_bike_lower_price; ?></span></b>
+                                            <p id="price_range">Rent it for between <b>£<span id="lower_price"><?php echo $page_bike_lower_price; ?></span></b>
                                                 - <b>£<span id="upper_price"><?php echo $page_bike_upper_price; ?></span></b></p>
                                         </div>
                                     </div>
@@ -966,7 +966,13 @@ $mysqli->close();
                                                 if (in_array($other_media_extension, $img_extensions)) {
                                                     echo '<img src="' . $page_other_media_url . '" id="current_other_media_img" class="other_media" alt="No other media!"/>';
                                                 } else {
-                                                    echo '<video src="' . $page_other_media_url . '" id="current_other_media_img" class="other_media" alt="No other media!"/>';
+                                                    if (file_exists($other_media_url)) {
+                                                        echo '<video src="' . $page_other_media_url . '" id="current_other_media_img" class="other_media" alt="No other media!"></video>';
+                                                        
+                                                    } else {
+                                                        echo '<img src="" id="current_other_media_img" class="other_media" alt="No other media!"/>';
+
+                                                    }
                                                 }
                                             } else {
                                                 echo '<img src="" id="current_other_media_img" class="other_media" alt="No other media!"/>';
